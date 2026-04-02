@@ -1,0 +1,35 @@
+USER TABLE:
+id_user | int(11) | NO | PRI | 
+nom | varchar(100) | NO |  | 
+prenom | varchar(100) | NO |  | 
+email | varchar(150) | NO | UNI | 
+password | varchar(255) | NO |  | 
+cin | varchar(20) | NO | UNI | 
+adresse | text | YES |  | 
+telephone | varchar(20) | YES |  | 
+image_url | varchar(255) | YES |  | 
+role | enum('ADMIN','EXPERT','AGRICOLE','FOURNISSEUR') | YES |  | AGRICOLE
+created_at | timestamp | NO |  | current_timestamp()
+updated_at | timestamp | NO |  | current_timestamp()
+
+USER_LOG TABLE:
+id | bigint(20) | NO | PRI | 
+user_id | int(11) | NO | MUL | 
+action_type | varchar(20) | NO |  | 
+performed_by | varchar(255) | NO |  | 
+timestamp | timestamp | NO |  | current_timestamp()
+description | text | YES |  | 
+
+SAMPLE USER:
+id_user => 4
+nom => Fournisseur
+prenom => Test
+email => fournisseur@farmai.tn
+password => GKXrmp0HcM4ci7fh/2glVg==$XDVlL76KFbjOqUo+oXDguZgUJb3RalvGPvv9nUZkL9Y=
+cin => 33333333
+adresse => Bizerte, Tunisie
+telephone => +216 73 000 000
+image_url => C:\Users\Aymen Ben Salem\Pictures\Screenshots\Capture d’écran 2026-01-21 134814.png
+role => FOURNISSEUR
+created_at => 2026-02-06 21:26:57
+updated_at => 2026-03-03 10:45:00

@@ -1,0 +1,79 @@
+{% extends 'layouts/expert.html.twig' %}
+
+{% block title %}Espace Expert - FarmAI{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Bienvenue, {{ app.user.prenom|default('Expert') }} {{ app.user.nom|default('') }} !</h1>
+    <p class="welcome-subtitle">Votre espace d'analyse et de conseil agricole <i class="fa-solid fa-microscope" style="color: var(--primary-green);"></i></p>
+</div>
+
+{# ─── Stats Cards ─────────────────────────────────────────────────────────── #}
+<div class="stats-grid">
+    <div class="stat-card green">
+        <div class="stat-value">12</div>
+        <div class="stat-label">Analyses</div>
+        <div class="stat-sublabel">Ce mois</div>
+        <div class="stat-footer stat-footer-line">
+            <i class="fa-solid fa-arrow-trend-up" style="color: #4ade80;"></i> +18%
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--dark-bg);">5</div>
+        <div class="stat-label" style="color: var(--dark-bg);">Rapports</div>
+        <div class="stat-sublabel">En cours</div>
+        <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">À finaliser</div>
+    </div>
+
+    <div class="stat-card light-gray">
+        <div class="stat-value" style="color: var(--dark-bg);">8</div>
+        <div class="stat-label" style="color: var(--dark-bg);">Recommandations</div>
+        <div class="stat-sublabel">Envoyées</div>
+        <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">Cette semaine</div>
+    </div>
+
+    <div class="stat-card dark">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Demandes</div>
+        <div class="stat-sublabel">En attente</div>
+        <div class="stat-footer stat-footer-line">
+            <i class="fa-solid fa-clock" style="color: #f59e0b;"></i> Urgent
+        </div>
+    </div>
+</div>
+
+{# ─── Bottom Section ──────────────────────────────────────────────────────── #}
+<div class="bottom-grid">
+    <div class="action-card">
+        <div class="action-header">
+            <h3 class="action-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h3>
+            <i class="fa-solid fa-ellipsis" style="color: #cbd5e1; cursor: pointer;"></i>
+        </div>
+
+        <div class="btn-group">
+            <a href="#" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouvelle Analyse</a>
+            <a href="#" class="btn btn-outline-green"><i class="fa-solid fa-file-lines"></i> Créer Rapport</a>
+        </div>
+
+        <div class="action-list">
+            <div class="list-item">
+                <div class="list-icon new">NEW</div>
+                <div class="list-text">Nouvelle demande d'analyse sol</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon refresh"><i class="fa-solid fa-arrows-rotate"></i></div>
+                <div class="list-text">Rapport #47 mis à jour</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="enterprise-card">
+        <h3 class="enterprise-title"><i class="fa-solid fa-flask"></i> Centre d'Analyse</h3>
+        <p class="enterprise-text">
+            Analysez les données des sols, déposez vos recommandations et collaborez avec les exploitations agricoles.
+        </p>
+        <i class="fa-solid fa-microscope enterprise-icon"></i>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}FarmAI — Statistiques Utilisateurs{% endblock %}
+
+{% block body %}
+<div class="chart-title">Distribution des Utilisateurs par Rôle</div>
+
+<div class="chart-page-container">
+    <div class="chart-wrapper">
+        <canvas id="rolesPieChart"></canvas>
+    </div>
+
+    <div class="custom-legend" id="chartLegend">
+        <!-- Legend dynamically filled by Chart.js script -->
+    </div>
+
+    <div class="chart-actions">
+        <button onclick="window.location.reload();" class="btn btn-solid-green">
+            <i class="fa-solid fa-arrows-rotate"></i> Actualiser les données
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Raw Data from Controller
+        const rawLabels = {{ labels|json_encode|raw }};
+        const rawCounts = {{ counts|json_encode|raw }};
+        
+        // Match specific colors to labels based on mockup output
+        // Experts (Blue), Administrateur (Purple), Fournisseur (Pink/Red), Agricole (Gray)
+        const roleColorsMap = {
+            'Expert': '#3b82f6', // Blue
+            'Administrateur': '#a855f7', // Purple
+            'Fournisseur': '#ef4444', // Red/Pink
+            'Agricole': '#808080' // Gray
+        };
+
+        const backgroundColors = [];
+        const formattedLabels = [];
+
+        rawLabels.forEach((label, index) => {
+            const val = label.trim();
+            const count = rawCounts[index] || 0;
+            const entryLabel = `${val} (${count})`;
+            formattedLabels.push(entryLabel);
+            
+            // Assign matched color or a random default
+            if (roleColorsMap[val]) {
+                backgroundColors.push(roleColorsMap[val]);
+            } else {
+                backgroundColors.push('#cbd5e1'); 
+            }
+        });
+
+        const ctx = document.getElementById('rolesPieChart').getContext('2d');
+        const rolesChart = new Chart(ctx, {
+            type: 'pie', // Precise pie chart format matching image
+            data: {
+                labels: formattedLabels,
+                datasets: [{
+                    data: rawCounts,
+                    backgroundColor: backgroundColors,
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false // We use a custom HTML legend
+                    },
+                    tooltip: {
+                        padding: 10,
+                        backgroundColor: '#1E293B',
+                        titleFont: { size: 14, family: "'Segoe UI', sans-serif" },
+                        bodyFont: { size: 13, family: "'Segoe UI', sans-serif" },
+                        cornerRadius: 8
+                    }
+                }
+            }
+        });
+
+        // Generate Custom Legend
+        const legendContainer = document.getElementById('chartLegend');
+        rolesChart.data.labels.forEach((label, index) => {
+            const color = rolesChart.data.datasets[0].backgroundColor[index];
+            const legendItem = document.createElement('div');
+            legendItem.className = 'legend-item';
+            legendItem.innerHTML = `
+                <div class="legend-color" style="background-color: ${color};"></div>
+                <span>${label}</span>
+            `;
+            legendContainer.appendChild(legendItem);
+        });
+    });
+</script>
+{% endblock %}

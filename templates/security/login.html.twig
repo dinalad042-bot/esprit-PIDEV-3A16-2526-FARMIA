@@ -1,0 +1,86 @@
+{% extends 'layouts/auth.html.twig' %}
+
+{% block title %}Connexion - FarmAI{% endblock %}
+
+{% block left_subtitle %}Agriculture Intelligente{% endblock %}
+
+{% block left_features %}
+    <li>Gestion optimisée des cultures</li>
+    <li>Analyse IA avancée</li>
+    <li>Suivi en temps réel</li>
+{% endblock %}
+
+{% block auth_content %}
+    {% if error %}
+        <div class="alert alert-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    <form method="post" action="{{ path('app_login') }}">
+        <div class="form-group">
+            <label for="username">Email</label>
+            <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" placeholder="exemple@email.com"  autofocus>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Mot de passe <a href="#">Mot de passe oublié?</a></label>
+            <input type="password" name="_password" id="password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <div class="form-group">
+            <label for="captcha_input">
+                Vérification CAPTCHA
+            </label>
+            <div class="captcha-wrapper">
+                <div class="captcha-image-container">
+                    <img src="{{ path('captcha_image') }}?t={{ 'now'|date('U') }}" alt="CAPTCHA" id="captchaImage" class="captcha-img">
+                    <button type="button" class="captcha-refresh" id="captchaRefresh" title="Rafraîchir le CAPTCHA">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <input type="text" name="_captcha" id="captcha_input" class="form-control" placeholder="Entrez le code ci-dessus"  autocomplete="off">
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-face"><i class="fas fa-camera"></i> Se connecter avec le visage</button>
+        
+        <div class="divider">ou</div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        
+        <button class="btn btn-primary" type="submit">Se connecter</button>
+    </form>
+    
+    <div class="auth-links">
+        Pas encore de compte ? <a href="{{ path('app_signup') }}">S'inscrire</a>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    var refreshBtn = document.getElementById('captchaRefresh');
+    var captchaImg = document.getElementById('captchaImage');
+
+    if (refreshBtn && captchaImg) {
+        refreshBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Ajouter un spinning effect
+            var icon = this.querySelector('i');
+            if (icon) icon.classList.add('fa-spin');
+            
+            // Recharger l'image avec un nouveau timestamp
+            captchaImg.src = '{{ path("captcha_image") }}?t=' + Date.now();
+            
+            // Arrêter le spin après chargement
+            captchaImg.onload = function() {
+                if (icon) icon.classList.remove('fa-spin');
+            };
+
+            // Vider le champ de saisie
+            var input = document.getElementById('captcha_input');
+            if (input) input.value = '';
+        });
+    }
+})();
+</script>
+{% endblock %}

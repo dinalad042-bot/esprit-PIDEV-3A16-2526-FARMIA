@@ -1,0 +1,117 @@
+<!-- Profile Modal Component -->
+<div class="profile-modal-overlay" id="profileModal" style="display: none;">
+    <div class="profile-modal">
+        <div class="profile-modal-header">
+            <h3 style="margin: 0; color: white;">Informations de l'utilisateur</h3>
+            <button type="button" class="close-modal-btn" onclick="closeProfileModal()">&times;</button>
+        </div>
+        
+        <form action="{{ path('app_profile_update') }}" method="POST" enctype="multipart/form-data">
+            <div class="profile-modal-body">
+                <!-- Colonne Gauche : Avatar -->
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar-preview" id="avatarPreviewContainer" style="overflow: hidden; border-radius: 50%;">
+                        <div id="currentAvatarWrapper" style="width: 100%; height: 100%;">
+                            {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '2rem'} %}
+                        </div>
+                        <img src="#" id="avatarPreview" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    </div>
+                    <label class="btn-outline-green btn-file-upload" style="cursor: pointer; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--primary-green); color: var(--primary-green);">
+                        Choisir Photo <input type="file" name="photo" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                    </label>
+                </div>
+                
+                <!-- Right column: Forms -->
+                <div class="profile-form-section">
+                    <div class="form-row">
+                        <label>Nom:</label>
+                        <input type="text" name="nom" class="profile-input" value="{{ app.user.nom }}">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Prénom:</label>
+                        <input type="text" name="prenom" class="profile-input" value="{{ app.user.prenom }}">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Email:</label>
+                        <input type="email" name="email" class="profile-input" value="{{ app.user.email }}">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>CIN:</label>
+                        <input type="text" name="cin" class="profile-input" value="{{ app.user.cin }}">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Téléphone:</label>
+                        <input type="text" name="telephone" class="profile-input" value="{{ app.user.telephone }}">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Adresse:</label>
+                        <input type="text" name="adresse" class="profile-input" value="{{ app.user.adresse }}">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Mot de passe:</label>
+                        <input type="password" name="password" class="profile-input" placeholder="Nouveau mot de passe...">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Rôle:</label>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <select name="role" class="profile-input">
+                                <option value="ADMIN" {% if 'ROLE_ADMIN' in app.user.roles %}selected{% endif %}>ADMIN</option>
+                                <option value="EXPERT" {% if 'ROLE_EXPERT' in app.user.roles %}selected{% endif %}>EXPERT</option>
+                                <option value="AGRICOLE" {% if 'ROLE_AGRICOLE' in app.user.roles %}selected{% endif %}>AGRICOLE</option>
+                                <option value="FOURNISSEUR" {% if 'ROLE_FOURNISSEUR' in app.user.roles %}selected{% endif %}>FOURNISSEUR</option>
+                            </select>
+                        {% else %}
+                            <input type="text" class="profile-input readonly-input" value="{{ app.user.role|default('User') }}" disabled>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-modal-footer">
+                <button type="submit" class="btn btn-solid-blue">Enregistrer</button>
+                <button type="button" class="btn btn-outline-gray" onclick="closeProfileModal()">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openProfileModal() {
+        document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').style.display = 'none';
+    }
+
+    // Fermer quand on clique à l'extérieur
+    window.onclick = function(event) {
+        var modal = document.getElementById('profileModal');
+        if (event.target == modal) {
+            closeProfileModal();
+        }
+    }
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('avatarPreview');
+            var wrapper = document.getElementById('currentAvatarWrapper');
+            if(output) { 
+                output.src = reader.result; 
+                output.style.display = 'block';
+            }
+            if(wrapper) {
+                wrapper.style.display = 'none';
+            }
+        }
+        if(event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
+    }
+</script>

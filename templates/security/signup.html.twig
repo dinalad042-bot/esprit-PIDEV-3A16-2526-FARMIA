@@ -1,0 +1,86 @@
+{% extends 'layouts/auth.html.twig' %}
+
+{% block title %}Inscription - FarmAI{% endblock %}
+
+{% block left_subtitle %}Rejoignez-nous{% endblock %}
+
+{% block left_features %}
+    <li>Inscription rapide et sécurisée</li>
+    <li>Accès à tous les outils</li>
+    <li>Support dédié</li>
+{% endblock %}
+
+{% block auth_content %}
+    {% if error is defined and error %}
+        <div class="alert alert-error" style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-left: 5px solid #dc3545; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+            <strong style="display: block; margin-bottom: 5px;"><i class="fas fa-exclamation-triangle"></i> Échec de l'inscription :</strong>
+            <span>{{ error }}</span>
+        </div>
+    {% endif %}
+
+    <form method="post" action="{{ path('app_signup') }}">
+        <div class="form-group row">
+            <div>
+                <label for="nom">Nom *</label>
+                <input type="text" name="nom" id="nom" class="form-control" placeholder="Votre nom" required>
+            </div>
+            <div>
+                <label for="prenom">Prénom *</label>
+                <input type="text" name="prenom" id="prenom" class="form-control" placeholder="Votre prénom" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" name="email" id="email" class="form-control" placeholder="exemple@email.com" required>
+        </div>
+
+        <div class="form-group row">
+            <div>
+                <label for="cin">CIN *</label>
+                <input type="text" name="cin" id="cin" class="form-control" placeholder="8 chiffres">
+            </div>
+            <div>
+                <label for="telephone">Téléphone</label>
+                <input type="text" name="telephone" id="telephone" class="form-control" placeholder="+216 XX XXX XXX">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="adresse">Adresse</label>
+            <input type="text" name="adresse" id="adresse" class="form-control" placeholder="Votre adresse complète">
+        </div>
+
+        <div class="form-group row">
+            <div>
+                <label for="password">Mot de passe *</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Min. 6 caractères" required>
+            </div>
+            <div>
+                <label for="password_confirm">Confirmer *</label>
+                <input type="password" name="password_confirm" id="password_confirm" class="form-control" placeholder="Confirmer" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="role">Rôle *</label>
+            <select name="role" id="role" class="form-control" required>
+                <option value="ROLE_AGRICOLE">Agricole</option>
+                <option value="ROLE_EXPERT">Expert</option>
+                <option value="ROLE_FOURNISSEUR">Fournisseur</option>
+                <option value="ROLE_USER">Utilisateur (Défaut)</option>
+            </select>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="cgu" required>
+            <label for="cgu">J'accepte les conditions d'utilisation</label>
+        </div>
+
+        <button class="btn btn-primary" type="submit">S'inscrire</button>
+    </form>
+    
+    <div class="auth-links">
+        Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Audit des Actions - FarmAI{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .log-badge {
+        font-weight: 800; font-size: 0.8rem; padding: 6px 15px; border-radius: 20px; text-align: center; width: 80px; letter-spacing: 0.5px;
+    }
+    .log-create { background-color: #dcfce7; color: #22c55e; }
+    .log-update { background-color: #ffedd5; color: #f97316; }
+    .log-delete { background-color: #fee2e2; color: #ef4444; }
+    
+    .log-card {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 25px; background: white; border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;
+        margin-bottom: 12px; transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .log-card:hover { transform: translateY(-1px); box-shadow: 0 6px 8px -1px rgba(0,0,0,0.08); }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="welcome-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div>
+        <h1 class="welcome-title" style="margin: 0;">Audit des Actions Utilisateurs</h1>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <a href="{{ path('admin_dashboard') }}" class="btn" style="border: 1px solid var(--primary-green); color: var(--primary-green); background: white; border-radius: 8px; font-weight: 600;"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+    
+    <button onclick="window.location.reload();" class="btn" style="border: 1px solid var(--primary-green); color: var(--primary-green); background: white; border-radius: 8px; font-weight: 600;"><i class="fa-solid fa-arrows-rotate"></i> Actualiser</button>
+</div>
+
+<div class="chart-page-container" style="max-width: 100%; padding: 30px; border-radius: 12px; height: calc(100vh - 220px); overflow-y: auto;" id="logs-container">
+    {% for log in logs %}
+        {% set actionType = log.actionType %}
+        {% set badgeClass = 'log-' ~ actionType|lower %}
+        {% set performedByEmail = log.performedBy ? log.performedBy.email : 'System/Guest' %}
+        {% set targetEmail = log.user ? log.user.email : 'N/A' %}
+        
+        <div class="log-card">
+            <!-- Badge -->
+            <div style="width: 15%;">
+                <div class="log-badge {{ badgeClass }}">{{ actionType }}</div>
+            </div>
+            
+            <!-- Person and Target -->
+            <div style="width: 35%;">
+                <div style="font-weight: 700; color: var(--dark-bg); font-size: 0.95rem; margin-bottom: 4px;">Par: {{ performedByEmail }}</div>
+                <div style="color: #94a3b8; font-size: 0.85rem;">ID Utilisateur concerné: {{ targetEmail }}</div>
+            </div>
+            
+            <!-- Date/Time -->
+            <div style="width: 20%; color: var(--dark-bg); font-weight: 600; font-size: 0.9rem;">
+                <div>{{ log.timestamp ? log.timestamp|date('d/m/Y') : '' }}</div>
+                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 400;">{{ log.timestamp ? log.timestamp|date('H:i:s') : '' }}</div>
+            </div>
+            
+            <!-- Detail -->
+            <div style="width: 30%; text-align: right; color: #64748b; font-size: 0.9rem;">
+                {{ log.description }}
+            </div>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px; color: #94a3b8;">Aucune action enregistrée.</div>
+    {% endfor %}
+</div>
+
+<script>
+    function fetchLogs() {
+        fetch('{{ path('admin_audit_logs_data') }}')
+            .then(response => response.json())
+            .then(data => {
+                const logsContainer = document.getElementById('logs-container');
+                if (data.logs.length === 0) {
+                    logsContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #94a3b8;">Aucune action enregistrée.</div>';
+                    return;
+                }
+                
+                let html = '';
+                data.logs.forEach(log => {
+                    const badgeClass = 'log-' + log.action.toLowerCase();
+                    html += `
+                        <div class="log-card">
+                            <div style="width: 15%;">
+                                <div class="log-badge ${badgeClass}">${log.action}</div>
+                            </div>
+                            <div style="width: 35%;">
+                                <div style="font-weight: 700; color: var(--dark-bg); font-size: 0.95rem; margin-bottom: 4px;">Par: ${log.email}</div>
+                                <div style="color: #94a3b8; font-size: 0.85rem;">ID Utilisateur concerné: ${log.target}</div>
+                            </div>
+                            <div style="width: 20%; color: var(--dark-bg); font-weight: 600; font-size: 0.9rem;">
+                                <div>${log.date}</div>
+                                <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 400;">${log.time}</div>
+                            </div>
+                            <div style="width: 30%; text-align: right; color: #64748b; font-size: 0.9rem;">
+                                ${log.detail}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                logsContainer.innerHTML = html;
+            })
+            .catch(error => console.error('Erreur lors du rafraîchissement des logs:', error));
+    }
+
+    // Polling toutes les 5 secondes
+    setInterval(fetchLogs, 5000);
+</script>
+{% endblock %}

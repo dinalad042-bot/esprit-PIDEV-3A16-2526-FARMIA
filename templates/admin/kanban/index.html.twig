@@ -1,0 +1,501 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Kanban Board | FarmAI{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .kanban-page {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .kanban-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--dark-bg);
+        margin: 0 0 5px 0;
+    }
+    
+    .page-subtitle {
+        color: var(--text-muted);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+    
+    .kanban-board {
+        display: flex;
+        gap: 24px;
+        flex-grow: 1;
+        overflow-x: auto;
+        padding-bottom: 20px;
+        /* Custom scrollbar for board */
+        scrollbar-width: thin;
+    }
+    
+    .kanban-col {
+        background-color: #f1f5f9;
+        border-radius: var(--border-radius-lg);
+        width: 340px;
+        min-width: 340px;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    
+    .col-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .col-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--dark-bg);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .task-count {
+        background-color: #e2e8f0;
+        color: var(--text-dark);
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .kanban-cards {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        min-height: 100px;
+        border-radius: 12px;
+        transition: background-color 0.2s;
+    }
+    
+    .kanban-cards.drag-over {
+        background-color: #e2e8f0;
+    }
+    
+    .kanban-card {
+        background-color: var(--white);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        cursor: grab;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    
+    .kanban-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
+        border-color: #cbd5e1;
+    }
+    
+    .kanban-card:active {
+        cursor: grabbing;
+    }
+    
+    .kanban-card.dragging {
+        opacity: 0.5;
+        border: 2px dashed #94a3b8;
+    }
+    
+    .card-priority {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .priority-haute { background-color: #fee2e2; color: #ef4444; }
+    .priority-moyenne { background-color: #fef3c7; color: #f59e0b; }
+    .priority-basse   { background-color: #dcfce7; color: #22c55e; }
+    
+    .card-title {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--dark-bg);
+        margin-bottom: 8px;
+    }
+    
+    .card-desc {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        /* Truncate text */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 12px;
+    }
+    
+    .card-date {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .card-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .card-action-btn {
+        background: none;
+        border: none;
+        color: #cbd5e1;
+        cursor: pointer;
+        padding: 4px;
+        transition: color 0.2s;
+    }
+    
+    .card-action-btn:hover {
+        color: var(--dark-bg);
+    }
+    
+    .card-action-btn.delete:hover {
+        color: #ef4444;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="kanban-page">
+    <div class="kanban-header">
+        <div>
+            <h1 class="page-title">Kanban Board</h1>
+            <p class="page-subtitle">Suivez et organisez l'avancement de vos projets et tâches agricoles.</p>
+        </div>
+        <button class="btn btn-solid-blue" style="background:#38bdf8; border:none; padding:12px 24px; color:white; border-radius:8px; font-weight:600; cursor:pointer;" onclick="openTaskModal()">
+            <i class="fa-solid fa-plus" style="margin-right:8px;"></i> Nouvelle Tâche
+        </button>
+    </div>
+
+    <div class="kanban-board">
+        <!-- Todo Column -->
+        <div class="kanban-col">
+            <div class="col-header">
+                <span class="col-title">
+                    <span style="width:10px; height:10px; border-radius:50%; background:#94a3b8;"></span>
+                    To Do
+                </span>
+                <span class="task-count" id="count-todo">0</span>
+            </div>
+            <div class="kanban-cards" id="col-todo" data-status="todo"></div>
+        </div>
+        
+        <!-- In Progress Column -->
+        <div class="kanban-col">
+            <div class="col-header">
+                <span class="col-title">
+                    <span style="width:10px; height:10px; border-radius:50%; background:#38bdf8;"></span>
+                    In Progress
+                </span>
+                <span class="task-count" id="count-in-progress">0</span>
+            </div>
+            <div class="kanban-cards" id="col-in-progress" data-status="in-progress"></div>
+        </div>
+
+        <!-- Done Column -->
+        <div class="kanban-col">
+            <div class="col-header">
+                <span class="col-title">
+                    <span style="width:10px; height:10px; border-radius:50%; background:#22c55e;"></span>
+                    Done
+                </span>
+                <span class="task-count" id="count-done">0</span>
+            </div>
+            <div class="kanban-cards" id="col-done" data-status="done"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Modal -->
+<div class="profile-modal-overlay" id="taskModal" style="display:none; align-items:center; justify-content:center;">
+    <div class="profile-modal" style="width: 550px; background:white; border-radius:20px; overflow:hidden;">
+        <div class="profile-modal-header" style="background:#1e293b; padding:20px 25px; display:flex; justify-content:space-between;">
+            <h3 style="margin: 0; color: white;" id="taskModalTitle">Nouvelle Tâche</h3>
+            <button type="button" class="close-modal-btn" onclick="closeTaskModal()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+        <div class="profile-modal-body" style="padding:25px; display:flex; flex-direction:column; gap:20px;">
+            <input type="hidden" id="taskId">
+            
+            <div>
+                <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Titre de la tâche</label>
+                <input type="text" id="taskTitle" class="profile-input" style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #e2e8f0; border-radius:8px;">
+            </div>
+            
+            <div>
+                <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Description</label>
+                <textarea id="taskDesc" class="profile-input" style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #e2e8f0; border-radius:8px; height:100px; resize:none;"></textarea>
+            </div>
+            
+            <div style="display:flex; gap:20px;">
+                <div style="flex:1;">
+                    <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Priorité</label>
+                    <select id="taskPriority" class="profile-input" style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #e2e8f0; border-radius:8px;">
+                        <option value="basse">Basse</option>
+                        <option value="moyenne" selected>Moyenne</option>
+                        <option value="haute">Haute</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Date Limite</label>
+                    <input type="date" id="taskDate" class="profile-input" style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #e2e8f0; border-radius:8px;">
+                </div>
+            </div>
+            
+            <div>
+                <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Statut (Colonne)</label>
+                <select id="taskCol" class="profile-input" style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #e2e8f0; border-radius:8px;">
+                    <option value="todo">To Do</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+            </div>
+        </div>
+        <div class="profile-modal-footer" style="padding:20px 25px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap:12px;">
+            <button type="button" class="btn btn-outline-gray" onclick="closeTaskModal()" style="padding:10px 20px; border-radius:8px; border:none; background:#e2e8f0; cursor:pointer; font-weight:600;">Annuler</button>
+            <button type="button" class="btn btn-solid-blue" onclick="saveTask()" style="padding:10px 20px; border-radius:8px; border:none; background:#38bdf8; color:white; cursor:pointer; font-weight:600;">Enregistrer</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    // Kanban Logic
+    let tasks = [];
+    const LOCAL_STORAGE_KEY = 'farmai_kanban_tasks';
+
+    // Format Date for display
+    function formatDate(dateStr) {
+        if (!dateStr) return 'Aucune date';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    // Load tasks from local storage
+    function loadTasks() {
+        const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (stored) {
+            tasks = JSON.parse(stored);
+        } else {
+            // Default demo tasks
+            tasks = [
+                { id: 1, title: 'Inspecter les capteurs', desc: 'Vérifier la connectivité des capteurs d\'humidité dans la parcelle Nord.', priority: 'haute', date: '2026-05-10', status: 'todo' },
+                { id: 2, title: 'Analyse des données météo', desc: 'Compiler les prévisions de pluie pour la semaine prochaine.', priority: 'moyenne', date: '', status: 'in-progress' },
+                { id: 3, title: 'Mise à jour logiciel drones', desc: 'Flasher le nouveau firmware sur les drones d\'irrigation.', priority: 'basse', date: '2026-04-15', status: 'done' }
+            ];
+            saveToStorage();
+        }
+        renderBoard();
+    }
+
+    function saveToStorage() {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tasks));
+    }
+
+    // Render columns
+    function renderBoard() {
+        const columns = ['todo', 'in-progress', 'done'];
+        
+        columns.forEach(col => {
+            const container = document.getElementById('col-' + col);
+            container.innerHTML = '';
+            const colTasks = tasks.filter(t => t.status === col);
+            
+            document.getElementById('count-' + col).innerText = colTasks.length;
+
+            colTasks.forEach(task => {
+                const el = document.createElement('div');
+                el.className = 'kanban-card';
+                el.draggable = true;
+                el.dataset.id = task.id;
+
+                let badgeClass = 'priority-' + task.priority;
+                
+                el.innerHTML = `
+                    <div class="card-priority ${badgeClass}">${task.priority}</div>
+                    <div class="card-title">${task.title}</div>
+                    <div class="card-desc">${task.desc}</div>
+                    <div class="card-footer">
+                        <div class="card-date"><i class="fa-regular fa-calendar"></i> ${formatDate(task.date)}</div>
+                        <div class="card-actions">
+                            <button class="card-action-btn" onclick="editTask(${task.id})"><i class="fa-solid fa-pen"></i></button>
+                            <button class="card-action-btn delete" onclick="deleteTask(${task.id})"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+
+                // Drag Events
+                el.addEventListener('dragstart', () => { el.classList.add('dragging'); });
+                el.addEventListener('dragend', () => { el.classList.remove('dragging'); });
+
+                container.appendChild(el);
+            });
+        });
+    }
+
+    // Drag and Drop Logic
+    function setupDropZones() {
+        const containers = document.querySelectorAll('.kanban-cards');
+        
+        containers.forEach(container => {
+            container.addEventListener('dragover', e => {
+                e.preventDefault();
+                container.classList.add('drag-over');
+                const afterElement = getDragAfterElement(container, e.clientY);
+                const draggable = document.querySelector('.dragging');
+                if (draggable) {
+                    if (afterElement == null) {
+                        container.appendChild(draggable);
+                    } else {
+                        container.insertBefore(draggable, afterElement);
+                    }
+                }
+            });
+
+            container.addEventListener('dragleave', e => {
+                container.classList.remove('drag-over');
+            });
+
+            container.addEventListener('drop', e => {
+                e.preventDefault();
+                container.classList.remove('drag-over');
+                const draggable = document.querySelector('.dragging');
+                if (draggable) {
+                    const taskId = parseInt(draggable.dataset.id);
+                    const newStatus = container.dataset.status;
+                    
+                    // Find task and update status
+                    const taskIndex = tasks.findIndex(t => t.id === taskId);
+                    if (taskIndex !== -1 && tasks[taskIndex].status !== newStatus) {
+                        tasks[taskIndex].status = newStatus;
+                        saveToStorage();
+                        // Optional: play a mini sound or trigger small flash
+                    }
+                    renderBoard(); // re-render to update counts
+                }
+            });
+        });
+    }
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.kanban-card:not(.dragging)')];
+
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    // Modal Operations
+    function openTaskModal() {
+        document.getElementById('taskId').value = '';
+        document.getElementById('taskTitle').value = '';
+        document.getElementById('taskDesc').value = '';
+        document.getElementById('taskPriority').value = 'moyenne';
+        document.getElementById('taskDate').value = '';
+        document.getElementById('taskCol').value = 'todo';
+        document.getElementById('taskModalTitle').innerText = 'Nouvelle Tâche';
+        
+        document.getElementById('taskModal').style.display = 'flex';
+    }
+
+    function closeTaskModal() {
+        document.getElementById('taskModal').style.display = 'none';
+    }
+
+    function editTask(id) {
+        const task = tasks.find(t => t.id === id);
+        if (task) {
+            document.getElementById('taskId').value = task.id;
+            document.getElementById('taskTitle').value = task.title;
+            document.getElementById('taskDesc').value = task.desc;
+            document.getElementById('taskPriority').value = task.priority;
+            document.getElementById('taskDate').value = task.date;
+            document.getElementById('taskCol').value = task.status;
+            document.getElementById('taskModalTitle').innerText = 'Modifier Tâche';
+            
+            document.getElementById('taskModal').style.display = 'flex';
+        }
+    }
+
+    function saveTask() {
+        const idVal = document.getElementById('taskId').value;
+        const newTask = {
+            id: idVal ? parseInt(idVal) : Date.now(),
+            title: document.getElementById('taskTitle').value,
+            desc: document.getElementById('taskDesc').value,
+            priority: document.getElementById('taskPriority').value,
+            date: document.getElementById('taskDate').value,
+            status: document.getElementById('taskCol').value
+        };
+
+        if (!newTask.title.trim()) {
+            alert('Le titre est obligatoire');
+            return;
+        }
+
+        if (idVal) {
+            const index = tasks.findIndex(t => t.id === parseInt(idVal));
+            if (index !== -1) tasks[index] = newTask;
+        } else {
+            tasks.push(newTask);
+        }
+
+        saveToStorage();
+        renderBoard();
+        closeTaskModal();
+    }
+
+    function deleteTask(id) {
+        if(confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveToStorage();
+            renderBoard();
+        }
+    }
+
+    // Initialize
+    setupDropZones();
+    loadTasks();
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transition FarmAI...</title>
+    <style>
+        body { margin: 0; background-color: #0f172a; overflow: hidden; }
+        
+        /* Optional: Change the subtitle based on type */
+    </style>
+</head>
+<body>
+    {% include 'components/_splash_screen.html.twig' %}
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const subtitle = document.querySelector('.splash-subtitle');
+            if (subtitle) {
+                {% if type == 'logout' %}
+                    subtitle.innerText = "Déconnexion en cours...";
+                {% else %}
+                    subtitle.innerText = "Préparation de votre espace...";
+                {% endif %}
+            }
+
+            // Redirect exactly after 3 seconds
+            setTimeout(function() {
+                window.location.href = "{{ target_url|raw }}";
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

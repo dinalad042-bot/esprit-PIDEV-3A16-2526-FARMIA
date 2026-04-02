@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FarmAI Fournisseur{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/profile_modal.css') }}">
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="profile-card" onclick="openProfileModal()" style="cursor: pointer;">
+            <div class="profile-img-wrapper" style="overflow: hidden; border-radius: 50%;">
+                {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '1.2rem'} %}
+            </div>
+            <i class="fa-solid fa-ellipsis profile-ellipsis"></i>
+            <div class="profile-info">
+                <div class="profile-name">{{ app.user.prenom|default('Fournisseur') }} {{ app.user.nom|default('') }}</div>
+                <div class="profile-role">Fournisseur</div>
+            </div>
+        </div>
+
+        {% set current_route = app.request.attributes.get('_route') %}
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="{{ path('dashboard_fournisseur') }}" class="{% if current_route == 'dashboard_fournisseur' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="openProfileModal(); return false;">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Mon Profil</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>Produits</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Commandes</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Catalogue</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="logout-container">
+            <a href="{{ path('app_logout') }}">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="brand-title">FarmAI Platform</div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+                <div class="topbar-avatar" style="display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border-radius: 50%;" onclick="openProfileModal()">
+                    {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '1rem'} %}
+                </div>
+            </div>
+        </header>
+
+        {% block body %}{% endblock %}
+    </main>
+
+    {% include 'components/_profile_modal.html.twig' %}
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

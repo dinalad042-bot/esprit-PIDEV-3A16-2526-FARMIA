@@ -1,0 +1,164 @@
+<!-- User Add/Edit Dialog -->
+<div class="profile-modal-overlay" id="adminUserModal">
+    <div class="profile-modal">
+        <div class="profile-modal-header">
+            <h3 id="adminUserModalTitle" style="margin: 0; color: white;">Ajouter Utilisateur</h3>
+            <button type="button" class="close-modal-btn" onclick="closeAdminUserModal()">&times;</button>
+        </div>
+        
+        {{ form_start(form, {'action': path('admin_users_save'), 'attr': {'id': 'adminUserForm', 'enctype': 'multipart/form-data'}}) }}
+            <input type="hidden" name="id" id="modalUserId" value="{{ user_id|default('') }}">
+            <div class="profile-modal-body">
+                <!-- Avatar Column -->
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar-preview" style="overflow: hidden; border-radius: 50%; display: flex; justify-content: center; align-items: center; position: relative;">
+                        <!-- JS Fallback for Initials -->
+                        <div id="adminAvatarInitials" style="display: none; width: 100%; height: 100%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 2rem; text-transform: uppercase;"></div>
+                        <!-- Photo Preview -->
+                        <img src="#" id="adminAvatarPreview" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                        <!-- Generic Icon (Creation only) -->
+                        <i class="fa-solid fa-user-tie" id="adminAvatarFallback" style="font-size: 60px; color: #64748b;"></i>
+                    </div>
+                    <label class="btn-outline-green btn-file-upload" style="cursor: pointer; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--primary-green); color: var(--primary-green);">
+                        Choisir Photo <input type="file" name="photo" accept="image/*" style="display: none;" onchange="previewAdminImage(event)">
+                    </label>
+                </div>
+                
+                <!-- Form Column -->
+                <div class="profile-form-section">
+                    <div class="form-row" style="position: relative;">
+                        <label>Nom:</label>
+                        {{ form_widget(form.nom, {'id': 'modalUserNom'}) }}
+                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.nom) }}</div>
+                    </div>
+                    <div class="form-row" style="position: relative;">
+                        <label>Prénom:</label>
+                        {{ form_widget(form.prenom, {'id': 'modalUserPrenom'}) }}
+                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.prenom) }}</div>
+                    </div>
+                    <div class="form-row" style="position: relative;">
+                        <label>Email:</label>
+                        {{ form_widget(form.email, {'id': 'modalUserEmail'}) }}
+                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.email) }}</div>
+                    </div>
+                    <div class="form-row" style="position: relative;">
+                        <label>CIN:</label>
+                        {{ form_widget(form.cin, {'id': 'modalUserCin'}) }}
+                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.cin) }}</div>
+                    </div>
+                    <div class="form-row" style="position: relative;">
+                        <label>Téléphone:</label>
+                        {{ form_widget(form.telephone, {'id': 'modalUserTelephone'}) }}
+                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.telephone) }}</div>
+                    </div>
+                    <div class="form-row" style="position: relative;">
+                        <label>Adresse:</label>
+                        {{ form_widget(form.adresse, {'id': 'modalUserAdresse'}) }}
+                    </div>
+                    <div class="form-row" style="position: relative;">
+                        <label>Mot de passe:</label>
+                        {{ form_widget(form.password, {'id': 'modalUserPassword'}) }}
+                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.password) }}</div>
+                    </div>
+                    <div class="form-row" style="position: relative;">
+                        <label>Rôle:</label>
+                        {{ form_widget(form.role, {'id': 'modalUserRole'}) }}
+                    </div>
+                    
+                    {# Render any other fields (like CSRF token) #}
+                    {{ form_rest(form) }}
+                </div>
+            </div>
+            
+            <div class="profile-modal-footer">
+                <button type="submit" class="btn btn-solid-blue" style="background: var(--dark-bg);">Enregistrer</button>
+                <button type="button" class="btn btn-outline-gray" onclick="closeAdminUserModal()">Annuler</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+    function openAdminUserModal(id = null, nom = '', prenom = '', email = '', cin = '', telephone = '', adresse = '', role = 'USER', imageUrl = '') {
+        document.getElementById('adminUserModalTitle').innerText = id ? "Modifier Utilisateur" : "Ajouter Utilisateur";
+        document.getElementById('modalUserId').value = id || '';
+        document.getElementById('modalUserNom').value = nom;
+        document.getElementById('modalUserPrenom').value = prenom;
+        document.getElementById('modalUserEmail').value = email;
+        document.getElementById('modalUserCin').value = cin;
+        document.getElementById('modalUserTelephone').value = telephone;
+        document.getElementById('modalUserAdresse').value = adresse;
+        document.getElementById('modalUserPassword').required = id ? false : true;
+        
+        let roleSelect = document.getElementById('modalUserRole');
+        for (let i = 0; i < roleSelect.options.length; i++) {
+            if (roleSelect.options[i].value === role) {
+                roleSelect.selectedIndex = i;
+                break;
+            }
+        }
+
+        {% if not open_modal|default(false) %}
+            document.getElementById('adminAvatarPreview').src = '#';
+            document.getElementById('adminAvatarPreview').style.display = 'none';
+            document.getElementById('adminAvatarFallback').style.display = 'none';
+            document.getElementById('adminAvatarInitials').style.display = 'none';
+
+            if (imageUrl) {
+                document.getElementById('adminAvatarPreview').src = '/' + imageUrl;
+                document.getElementById('adminAvatarPreview').style.display = 'block';
+            } else if (id && nom && prenom) {
+                // Dynamically build avatar
+                let ini = (prenom.charAt(0) + nom.charAt(0)).toUpperCase();
+                let colors = ['#8b5cf6', '#4ade80', '#3b82f6', '#f59e0b', '#ec4899'];
+                let cIdx = (prenom.length + nom.length) % 5;
+                let iniDiv = document.getElementById('adminAvatarInitials');
+                iniDiv.innerText = ini;
+                iniDiv.style.backgroundColor = colors[cIdx];
+                iniDiv.style.display = 'flex';
+            } else {
+                document.getElementById('adminAvatarFallback').style.display = 'block';
+            }
+        {% endif %}
+
+        document.getElementById('adminUserModal').style.display = 'flex';
+    }
+
+    function closeAdminUserModal() {
+        document.getElementById('adminUserModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById('adminUserModal');
+        if (event.target == modal) { closeAdminUserModal(); }
+    }
+
+    function previewAdminImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('adminAvatarPreview');
+            var fallback = document.getElementById('adminAvatarFallback');
+            if(output) { output.src = reader.result; output.style.display = 'block'; }
+            if(fallback) { fallback.style.display = 'none'; }
+        }
+        if(event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
+    }
+    // Auto-open logic for Dashboard redirection or Form Errors
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('open') === 'create') {
+            openAdminUserModal();
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        {% if open_modal|default(false) %}
+            // The form has errors, we need to re-open the modal
+            document.getElementById('adminUserModalTitle').innerText = {{ is_edit ? '"Modifier Utilisateur"' : '"Ajouter Utilisateur"' }};
+            document.getElementById('modalUserId').value = '{{ user_id|default('')|escape('js') }}';
+            document.getElementById('modalUserPassword').required = {{ is_edit ? 'false' : 'true' }};
+
+            // Don't auto-fill via JS mapping to preserve the form's bad data and error messages !
+            document.getElementById('adminUserModal').style.display = 'flex';
+        {% endif %}
+    });
+</script>
