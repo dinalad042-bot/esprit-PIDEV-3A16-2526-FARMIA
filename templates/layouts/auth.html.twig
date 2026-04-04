@@ -11,23 +11,26 @@
     <div class="auth-layout">
         <!-- Panel gauche (Vert) -->
         <div class="left-panel">
-            <div class="logo-icon"><i class="fas fa-seedling"></i></div>
-            <h1>FarmAI</h1>
-            <h2>{% block left_subtitle %}Agriculture Intelligente{% endblock %}</h2>
+            <div class="left-panel-content">
+                <div class="logo-container">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h1>FarmAI</h1>
+                <h2>{% block left_subtitle %}Agriculture Intelligente{% endblock %}</h2>
 
-            <ul style="margin-top: 20px;">
-                {% block left_features %}
-                    <li>Gestion optimisée des cultures</li>
-                    <li>Analyse IA avancée</li>
-                    <li>Suivi en temps réel</li>
-                {% endblock %}
-            </ul>
+                <ul>
+                    {% block left_features %}
+                        <li>Gestion optimisée des cultures</li>
+                        <li>Analyse IA avancée</li>
+                        <li>Suivi en temps réel</li>
+                    {% endblock %}
+                </ul>
+            </div>
         </div>
 
-        <!-- Panel droite (Formulaire) -->
+        <!-- Panel droite (Formulaire Glassmorphism) -->
         <div class="right-panel">
             <div class="auth-box">
-                
                 {% for message in app.flashes('success') %}
                     <div class="alert alert-success">
                         {{ message }}

@@ -22,8 +22,8 @@
         </div>
 
         <div class="form-group">
-            <label for="password">Mot de passe <a href="#">Mot de passe oublié?</a></label>
-            <input type="password" name="_password" id="password" class="form-control" placeholder="••••••••" required>
+            <label for="password">Mot de passe <a href="#">Mot de passe oublié ?</a></label>
+            <input type="password" name="_password" id="password" class="form-control" placeholder="••••••••" >
         </div>
 
         <div class="form-group">
@@ -43,11 +43,12 @@
 
         <button type="button" class="btn btn-face"><i class="fas fa-camera"></i> Se connecter avec le visage</button>
         
-        <div class="divider">ou</div>
+        <div class="divider">OU</div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         
-        <button class="btn btn-primary" type="submit">Se connecter</button>
+        <!-- Classe spéciale pour calquer le design de la maquette (bordure vert glow, fond sombre) -->
+        <button class="btn btn-login" type="submit">Se connecter</button>
     </form>
     
     <div class="auth-links">
