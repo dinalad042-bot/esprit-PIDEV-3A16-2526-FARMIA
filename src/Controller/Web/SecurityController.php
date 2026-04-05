@@ -25,7 +25,7 @@ class SecurityController extends AbstractController
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
-            'error'         => $error,
+            'error' => $error,
         ]);
     }
 
@@ -36,51 +36,44 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('dashboard_default');
         }
 
+        $user = new \App\Entity\User();
+        $form = $this->createForm(\App\Form\RegistrationFormType::class, $user);
+        $form->handleRequest($request);
         $error = null;
 
-        if ($request->isMethod('POST')) {
-            $password = $request->request->get('password');
-            $passwordConfirm = $request->request->get('password_confirm');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $form->get('password')->getData();
 
-            if ($password !== $passwordConfirm) {
-                $error = 'Les mots de passe ne correspondent pas.';
-            } else {
+            try {
                 $data = [
-                    'nom'       => $request->request->get('nom'),
-                    'prenom'    => $request->request->get('prenom'),
-                    'email'     => $request->request->get('email'),
+                    'nom'       => $user->getNom(),
+                    'prenom'    => $user->getPrenom(),
+                    'email'     => $user->getEmail(),
                     'password'  => $password,
-                    'telephone' => $request->request->get('telephone'),
-                    'adresse'   => $request->request->get('adresse'),
-                    'role'      => $request->request->get('role', 'ROLE_USER'),
+                    'telephone' => $user->getTelephone(),
+                    'cin'       => $user->getCin(),
+                    'adresse'   => $user->getAdresse(),
+                    'role'      => $user->getRole(),
                 ];
 
-                try {
-                    $user = $authService->signup($data);
-                    $userLogService->log($user, 'SIGNUP_WEB', 'SUCCESS');
-                    
-                    $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
-                    return $this->redirectToRoute('app_login');
-                } catch (\InvalidArgumentException $e) {
-                    // Erreur de validation métier (email pris, mot de passe vide...)
-                    $error = $e->getMessage();
-                } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-                    // Violation de contrainte unique SQL (ex: CIN duplication) non détectée en amont
-                    $error = "Une contrainte unique SQL a été violée (ex: Email ou CIN déjà existant). Détail : " . $e->getMessage();
-                } catch (\Doctrine\DBAL\Exception\NotNullConstraintViolationException $e) {
-                    // Champ 'not null' manquant en base
-                    $error = "Un champ obligatoire manque pour la base de données. Détail : " . $e->getMessage();
-                } catch (\Doctrine\DBAL\Exception $e) {
-                    // Toute autre erreur SQL (colonne non trouvée, mauvaise table, etc.)
-                    $error = "Erreur base de données (SQL Doctrine) : " . $e->getMessage();
-                } catch (\Exception $e) {
-                    // Erreur générale non SQL
-                    $error = "Erreur système critique : " . $e->getMessage();
-                }
+                $createdUser = $authService->signup($data);
+                $userLogService->log($createdUser, 'SIGNUP_WEB', 'SUCCESS');
+                
+                $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
+                return $this->redirectToRoute('app_login');
+            } catch (\InvalidArgumentException $e) {
+                // Erreur de validation métier (email pris, mot de passe vide...)
+                $error = $e->getMessage();
+            } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                // Violation de contrainte unique SQL (ex: CIN duplication) non détectée en amont
+                $error = "Une contrainte unique SQL a été violée. Détail : " . $e->getMessage();
+            } catch (\Exception $e) {
+                $error = "Erreur système : " . $e->getMessage();
             }
         }
 
         return $this->render('security/signup.html.twig', [
+            'form'  => $form->createView(),
             'error' => $error,
         ]);
     }
