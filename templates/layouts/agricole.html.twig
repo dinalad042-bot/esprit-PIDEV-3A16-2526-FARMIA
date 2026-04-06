@@ -70,10 +70,8 @@
         <header class="topbar">
             <div class="brand-title">FarmAI Platform</div>
             <div class="topbar-right">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Rechercher...">
-                </div>
+                {# LA BARRE DE RECHERCHE A ÉTÉ SUPPRIMÉE ICI #}
+                
                 <div class="topbar-avatar" style="display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border-radius: 50%;" onclick="openProfileModal()">
                     {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '1rem'} %}
                 </div>

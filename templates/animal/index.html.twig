@@ -5,18 +5,32 @@
 {% block body %}
 <div style="background-color: #f8fafc; min-height: 100vh; padding: 20px; font-family: 'Segoe UI', sans-serif;">
     
-    <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+    {# HEADER AVEC RECHERCHE #}
+    <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
         <div>
             <h1 style="color: #1e293b; font-size: 2rem; font-weight: 800; margin: 0;">Gestion du Bétail</h1>
             <p style="color: #64748b; margin: 5px 0 0 0;">Suivez l'inventaire et la santé de votre cheptel.</p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <a href="#" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            {# BARRE DE RECHERCHE DYNAMIQUE #}
+            <form action="{{ path('app_animal_index') }}" method="GET" style="display: flex; align-items: center; background: white; padding: 5px 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                <input type="text" name="search" value="{{ searchTerm }}" placeholder="Espèce ou santé..." 
+                       style="border: none; outline: none; padding: 8px; width: 180px; font-size: 0.9rem;">
+                <button type="submit" style="background: none; border: none; color: #64748b; cursor: pointer; padding: 5px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                {% if searchTerm %}
+                    <a href="{{ path('app_animal_index') }}" style="color: #94a3b8; margin-left: 5px; text-decoration: none;"><i class="fa-solid fa-xmark"></i></a>
+                {% endif %}
+            </form>
+
+            <a href="{{ path('app_animal_pdf') }}" target="_blank" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
                 <i class="fa-solid fa-file-pdf"></i> PDF
             </a>
+            
             <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px;">
-                <i class="fa-solid fa-arrow-left"></i> Retour Menu
+                <i class="fa-solid fa-arrow-left"></i> Retour menu
             </a>
         </div>
     </div>
@@ -32,40 +46,33 @@
             {% set action_url = animal_edit ? path('app_animal_update', {'id_animal': animal_edit.idAnimal}) : path('app_animal_new') %}
             
             <form action="{{ action_url }}" method="POST" novalidate>
-                {# Espèce #}
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Espèce</label>
                     <input type="text" name="espece" value="{{ animal_edit ? animal_edit.espece : '' }}" placeholder="Ex: Bovin" 
                            style="width: 100%; padding: 12px; border: 1px solid {{ errors.espece is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
                     {% if errors.espece is defined %}
-                        <small style="color: #dc2626; font-weight: 600; margin-top: 5px; display: block;">{{ errors.espece }}</small>
+                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.espece }}</small>
                     {% endif %}
                 </div>
 
-                {# État de Santé #}
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">État de Santé</label>
                     <input type="text" name="etat_sante" value="{{ animal_edit ? animal_edit.etatSante : '' }}" placeholder="Ex: Excellente" 
                            style="width: 100%; padding: 12px; border: 1px solid {{ errors.etat_sante is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
                     {% if errors.etat_sante is defined %}
-                        <small style="color: #dc2626; font-weight: 600; margin-top: 5px; display: block;">{{ errors.etat_sante }}</small>
+                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.etat_sante }}</small>
                     {% endif %}
                 </div>
 
-                {# Date Naissance #}
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Date de Naissance</label>
                     <input type="date" name="date_naissance" value="{{ animal_edit and animal_edit.dateNaissance ? animal_edit.dateNaissance|date('Y-m-d') : '' }}" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.date_naissance is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
-                    {% if errors.date_naissance is defined %}
-                        <small style="color: #dc2626; font-weight: 600; margin-top: 5px; display: block;">{{ errors.date_naissance }}</small>
-                    {% endif %}
+                           style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;">
                 </div>
 
-                {# Ferme #}
                 <div style="margin-bottom: 30px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Affectation à une Ferme</label>
-                    <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid {{ errors.id_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px; background-color: white;">
+                    <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: white;">
                         <option value="">Choisir une ferme...</option>
                         {% for ferme in fermes %}
                             <option value="{{ ferme.idFerme }}" {{ animal_edit and animal_edit.idFerme == ferme.idFerme ? 'selected' : '' }}>
@@ -73,13 +80,10 @@
                             </option>
                         {% endfor %}
                     </select>
-                    {% if errors.id_ferme is defined %}
-                        <small style="color: #dc2626; font-weight: 600; margin-top: 5px; display: block;">{{ errors.id_ferme }}</small>
-                    {% endif %}
                 </div>
 
-                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer;">
-                    {{ animal_edit ? 'Mettre à jour l\'animal' : 'Enregistrer l\'animal' }}
+                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                    {{ animal_edit ? 'Mettre à jour' : 'Enregistrer l\'animal' }}
                 </button>
                 
                 {% if animal_edit %}
@@ -88,46 +92,65 @@
             </form>
         </div>
 
-        {# TABLEAU #}
+        {# TABLEAU AVEC TRI #}
         <div style="flex: 1;">
             <div style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                 <table style="width: 100%; border-collapse: collapse; text-align: left;">
                     <thead>
                         <tr style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0;">
-                            <th style="padding: 15px;">Espèce</th>
-                            <th style="padding: 15px;">Santé</th>
-                            <th style="padding: 15px;">Naissance</th>
-                            <th style="padding: 15px;">Ferme</th>
-                            <th style="padding: 15px; text-align: center;">Actions</th>
+                            <th style="padding: 15px;">
+                                <a href="{{ path('app_animal_index', {sort: 'espece', direction: (currentSort == 'espece' and currentDirection == 'ASC') ? 'DESC' : 'ASC', search: searchTerm}) }}" style="text-decoration: none; color: #475569; display: flex; align-items: center; gap: 5px;">
+                                    Espèce <i class="fa-solid fa-sort" style="font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            <th style="padding: 15px;">
+                                <a href="{{ path('app_animal_index', {sort: 'etat_sante', direction: (currentSort == 'etat_sante' and currentDirection == 'ASC') ? 'DESC' : 'ASC', search: searchTerm}) }}" style="text-decoration: none; color: #475569; display: flex; align-items: center; gap: 5px;">
+                                    Santé <i class="fa-solid fa-sort" style="font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            <th style="padding: 15px; color: #475569;">Naissance</th>
+                            <th style="padding: 15px; color: #475569;">Ferme</th>
+                            <th style="padding: 15px; text-align: center; color: #475569;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for animal in animals %}
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
                                 <td style="padding: 15px; font-weight: 600; color: #1e293b;">{{ animal.espece }}</td>
                                 <td style="padding: 15px;">
-                                    <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.8rem; font-weight: 700; border: 1px solid #bbf7d0;">
-                                        {{ animal.etatSante|upper }}
+                                    <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #bbf7d0; text-transform: uppercase;">
+                                        {{ animal.etatSante }}
                                     </span>
                                 </td>
                                 <td style="padding: 15px; color: #64748b;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}</td>
                                 <td style="padding: 15px;">
-                                    {% set ferme_nom = 'Inconnue' %}
+                                    {% set ferme_nom = 'Non affecté' %}
                                     {% for f in fermes %}
                                         {% if f.idFerme == animal.idFerme %}{% set ferme_nom = f.nomFerme %}{% endif %}
                                     {% endfor %}
                                     <span style="color: #2d7a36; font-weight: 700;">{{ ferme_nom }}</span>
                                 </td>
                                 <td style="padding: 15px; display: flex; gap: 10px; justify-content: center;">
-                                    <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; text-decoration: none;">
+                                    <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal, 'search': searchTerm, 'sort': currentSort, 'direction': currentDirection}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid #bbf7d0;">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
                                     <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer cet animal ?');">
                                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ animal.idAnimal) }}">
-                                        <button style="color: #dc2626; background: #fef2f2; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="padding: 50px; text-align: center; color: #94a3b8;">
+                                    <i class="fa-solid fa-cow" style="font-size: 2.5rem; display: block; margin-bottom: 15px; opacity: 0.3;"></i>
+                                    {% if searchTerm %}
+                                        Aucun animal ne correspond à "{{ searchTerm }}".
+                                    {% else %}
+                                        Votre cheptel est vide. Commencez par ajouter un animal.
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

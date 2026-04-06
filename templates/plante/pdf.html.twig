@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Inventaire des Cultures</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12px; color: #333; line-height: 1.5; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #2d7a36; padding-bottom: 10px; }
+        h1 { color: #2d7a36; margin: 0; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: left; }
+        th { background-color: #f8fafc; color: #1e293b; font-weight: bold; text-transform: uppercase; font-size: 10px; }
+        tr:nth-child(even) { background-color: #f1f5f9; }
+        .footer { margin-top: 50px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px solid #eee; padding-top: 10px; }
+        .badge { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>FarmAI - Inventaire des Cultures</h1>
+        <p>Document officiel d'exploitation généré le {{ "now"|date("d/m/Y à H:i") }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nom de l'Espèce</th>
+                <th>Cycle de Vie</th>
+                <th>Quantité en Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plante in plantes %}
+                <tr>
+                    <td style="font-weight: bold;">{{ plante.nomEspece }}</td>
+                    <td>{{ plante.cycleVie }}</td>
+                    <td><span class="badge">{{ plante.quantite }} unités</span></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 20px;">Aucune plante enregistrée dans le système.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        © 2026 FarmAI Digital Agriculture - Système de gestion automatisé
+    </div>
+
+</body>
+</html>

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Plante;
-use App\Entity\Ferme;
 use App\Repository\PlanteRepository;
 use App\Repository\FermeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,132 +11,133 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 #[Route('/plante')]
 class PlanteController extends AbstractController
 {
-    /**
-     * Affiche la liste des plantes et le formulaire d'ajout (vierge)
-     */
     #[Route('/', name: 'app_plante_index', methods: ['GET'])]
-    public function index(PlanteRepository $pRepo, FermeRepository $fRepo): Response
+    public function index(Request $request, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort', 'nom_espece'); // Modifié ici
+        $direction = $request->query->get('direction', 'ASC');
+
         return $this->render('plante/index.html.twig', [
-            'plantes' => $pRepo->findAll(),
+            'plantes' => $pRepo->findBySearchAndSort($search, $sort, $direction),
             'fermes' => $fRepo->findAll(),
             'plante_edit' => null,
-            'errors' => [] 
+            'errors' => [],
+            'searchTerm' => $search,
+            'currentSort' => $sort,
+            'currentDirection' => $direction
         ]);
     }
 
-    /**
-     * Crée une nouvelle plante avec contrôle de saisie serveur
-     */
     #[Route('/new', name: 'app_plante_new', methods: ['POST'])]
     public function new(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
         $plante = new Plante();
-        
-        // Extraction et sécurisation des données
-        $nomEspece = $request->request->get('nom_espece');
-        $cycleVie = $request->request->get('cycle_vie');
-        $quantiteRaw = $request->request->get('quantite');
-        $idFermeRaw = $request->request->get('id_ferme');
-
-        // Mapping vers l'objet (accepte null grâce aux modifs de l'entité)
-        $plante->setNomEspece($nomEspece !== "" ? $nomEspece : null);
-        $plante->setCycleVie($cycleVie !== "" ? $cycleVie : null);
-        $plante->setQuantite($quantiteRaw !== "" ? (int)$quantiteRaw : null);
-        $plante->setIdFerme($idFermeRaw !== "" ? (int)$idFermeRaw : null);
-
-        // Validation via les Assert de l'Entité
+        $this->mapData($plante, $request);
         $violations = $validator->validate($plante);
 
         if (count($violations) > 0) {
-            $errors = [];
-            foreach ($violations as $violation) {
-                $errors[$violation->getPropertyPath()] = $violation->getMessage();
-            }
-
-            return $this->render('plante/index.html.twig', [
-                'plantes' => $pRepo->findAll(),
-                'fermes' => $fRepo->findAll(),
-                'plante_edit' => null,
-                'errors' => $errors
-            ]);
+            return $this->renderErrors($violations, $pRepo, $fRepo, null, $request);
         }
 
         $em->persist($plante);
         $em->flush();
-        
-        $this->addFlash('success', 'Plante ajoutée avec succès !');
+        $this->addFlash('success', 'Plante ajoutée !');
         return $this->redirectToRoute('app_plante_index');
     }
 
-    /**
-     * Charge une plante existante dans le formulaire pour modification
-     */
     #[Route('/{id_plante}/edit', name: 'app_plante_edit', methods: ['GET'])]
-    public function edit(Plante $plante, PlanteRepository $pRepo, FermeRepository $fRepo): Response
+    public function edit(Plante $plante, Request $request, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort', 'nom_espece');
+        $direction = $request->query->get('direction', 'ASC');
+
         return $this->render('plante/index.html.twig', [
-            'plantes' => $pRepo->findAll(),
+            'plantes' => $pRepo->findBySearchAndSort($search, $sort, $direction),
             'fermes' => $fRepo->findAll(),
             'plante_edit' => $plante,
-            'errors' => []
+            'errors' => [],
+            'searchTerm' => $search,
+            'currentSort' => $sort,
+            'currentDirection' => $direction
         ]);
     }
 
-    /**
-     * Enregistre les modifications avec contrôle de saisie serveur
-     */
     #[Route('/{id_plante}/update', name: 'app_plante_update', methods: ['POST'])]
     public function update(Request $request, Plante $plante, EntityManagerInterface $em, ValidatorInterface $validator, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
-        $nomEspece = $request->request->get('nom_espece');
-        $cycleVie = $request->request->get('cycle_vie');
-        $quantiteRaw = $request->request->get('quantite');
-        $idFermeRaw = $request->request->get('id_ferme');
-
-        $plante->setNomEspece($nomEspece !== "" ? $nomEspece : null);
-        $plante->setCycleVie($cycleVie !== "" ? $cycleVie : null);
-        $plante->setQuantite($quantiteRaw !== "" ? (int)$quantiteRaw : null);
-        $plante->setIdFerme($idFermeRaw !== "" ? (int)$idFermeRaw : null);
-
+        $this->mapData($plante, $request);
         $violations = $validator->validate($plante);
 
         if (count($violations) > 0) {
-            $errors = [];
-            foreach ($violations as $violation) {
-                $errors[$violation->getPropertyPath()] = $violation->getMessage();
-            }
-
-            return $this->render('plante/index.html.twig', [
-                'plantes' => $pRepo->findAll(),
-                'fermes' => $fRepo->findAll(),
-                'plante_edit' => $plante, // On garde l'objet en cours d'édition
-                'errors' => $errors
-            ]);
+            return $this->renderErrors($violations, $pRepo, $fRepo, $plante, $request);
         }
 
         $em->flush();
-        
-        $this->addFlash('success', 'Plante mise à jour avec succès !');
+        $this->addFlash('success', 'Mise à jour réussie !');
         return $this->redirectToRoute('app_plante_index');
     }
 
-    /**
-     * Supprime une plante via le bouton poubelle
-     */
     #[Route('/delete/{id_plante}', name: 'app_plante_delete', methods: ['POST'])]
     public function delete(Request $request, Plante $plante, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete'.$plante->getIdPlante(), $request->request->get('_token'))) {
             $em->remove($plante);
             $em->flush();
-            $this->addFlash('danger', 'Plante supprimée de l\'exploitation.');
+            $this->addFlash('danger', 'Plante supprimée.');
         }
-        
         return $this->redirectToRoute('app_plante_index');
+    }
+
+    private function mapData(Plante $plante, Request $request): void
+    {
+        // On s'assure d'appeler les setters qui correspondent à vos propriétés
+        $plante->setNomEspece($request->request->get('nom_espece') ?: null);
+        $plante->setCycleVie($request->request->get('cycle_vie') ?: null);
+        $plante->setQuantite($request->request->get('quantite') !== "" ? (int)$request->request->get('quantite') : null);
+        $plante->setIdFerme($request->request->get('id_ferme') !== "" ? (int)$request->request->get('id_ferme') : null);
+    }
+
+    private function renderErrors($violations, $pRepo, $fRepo, $plante_edit, Request $request): Response
+    {
+        $errors = [];
+        foreach ($violations as $v) { $errors[$v->getPropertyPath()] = $v->getMessage(); }
+        
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort', 'nom_espece');
+        $direction = $request->query->get('direction', 'ASC');
+
+        return $this->render('plante/index.html.twig', [
+            'plantes' => $pRepo->findBySearchAndSort($search, $sort, $direction),
+            'fermes' => $fRepo->findAll(),
+            'plante_edit' => $plante_edit,
+            'errors' => $errors,
+            'searchTerm' => $search,
+            'currentSort' => $sort,
+            'currentDirection' => $direction
+        ]);
+    }
+
+    #[Route('/pdf', name: 'app_plante_pdf', methods: ['GET'])]
+    public function generatePdf(PlanteRepository $pRepo): Response
+    {
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($pdfOptions);
+        $html = $this->renderView('plante/pdf.html.twig', ['plantes' => $pRepo->findAll()]);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        return new Response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="liste_plantes.pdf"',
+        ]);
     }
 }

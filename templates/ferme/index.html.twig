@@ -5,96 +5,158 @@
 {% block body %}
 <div style="background-color: #f8fafc; min-height: 100vh; padding: 20px; font-family: 'Segoe UI', sans-serif;">
     
+    {# HEADER AVEC TITRE ET BARRE DE RECHERCHE INTEGRÉE #}
     <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1 style="color: #1e293b; font-size: 2rem; font-weight: 800; margin: 0;">Gestion des Fermes</h1>
             <p style="color: #64748b; margin: 5px 0 0 0;">Tableau de bord de vos exploitations.</p>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <a href="#" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            {# BARRE DE RECHERCHE PRINCIPALE (REMPLACE L'ANCIEN BOUTON ROUGE) #}
+            <form action="{{ path('app_ferme_index') }}" method="GET" style="position: relative; display: flex; align-items: center;">
+                <input type="text" 
+                       name="search" 
+                       value="{{ searchTerm }}" 
+                       placeholder="Rechercher une ferme..." 
+                       style="padding: 10px 40px 10px 15px; border-radius: 20px; border: 1px solid #e2e8f0; outline: none; width: 280px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                
+                <button type="submit" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: #2d7a36;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
+                {# Champs cachés pour garder le tri lors d'une recherche #}
+                <input type="hidden" name="sort" value="{{ currentSort }}">
+                <input type="hidden" name="direction" value="{{ currentDirection }}">
+                
+                {% if searchTerm %}
+                    <a href="{{ path('app_ferme_index') }}" style="margin-left: 10px; color: #dc2626; text-decoration: none; font-size: 0.9rem;" title="Effacer la recherche">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </a>
+                {% endif %}
+            </form>
+
+            {# BOUTON EXPORT PDF #}
+            <a href="{{ path('app_ferme_pdf') }}" target="_blank" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
                 <i class="fa-solid fa-file-pdf"></i> PDF
             </a>
-            <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px;">
-                <i class="fa-solid fa-arrow-left"></i> Retour Menu
+
+            {# BOUTON RETOUR #}
+            <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0;">
+                <i class="fa-solid fa-arrow-left"></i> Retour menu
             </a>
         </div>
     </div>
 
     <div style="display: flex; gap: 30px; align-items: flex-start;">
         
-        {# FORMULAIRE #}
-        <div style="flex: 0 0 400px; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h2 style="color: #1e293b; font-size: 1.3rem; font-weight: 700; margin-bottom: 25px;">
-                {{ ferme_edit ? 'Modifier la ferme' : 'Ajouter une nouvelle ferme' }}
+        {# COLONNE GAUCHE : FORMULAIRE (Ajout / Modification) #}
+        <div style="flex: 0 0 380px; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+            <h2 style="color: #1e293b; font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid {{ ferme_edit ? 'fa-pen-to-square' : 'fa-plus-circle' }}" style="color: #2d7a36;"></i>
+                {{ ferme_edit ? 'Modifier la ferme' : 'Nouvelle ferme' }}
             </h2>
             
             {% set action_url = ferme_edit ? path('app_ferme_update', {'id_ferme': ferme_edit.idFerme}) : path('app_ferme_new') %}
             
             <form action="{{ action_url }}" method="POST" novalidate>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Nom de la ferme</label>
-                    <input type="text" name="nom_ferme" value="{{ ferme_edit ? ferme_edit.nomFerme : '' }}" placeholder="Ex: Ferme du Nord" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
-                    {% if errors.nom_ferme is defined %}<small style="color: #dc2626; font-weight: 600;">{{ errors.nom_ferme }}</small>{% endif %}
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Nom de la ferme</label>
+                    <input type="text" name="nom_ferme" placeholder="Ex: Ferme du Nord" value="{{ ferme_edit ? ferme_edit.nomFerme : '' }}" 
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
+                    {% if errors.nom_ferme is defined %}<small style="color: #dc2626; font-weight: 500;">{{ errors.nom_ferme }}</small>{% endif %}
                 </div>
 
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Lieu (Localisation)</label>
-                    <input type="text" name="lieu" value="{{ ferme_edit ? ferme_edit.lieu : '' }}" placeholder="Ex: Tunis" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.lieu is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
-                    {% if errors.lieu is defined %}<small style="color: #dc2626; font-weight: 600;">{{ errors.lieu }}</small>{% endif %}
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Lieu (Localisation)</label>
+                    <input type="text" name="lieu" placeholder="Ex: Tunis" value="{{ ferme_edit ? ferme_edit.lieu : '' }}" 
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.lieu is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
+                    {% if errors.lieu is defined %}<small style="color: #dc2626; font-weight: 500;">{{ errors.lieu }}</small>{% endif %}
                 </div>
 
-                <div style="margin-bottom: 30px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Surface (m²)</label>
-                    <input type="number" step="0.1" name="surface" value="{{ ferme_edit ? ferme_edit.surface : '' }}" placeholder="Ex: 500" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.surface is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
-                    {% if errors.surface is defined %}<small style="color: #dc2626; font-weight: 600;">{{ errors.surface }}</small>{% endif %}
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Surface (m²)</label>
+                    <input type="number" step="0.1" name="surface" placeholder="Ex: 500" value="{{ ferme_edit ? ferme_edit.surface : '' }}" 
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.surface is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
+                    {% if errors.surface is defined %}<small style="color: #dc2626; font-weight: 500;">{{ errors.surface }}</small>{% endif %}
                 </div>
 
-                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer;">
-                    {{ ferme_edit ? 'Mettre à jour la ferme' : 'Enregistrer l\'unité' }}
+                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; font-size: 1rem;">
+                    {{ ferme_edit ? 'Mettre à jour l\'unité' : 'Enregistrer l\'unité' }}
                 </button>
 
                 {% if ferme_edit %}
-                    <a href="{{ path('app_ferme_index') }}" style="display: block; text-align: center; margin-top: 15px; color: #64748b; text-decoration: none; font-size: 0.9rem;">Annuler la modification</a>
+                    <a href="{{ path('app_ferme_index') }}" style="display: block; text-align: center; margin-top: 15px; color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+                        Annuler la modification
+                    </a>
                 {% endif %}
             </form>
         </div>
 
-        {# TABLEAU #}
+        {# COLONNE DROITE : TABLEAU DES RESULTATS #}
         <div style="flex: 1;">
-            <div style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <div style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
                 <table style="width: 100%; border-collapse: collapse; text-align: left;">
                     <thead>
-                        <tr style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0;">
-                            <th style="padding: 15px;">Nom de la Ferme</th>
-                            <th style="padding: 15px;">Lieu</th>
-                            <th style="padding: 15px;">Surface</th>
-                            <th style="padding: 15px; text-align: center;">Actions</th>
+                        <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                            <th style="padding: 18px 15px;">
+                                <a href="{{ path('app_ferme_index', {sort: 'nom_ferme', direction: (currentSort == 'nom_ferme' and currentDirection == 'ASC') ? 'DESC' : 'ASC', search: searchTerm}) }}" 
+                                   style="text-decoration: none; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                    Nom de la Ferme 
+                                    <i class="fa-solid {{ currentSort == 'nom_ferme' ? (currentDirection == 'ASC' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' }}" style="color: #94a3b8;"></i>
+                                </a>
+                            </th>
+                            <th style="padding: 18px 15px;">
+                                <a href="{{ path('app_ferme_index', {sort: 'lieu', direction: (currentSort == 'lieu' and currentDirection == 'ASC') ? 'DESC' : 'ASC', search: searchTerm}) }}" 
+                                   style="text-decoration: none; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                    Lieu 
+                                    <i class="fa-solid {{ currentSort == 'lieu' ? (currentDirection == 'ASC' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' }}" style="color: #94a3b8;"></i>
+                                </a>
+                            </th>
+                            <th style="padding: 18px 15px;">
+                                <a href="{{ path('app_ferme_index', {sort: 'surface', direction: (currentSort == 'surface' and currentDirection == 'ASC') ? 'DESC' : 'ASC', search: searchTerm}) }}" 
+                                   style="text-decoration: none; color: #1e293b; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                                    Surface 
+                                    <i class="fa-solid {{ currentSort == 'surface' ? (currentDirection == 'ASC' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' }}" style="color: #94a3b8;"></i>
+                                </a>
+                            </th>
+                            <th style="padding: 18px 15px; text-align: center; color: #1e293b; font-weight: 700;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for ferme in fermes %}
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#fcfdfd'" onmouseout="this.style.background='transparent'">
                                 <td style="padding: 15px; font-weight: 600; color: #1e293b;">{{ ferme.nomFerme }}</td>
                                 <td style="padding: 15px; color: #64748b;">{{ ferme.lieu }}</td>
                                 <td style="padding: 15px;">
-                                    <span style="background: #eff6ff; color: #1e40af; padding: 6px 12px; border-radius: 8px; font-weight: 700;">
-                                        {{ ferme.surface }} m²
+                                    <span style="background: #eff6ff; color: #1e40af; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; border: 1px solid #dbeafe;">
+                                        {{ ferme.surface|number_format(0, '.', ' ') }} m²
                                     </span>
                                 </td>
                                 <td style="padding: 15px; display: flex; gap: 10px; justify-content: center;">
-                                    <a href="{{ path('app_ferme_edit', {'id_ferme': ferme.idFerme}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                                    {# EDIT #}
+                                    <a href="{{ path('app_ferme_edit', {'id_ferme': ferme.idFerme}) }}" 
+                                       style="color: #2d7a36; background: #f0fdf4; padding: 8px; border-radius: 8px; border: 1px solid #bbf7d0; transition: all 0.2s;" title="Modifier">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <form method="post" action="{{ path('app_ferme_delete', {'id_ferme': ferme.idFerme}) }}" onsubmit="return confirm('Supprimer cette ferme ?');">
+                                    
+                                    {# DELETE #}
+                                    <form method="post" action="{{ path('app_ferme_delete', {'id_ferme': ferme.idFerme}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette ferme ?');">
                                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ferme.idFerme) }}">
-                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s;" title="Supprimer">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" style="padding: 60px; text-align: center; color: #94a3b8;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                                        <i class="fa-solid fa-magnifying-glass" style="font-size: 2rem; opacity: 0.3;"></i>
+                                        <p style="margin: 0; font-size: 1.1rem;">Aucune ferme ne correspond à votre recherche.</p>
+                                        <a href="{{ path('app_ferme_index') }}" style="color: #2d7a36; font-weight: 600;">Afficher tout</a>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}

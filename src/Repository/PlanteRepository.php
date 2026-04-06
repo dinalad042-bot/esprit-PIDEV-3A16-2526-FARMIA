@@ -16,28 +16,30 @@ class PlanteRepository extends ServiceEntityRepository
         parent::__construct($registry, Plante::class);
     }
 
-    //    /**
-    //     * @return Plante[] Returns an array of Plante objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Recherche et tri des plantes avec les noms de champs exacts
+     */
+    public function findBySearchAndSort(?string $search, string $sort, string $direction): array
+    {
+        $qb = $this->createQueryBuilder('p');
 
-    //    public function findOneBySomeField($value): ?Plante
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        // 1. Filtrage
+        if ($search) {
+            $qb->andWhere('p.nom_espece LIKE :val OR p.cycle_vie LIKE :val')
+               ->setParameter('val', '%' . $search . '%');
+        }
+
+        // 2. Whitelist de tri (noms des propriétés dans l'entité)
+        $allowedSorts = ['nom_espece', 'cycle_vie', 'quantite'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nom_espece'; 
+        }
+
+        // 3. Direction
+        $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+
+        $qb->orderBy('p.' . $sort, $direction);
+
+        return $qb->getQuery()->getResult();
+    }
 }
