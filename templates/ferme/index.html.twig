@@ -5,7 +5,6 @@
 {% block body %}
 <div style="background-color: #f8fafc; min-height: 100vh; padding: 20px; font-family: 'Segoe UI', sans-serif;">
     
-    {# En-tête avec Boutons PDF et Retour #}
     <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1 style="color: #1e293b; font-size: 2rem; font-weight: 800; margin: 0;">Gestion des Fermes</h1>
@@ -13,14 +12,10 @@
         </div>
 
         <div style="display: flex; align-items: center; gap: 20px;">
-            {# BOUTON PDF #}
-            <a href="#" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2); transition: transform 0.2s;">
-                <i class="fa-solid fa-file-pdf" style="font-size: 1.2rem;"></i>
-                PDF
+            <a href="#" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
+                <i class="fa-solid fa-file-pdf"></i> PDF
             </a>
-
-            {# BOUTON RETOUR MENU #}
-            <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px; transition: background 0.3s;">
+            <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px;">
                 <i class="fa-solid fa-arrow-left"></i> Retour Menu
             </a>
         </div>
@@ -28,7 +23,7 @@
 
     <div style="display: flex; gap: 30px; align-items: flex-start;">
         
-        {# Formulaire à gauche (Ajout / Modification) #}
+        {# FORMULAIRE #}
         <div style="flex: 0 0 400px; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <h2 style="color: #1e293b; font-size: 1.3rem; font-weight: 700; margin-bottom: 25px;">
                 {{ ferme_edit ? 'Modifier la ferme' : 'Ajouter une nouvelle ferme' }}
@@ -36,23 +31,29 @@
             
             {% set action_url = ferme_edit ? path('app_ferme_update', {'id_ferme': ferme_edit.idFerme}) : path('app_ferme_new') %}
             
-            <form action="{{ action_url }}" method="POST">
+            <form action="{{ action_url }}" method="POST" novalidate>
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Nom de la ferme</label>
-                    <input type="text" name="nom_ferme" value="{{ ferme_edit ? ferme_edit.nomFerme : '' }}" placeholder="Ex: Ferme du Nord" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;" required>
+                    <input type="text" name="nom_ferme" value="{{ ferme_edit ? ferme_edit.nomFerme : '' }}" placeholder="Ex: Ferme du Nord" 
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
+                    {% if errors.nom_ferme is defined %}<small style="color: #dc2626; font-weight: 600;">{{ errors.nom_ferme }}</small>{% endif %}
                 </div>
 
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Lieu (Localisation)</label>
-                    <input type="text" name="lieu" value="{{ ferme_edit ? ferme_edit.lieu : '' }}" placeholder="Ex: Tunis" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;" required>
+                    <input type="text" name="lieu" value="{{ ferme_edit ? ferme_edit.lieu : '' }}" placeholder="Ex: Tunis" 
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.lieu is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
+                    {% if errors.lieu is defined %}<small style="color: #dc2626; font-weight: 600;">{{ errors.lieu }}</small>{% endif %}
                 </div>
 
                 <div style="margin-bottom: 30px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Surface (m²)</label>
-                    <input type="number" step="0.1" name="surface" value="{{ ferme_edit ? ferme_edit.surface : '' }}" placeholder="Ex: 500" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;" required>
+                    <input type="number" step="0.1" name="surface" value="{{ ferme_edit ? ferme_edit.surface : '' }}" placeholder="Ex: 500" 
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.surface is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
+                    {% if errors.surface is defined %}<small style="color: #dc2626; font-weight: 600;">{{ errors.surface }}</small>{% endif %}
                 </div>
 
-                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: background 0.3s;">
+                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer;">
                     {{ ferme_edit ? 'Mettre à jour la ferme' : 'Enregistrer l\'unité' }}
                 </button>
 
@@ -62,7 +63,7 @@
             </form>
         </div>
 
-        {# Tableau à droite (Liste des Fermes) #}
+        {# TABLEAU #}
         <div style="flex: 1;">
             <div style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                 <table style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -76,31 +77,24 @@
                     </thead>
                     <tbody>
                         {% for ferme in fermes %}
-                            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;">
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
                                 <td style="padding: 15px; font-weight: 600; color: #1e293b;">{{ ferme.nomFerme }}</td>
                                 <td style="padding: 15px; color: #64748b;">{{ ferme.lieu }}</td>
                                 <td style="padding: 15px;">
-                                    <span style="background: #eff6ff; color: #1e40af; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.9rem;">
+                                    <span style="background: #eff6ff; color: #1e40af; padding: 6px 12px; border-radius: 8px; font-weight: 700;">
                                         {{ ferme.surface }} m²
                                     </span>
                                 </td>
                                 <td style="padding: 15px; display: flex; gap: 10px; justify-content: center;">
-                                    <a href="{{ path('app_ferme_edit', {'id_ferme': ferme.idFerme}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid #bbf7d0;">
+                                    <a href="{{ path('app_ferme_edit', {'id_ferme': ferme.idFerme}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <form method="post" action="{{ path('app_ferme_delete', {'id_ferme': ferme.idFerme}) }}" onsubmit="return confirm('Supprimer cette ferme ?');" style="display:inline;">
+                                    <form method="post" action="{{ path('app_ferme_delete', {'id_ferme': ferme.idFerme}) }}" onsubmit="return confirm('Supprimer cette ferme ?');">
                                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ferme.idFerme) }}">
                                         <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="4" style="padding: 40px; text-align: center; color: #94a3b8;">
-                                    <i class="fa-solid fa-tractors" style="display: block; font-size: 2rem; margin-bottom: 10px;"></i>
-                                    Aucune ferme enregistrée.
                                 </td>
                             </tr>
                         {% endfor %}

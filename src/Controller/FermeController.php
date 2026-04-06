@@ -9,62 +9,65 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/ferme')]
 class FermeController extends AbstractController
 {
-    /**
-     * Affiche la liste des fermes et le formulaire d'ajout
-     */
     #[Route('/', name: 'app_ferme_index', methods: ['GET'])]
     public function index(FermeRepository $repo): Response
     {
         return $this->render('ferme/index.html.twig', [
             'fermes' => $repo->findAll(),
-            'ferme_edit' => null
+            'ferme_edit' => null,
+            'errors' => []
         ]);
     }
 
-    /**
-     * Création d'une nouvelle ferme
-     */
     #[Route('/new', name: 'app_ferme_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
     {
         $ferme = new Ferme();
-        $this->saveData($ferme, $request, $em);
+        $this->mapData($ferme, $request);
+
+        $violations = $validator->validate($ferme);
+
+        if (count($violations) > 0) {
+            return $this->renderWithErrors($violations, $repo, null);
+        }
+
+        $em->persist($ferme);
+        $em->flush();
         
         $this->addFlash('success', 'Ferme créée avec succès !');
         return $this->redirectToRoute('app_ferme_index');
     }
 
-    /**
-     * Charge une ferme pour modification
-     */
     #[Route('/{id_ferme}/edit', name: 'app_ferme_edit', methods: ['GET'])]
     public function edit(Ferme $ferme, FermeRepository $repo): Response
     {
         return $this->render('ferme/index.html.twig', [
             'fermes' => $repo->findAll(),
-            'ferme_edit' => $ferme
+            'ferme_edit' => $ferme,
+            'errors' => []
         ]);
     }
 
-    /**
-     * Enregistre les modifications d'une ferme
-     */
     #[Route('/{id_ferme}/update', name: 'app_ferme_update', methods: ['POST'])]
-    public function update(Request $request, Ferme $ferme, EntityManagerInterface $em): Response
+    public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
     {
-        $this->saveData($ferme, $request, $em);
-        
+        $this->mapData($ferme, $request);
+        $violations = $validator->validate($ferme);
+
+        if (count($violations) > 0) {
+            return $this->renderWithErrors($violations, $repo, $ferme);
+        }
+
+        $em->flush();
         $this->addFlash('success', 'Ferme mise à jour !');
         return $this->redirectToRoute('app_ferme_index');
     }
 
-    /**
-     * Suppression d'une ferme
-     */
     #[Route('/delete/{id_ferme}', name: 'app_ferme_delete', methods: ['POST'])]
     public function delete(Request $request, Ferme $ferme, EntityManagerInterface $em): Response
     {
@@ -73,20 +76,27 @@ class FermeController extends AbstractController
             $em->flush();
             $this->addFlash('danger', 'Ferme supprimée.');
         }
-        
         return $this->redirectToRoute('app_ferme_index');
     }
 
-    /**
-     * Logique d'enregistrement centralisée
-     */
-    private function saveData(Ferme $ferme, Request $request, EntityManagerInterface $em): void
+    private function mapData(Ferme $ferme, Request $request): void
     {
-        $ferme->setNomFerme($request->request->get('nom_ferme'));
-        $ferme->setLieu($request->request->get('lieu'));
-        $ferme->setSurface((float)$request->request->get('surface'));
-        
-        $em->persist($ferme);
-        $em->flush();
+        $ferme->setNomFerme($request->request->get('nom_ferme') ?: null);
+        $ferme->setLieu($request->request->get('lieu') ?: null);
+        $surface = $request->request->get('surface');
+        $ferme->setSurface($surface !== "" ? (float)$surface : null);
+    }
+
+    private function renderWithErrors($violations, $repo, $ferme_edit): Response
+    {
+        $errors = [];
+        foreach ($violations as $v) {
+            $errors[$v->getPropertyPath()] = $v->getMessage();
+        }
+        return $this->render('ferme/index.html.twig', [
+            'fermes' => $repo->findAll(),
+            'ferme_edit' => $ferme_edit,
+            'errors' => $errors
+        ]);
     }
 }
