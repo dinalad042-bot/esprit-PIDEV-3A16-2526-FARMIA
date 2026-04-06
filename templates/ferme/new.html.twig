@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Ferme{% endblock %}
+
+{% block body %}
+    <h1>Create new Ferme</h1>
+
+    {{ include('ferme/_form.html.twig') }}
+
+    <a href="{{ path('app_ferme_index') }}">back to list</a>
+{% endblock %}

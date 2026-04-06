@@ -1,0 +1,131 @@
+{% extends 'layouts/agricole.html.twig' %}
+
+{% block title %}Gestion des Plantes - FarmAI{% endblock %}
+
+{% block body %}
+<div style="background-color: #f8fafc; min-height: 100vh; padding: 20px; font-family: 'Segoe UI', sans-serif;">
+    
+    {# En-tête avec Boutons PDF et Retour #}
+    <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="color: #1e293b; font-size: 2rem; font-weight: 800; margin: 0;">Gestion Intelligence des Plantes</h1>
+            <p style="color: #64748b; margin: 5px 0 0 0;">Suivez vos cultures et gérez vos stocks.</p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 20px;">
+            {# BOUTON PDF #}
+            <a href="#" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2); transition: transform 0.2s;">
+                <i class="fa-solid fa-file-pdf" style="font-size: 1.2rem;"></i>
+                PDF
+            </a>
+
+            {# BOUTON RETOUR MENU #}
+            <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px; transition: background 0.3s;">
+                <i class="fa-solid fa-arrow-left"></i> Retour Menu
+            </a>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 30px; align-items: flex-start;">
+        
+        {# Formulaire à gauche (Ajout / Modification) #}
+        <div style="flex: 0 0 400px; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h2 style="color: #1e293b; font-size: 1.3rem; font-weight: 700; margin-bottom: 25px;">
+                {{ plante_edit ? 'Modifier la plante' : 'Détails de la Nouvelle Plante' }}
+            </h2>
+            
+            {% set action_url = plante_edit ? path('app_plante_update', {'id_plante': plante_edit.idPlante}) : path('app_plante_new') %}
+            
+            <form action="{{ action_url }}" method="POST">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">Nom de l'espèce</label>
+                    <input type="text" name="nom_espece" value="{{ plante_edit ? plante_edit.nomEspece : '' }}" placeholder="Ex: Tomate" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;" required>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">Cycle de vie</label>
+                    <input type="text" name="cycle_vie" value="{{ plante_edit ? plante_edit.cycleVie : '' }}" placeholder="Ex: Saisonnier" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;" required>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">Quantité</label>
+                    <input type="number" name="quantite" value="{{ plante_edit ? plante_edit.quantite : '' }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px;" required>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 5px;">Ferme d'affectation</label>
+                    <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer;" required>
+                        <option value="" disabled {{ not plante_edit ? 'selected' : '' }}>Choisir une ferme...</option>
+                        {% for ferme in fermes %}
+                            <option value="{{ ferme.idFerme }}" {{ plante_edit and plante_edit.idFerme == ferme.idFerme ? 'selected' : '' }}>
+                                {{ ferme.nomFerme }} ({{ ferme.lieu }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: background 0.3s;">
+                    {{ plante_edit ? 'Mettre à jour la plante' : 'Enregistrer la plante' }}
+                </button>
+
+                {% if plante_edit %}
+                    <a href="{{ path('app_plante_index') }}" style="display: block; text-align: center; margin-top: 15px; color: #64748b; text-decoration: none; font-size: 0.9rem;">Annuler la modification</a>
+                {% endif %}
+            </form>
+        </div>
+
+        {# Tableau à droite (Liste des Plantes) #}
+        <div style="flex: 1; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0;">
+                        <th style="padding: 15px;">Espèce</th>
+                        <th style="padding: 15px;">Cycle</th>
+                        <th style="padding: 15px;">Quantité</th>
+                        <th style="padding: 15px;">Ferme</th>
+                        <th style="padding: 15px; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plante in plantes %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 15px; font-weight: 600; color: #1e293b;">{{ plante.nomEspece }}</td>
+                            <td style="padding: 15px; color: #64748b;">{{ plante.cycleVie }}</td>
+                            <td style="padding: 15px; font-weight: 700;">{{ plante.quantite }}</td>
+                            
+                            <td style="padding: 15px;">
+                                {% set ferme_nom = 'Non assignée' %}
+                                {% for ferme in fermes %}
+                                    {% if ferme.idFerme == plante.idFerme %}
+                                        {% set ferme_nom = ferme.nomFerme %}
+                                    {% endif %}
+                                {% endfor %}
+                                <span style="color: #22c55e; font-weight: 700;">{{ ferme_nom }}</span>
+                            </td>
+
+                            <td style="padding: 15px; display: flex; gap: 10px; justify-content: center;">
+                                <a href="{{ path('app_plante_edit', {'id_plante': plante.idPlante}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid #bbf7d0;">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <form method="post" action="{{ path('app_plante_delete', {'id_plante': plante.idPlante}) }}" onsubmit="return confirm('Supprimer cette plante ?');" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plante.idPlante) }}">
+                                    <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="padding: 40px; text-align: center; color: #94a3b8;">
+                                <i class="fa-solid fa-seedling" style="display: block; font-size: 2rem; margin-bottom: 10px;"></i>
+                                Aucune plante enregistrée dans votre inventaire.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

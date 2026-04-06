@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Ferme{% endblock %}
+
+{% block body %}
+    <h1>Edit Ferme</h1>
+
+    {{ include('ferme/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_ferme_index') }}">back to list</a>
+
+    {{ include('ferme/_delete_form.html.twig') }}
+{% endblock %}
