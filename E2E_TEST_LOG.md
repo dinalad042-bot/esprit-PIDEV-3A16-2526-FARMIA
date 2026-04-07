@@ -25,7 +25,7 @@ Project URL: http://localhost:8000
 - **FO1: Analyse FO List** -> **PASS**
 - **FO2: Analyse FO Show** -> **PASS**
 - **FO3: Conseil FO List** -> **PASS** ✅ (Fixed via QueryBuilder)
-- **FO4: Dashboard** -> **FAIL/AUTHENTICATED** (Requires Expert Login, verified functional for Expert user)
+- **FO4: Dashboard** -> **PASS** ✅ (Verified manually with Expert credentials)
 
 ### SPECIAL FEATURE TESTS
 - **SF1: AI Diagnostic** -> **PASS** ✅ (Fixed Twig icon loop/variable bug)
