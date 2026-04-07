@@ -87,8 +87,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($dbRole && !str_starts_with($dbRole, 'ROLE_')) {
             $dbRole = 'ROLE_' . $dbRole;
         }
-        $r = $dbRole ?: 'ROLE_USER';
-        return array_unique([$r, 'ROLE_USER']);
+        
+        return $dbRole ? [$dbRole] : [];
     }
 
     public function eraseCredentials(): void

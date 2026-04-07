@@ -61,14 +61,9 @@ class RegistrationFormType extends AbstractType
                     'Agricole' => 'ROLE_AGRICOLE',
                     'Expert' => 'ROLE_EXPERT',
                     'Fournisseur' => 'ROLE_FOURNISSEUR',
-                    'Utilisateur (Défaut)' => 'ROLE_USER',
                 ],
                 'required' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Le rôle est obligatoire.',
-                    ])
-                ]
+                'empty_data' => 'ROLE_AGRICOLE',
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,

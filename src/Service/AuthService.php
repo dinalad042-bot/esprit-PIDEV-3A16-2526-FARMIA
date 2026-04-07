@@ -34,6 +34,18 @@ class AuthService
             throw new \InvalidArgumentException('Le CIN ' . $data['cin'] . ' est déjà utilisé par un autre compte.');
         }
 
+        // Attribution du rôle par défaut si non fourni
+        if (empty($data['role'])) {
+            $data['role'] = 'ROLE_AGRICOLE';
+        }
+
+        // Validation stricte des rôles autorisés à l'inscription publique
+        $allowedRoles = ['ROLE_AGRICOLE', 'ROLE_EXPERT', 'ROLE_FOURNISSEUR', 'AGRICOLE', 'EXPERT', 'FOURNISSEUR'];
+        $roleToCheck = str_replace('ROLE_', '', $data['role']); // Pour uniformité avec la BD
+        if (!in_array($roleToCheck, ['AGRICOLE', 'EXPERT', 'FOURNISSEUR'], true)) {
+            throw new \InvalidArgumentException('Rôle invalide ou non autorisé pour l\'inscription.');
+        }
+
         return $this->userService->create($data);
     }
 

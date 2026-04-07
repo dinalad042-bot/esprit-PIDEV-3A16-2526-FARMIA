@@ -47,7 +47,6 @@ class UserAdminType extends AbstractType
                     'EXPERT' => 'EXPERT',
                     'AGRICOLE' => 'AGRICOLE',
                     'FOURNISSEUR' => 'FOURNISSEUR',
-                    'USER' => 'USER',
                 ],
                 'attr' => ['class' => 'profile-input']
             ])
