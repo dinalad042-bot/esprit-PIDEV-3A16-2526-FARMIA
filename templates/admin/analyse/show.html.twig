@@ -16,6 +16,17 @@
            style="background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px; margin-left:auto;">
             <i class="fa-solid fa-robot"></i> Diagnostic IA
         </a>
+        <a href="{{ path('admin_report_analyse_pdf', {id: analyse.id}) }}"
+           target="_blank"
+           style="background:#e74c3c; color:#fff; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-file-pdf"></i> Export PDF
+        </a>
+        {% if analyse.ferme %}
+        <a href="{{ path('admin_report_weather', {id: analyse.id}) }}"
+           style="background:#0984e3; color:#fff; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px;">
+            🌤️ Météo Agricole
+        </a>
+        {% endif %}
         <a href="{{ path('admin_analyse_edit', {id: analyse.id}) }}" class="action-btn-edit">
             <i class="fa-solid fa-pen"></i> Modifier
         </a>

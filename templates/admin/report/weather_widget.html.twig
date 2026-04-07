@@ -1,0 +1,93 @@
+{% extends 'layouts/admin.html.twig' %}
+{% block title %}Météo — {{ analyse.ferme ? analyse.ferme.nomFerme : 'Ferme' }}{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:700px;">
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+        <a href="{{ path('admin_analyse_show', {id: analyse.id}) }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
+            🌤️ Météo Agricole
+        </h2>
+    </div>
+
+    {% if weather.success %}
+
+    {# Main Weather Card #}
+    <div style="background:linear-gradient(135deg,#74b9ff,#0984e3); border-radius:16px; padding:2rem; color:#fff; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div style="font-size:0.9rem; opacity:0.8;">
+                    <i class="fa-solid fa-map-marker-alt"></i>
+                    {{ weather.location }}, {{ weather.country }}
+                </div>
+                <div style="font-size:3.5rem; font-weight:900; margin:0.5rem 0;">
+                    {{ weather.temperature }}°C
+                </div>
+                <div style="font-size:1rem; opacity:0.9;">
+                    {{ weather.description }}
+                </div>
+            </div>
+            <img src="{{ weather.icon_url }}" alt="weather icon"
+                 style="width:100px; height:100px;">
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.3);">
+            <div style="text-align:center;">
+                <div style="font-size:1.2rem; font-weight:700;">{{ weather.humidity }}%</div>
+                <div style="font-size:0.78rem; opacity:0.8;">Humidité</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:1.2rem; font-weight:700;">{{ weather.feels_like }}°C</div>
+                <div style="font-size:0.78rem; opacity:0.8;">Ressenti</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:1.2rem; font-weight:700;">{{ weather.wind_speed }} km/h</div>
+                <div style="font-size:0.78rem; opacity:0.8;">Vent</div>
+            </div>
+        </div>
+    </div>
+
+    {# Agricultural Advice Card #}
+    <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem; margin-bottom:1.5rem;">
+        <h3 style="font-size:0.9rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1a1a2e; margin:0 0 1rem;">
+            <i class="fa-solid fa-tractor" style="color:#2ecc71;"></i>
+            Conseils Agricoles du Jour
+        </h3>
+        <div style="font-size:0.9rem; line-height:2; color:#444; white-space:pre-line;">
+            {{ advice }}
+        </div>
+    </div>
+
+    {# Link back to analyse #}
+    <div style="text-align:center;">
+        <a href="{{ path('admin_analyse_show', {id: analyse.id}) }}"
+           class="btn btn-dark">
+            <i class="fa-solid fa-flask"></i>
+            Retour à l'analyse
+        </a>
+        <a href="{{ path('admin_report_analyse_pdf', {id: analyse.id}) }}"
+           class="btn btn-success" style="margin-left:0.5rem;">
+            <i class="fa-solid fa-file-pdf"></i>
+            Exporter PDF
+        </a>
+    </div>
+
+    {% else %}
+
+    <div style="background:#fff; border-radius:12px; padding:3rem; text-align:center; color:#aaa; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        <i class="fa-solid fa-cloud-slash" style="font-size:3rem; margin-bottom:1rem; display:block;"></i>
+        <p>Données météo non disponibles.</p>
+        <small>{{ weather.error ?? 'Vérifiez votre clé API OpenWeatherMap.' }}</small>
+        <br>
+        <a href="{{ path('admin_analyse_show', {id: analyse.id}) }}"
+           class="btn btn-secondary" style="margin-top:1rem;">
+            Retour à l'analyse
+        </a>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}
