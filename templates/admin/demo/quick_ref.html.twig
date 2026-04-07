@@ -1,0 +1,215 @@
+{% extends 'app_layout.html.twig' %}
+
+{% block title %}Demo Day Quick Reference — FarmAI{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .demo-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .demo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .demo-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: var(--card-color, #2e7d32);
+    }
+
+    .demo-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .demo-icon {
+        font-size: 2.5rem;
+    }
+
+    .demo-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin: 0;
+    }
+
+    .demo-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: rgba(0,0,0,0.05);
+        color: var(--card-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .demo-desc {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        flex-grow: 1;
+    }
+
+    .demo-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: var(--card-color);
+        color: white;
+        text-decoration: none;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: opacity 0.2s;
+    }
+
+    .demo-btn:hover {
+        opacity: 0.9;
+        color: white;
+    }
+
+    .copy-section {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px dashed #dee2e6;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.9rem;
+    }
+
+    .copy-text {
+        color: #495057;
+        font-style: italic;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 10px;
+    }
+
+    .btn-copy {
+        background: #fff;
+        border: 1px solid #ced4da;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    .btn-copy:active {
+        background: #e9ecef;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #2e7d32;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>🚀 Demo Day Control Center</h1>
+    <p>Simplified access to all features for the final evaluation.</p>
+</div>
+
+<div class="demo-grid">
+    {% for link in links %}
+    <div class="demo-card" style="--card-color: {{ link.color }}">
+        <div>
+            <div class="demo-header">
+                <span class="demo-icon">{{ link.icon }}</span>
+                <div>
+                    <h2 class="demo-title">{{ link.title }}</h2>
+                    <span class="demo-badge">{{ link.badge }}</span>
+                </div>
+            </div>
+            <p class="demo-desc">{{ link.description }}</p>
+        </div>
+        
+        <div>
+            <a href="{{ link.url }}" class="demo-btn">
+                Launch Phase {{ loop.index }}
+            </a>
+
+            {% if link.copy is defined %}
+            <div class="copy-section">
+                <span class="copy-text" id="copy-text-{{ loop.index }}">{{ link.copy }}</span>
+                <button class="btn-copy" onclick="copyToClipboard('{{ link.copy }}', this)">Copy</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card mt-3" style="border-top-color: #ffd700; background: #fffdf0;">
+    <h2 style="color: #856404; margin-top: 0;">💡 Demo Tips for Alaeddin</h2>
+    <ul style="color: #856404; line-height: 1.8;">
+        <li><strong>Preparation:</strong> Ensure you are logged in as an <strong>Admin</strong> before starting.</li>
+        <li><strong>Java DB:</strong> Make sure your Java application is running if the evaluator asks to see live synchronization.</li>
+        <li><strong>AI Context:</strong> Use the "Copy" button in the AI Demo card to quickly paste the symptoms into the prompt.</li>
+        <li><strong>Full Flow:</strong> Use the <a href="https://github.com/dinalad042-bot/esprit-PIDEV-3A16-2526-FARMIA/tree/Alaeddin-expertise-branch" target="_blank">GitHub Link</a> to show your commits early.</li>
+    </ul>
+    <div style="text-align: right;">
+        <a href="https://github.com/dinalad042-bot/esprit-PIDEV-3A16-2526-FARMIA/tree/Alaeddin-expertise-branch" target="_blank" class="btn btn-outline" style="width: auto;">View GitHub Repositoy</a>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.borderColor = '#28a745';
+        btn.style.color = '#28a745';
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.borderColor = '#ced4da';
+            btn.style.color = 'inherit';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

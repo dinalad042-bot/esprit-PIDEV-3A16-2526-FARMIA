@@ -195,6 +195,9 @@
         <div>
             {% if app.user %}
                 <a href="{{ path('dashboard_default') }}">Tableau de bord</a>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('admin_demo_ref') }}" style="color: #ffd700;">🚀 Demo Center</a>
+                {% endif %}
                 <span>| {{ app.user.prenom }} {{ app.user.nom }}</span>
                 <a href="{{ path('app_logout') }}" style="margin-left: 15px; text-decoration: underline;">Déconnexion</a>
             {% else %}
