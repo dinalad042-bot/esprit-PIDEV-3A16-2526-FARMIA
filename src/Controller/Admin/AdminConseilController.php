@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Controller\Admin;
+
+use App\Entity\Conseil;
+use App\Form\ConseilType;
+use App\Repository\ConseilRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/admin/conseil', name: 'admin_conseil_')]
+class AdminConseilController extends AbstractController
+{
+    public function __construct(
+        private EntityManagerInterface $em,
+        private ConseilRepository $repo
+    ) {}
+
+    #[Route('', name: 'index', methods: ['GET'])]
+    public function index(Request $request): Response
+    {
+        $search   = $request->query->get('search', '');
+        $priorite = $request->query->get('priorite', '');
+        $conseils = $search
+            ? $this->repo->search($search, $priorite ?: null)
+            : $this->repo->findBy([], ['id' => 'DESC']);
+
+        return $this->render('admin/conseil/index.html.twig', [
+            'conseils' => $conseils,
+            'search'   => $search,
+            'priorite' => $priorite,
+        ]);
+    }
+
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $conseil = new Conseil();
+        $form    = $this->createForm(ConseilType::class, $conseil);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->persist($conseil);
+            $this->em->flush();
+            $this->addFlash('success', 'Conseil créé avec succès.');
+            return $this->redirectToRoute('admin_conseil_index');
+        }
+
+        return $this->render('admin/conseil/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Conseil $conseil): Response
+    {
+        $form = $this->createForm(ConseilType::class, $conseil);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->flush();
+            $this->addFlash('success', 'Conseil modifié avec succès.');
+            return $this->redirectToRoute('admin_conseil_index');
+        }
+
+        return $this->render('admin/conseil/edit.html.twig', [
+            'form'    => $form->createView(),
+            'conseil' => $conseil,
+        ]);
+    }
+
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, Conseil $conseil): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$conseil->getId(), $request->request->get('_token'))) {
+            $this->em->remove($conseil);
+            $this->em->flush();
+            $this->addFlash('success', 'Conseil supprimé.');
+        }
+        return $this->redirectToRoute('admin_conseil_index');
+    }
+}

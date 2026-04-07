@@ -1,0 +1,76 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Modifier Analyse #{{ analyse.id }} — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:800px;">
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+        <a href="{{ path('admin_analyse_index') }}" class="btn btn-outline-green">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
+            <i class="fa-solid fa-pen" style="color:#2ecc71;"></i>
+            Modifier Analyse <span style="color:#2ecc71;">#{{ analyse.id }}</span>
+        </h2>
+    </div>
+
+    <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08); padding:2rem;">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+
+            <div class="form-group" style="grid-column:1/-1;">
+                {{ form_label(form.dateAnalyse) }}
+                {{ form_errors(form.dateAnalyse) }}
+                {{ form_widget(form.dateAnalyse) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.technicien) }}
+                {{ form_errors(form.technicien) }}
+                {{ form_widget(form.technicien) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.ferme) }}
+                {{ form_errors(form.ferme) }}
+                {{ form_widget(form.ferme) }}
+            </div>
+
+            <div class="form-group" style="grid-column:1/-1;">
+                {{ form_label(form.resultatTechnique) }}
+                {{ form_errors(form.resultatTechnique) }}
+                {{ form_widget(form.resultatTechnique) }}
+            </div>
+
+            <div class="form-group" style="grid-column:1/-1;">
+                {{ form_label(form.imageUrl) }}
+                {{ form_errors(form.imageUrl) }}
+                {{ form_widget(form.imageUrl) }}
+                {% if analyse.imageUrl %}
+                    <div style="margin-top:0.5rem;">
+                        <img src="{{ analyse.imageUrl }}" alt="Preview"
+                             style="height:80px; border-radius:8px; object-fit:cover;"
+                             onerror="this.style.display='none'">
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div style="margin-top:2rem; display:flex; gap:1rem;">
+            <button type="submit" class="btn btn-dark">
+                <i class="fa-solid fa-floppy-disk"></i> Mettre à jour
+            </button>
+            <a href="{{ path('admin_analyse_index') }}" class="btn btn-outline-green">Annuler</a>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

@@ -20,7 +20,7 @@
             </div>
             <i class="fa-solid fa-ellipsis profile-ellipsis"></i>
             <div class="profile-info">
-                <div class="profile-name">{{ app.user.prenom|default('aymen') }} {{ app.user.nom|default('aymen') }}</div>
+                <div class="profile-name">{{ app.user ? app.user.prenom|default('aymen') : 'Guest' }} {{ app.user ? app.user.nom|default('aymen') : '' }}</div>
                 <div class="profile-role">Administrateur</div>
             </div>
         </div>
@@ -57,6 +57,20 @@
                 <a href="{{ path('admin_kanban_index') }}" class="{% if current_route == 'admin_kanban_index' %}active{% endif %}">
                     <i class="fa-solid fa-list-check"></i>
                     <span>Kanban Board</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_analyse_index') }}"
+                   class="{% if current_route starts with 'admin_analyse' %}active{% endif %}">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Analyses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_conseil_index') }}"
+                   class="{% if current_route starts with 'admin_conseil' %}active{% endif %}">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Conseils</span>
                 </a>
             </li>
         </ul>

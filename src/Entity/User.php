@@ -68,9 +68,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
+    #[ORM\OneToMany(mappedBy: 'technicien', targetEntity: Analyse::class)]
+    private Collection $analyses;
+
     public function __construct()
     {
         $this->userLogs = new ArrayCollection();
+        $this->analyses = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────

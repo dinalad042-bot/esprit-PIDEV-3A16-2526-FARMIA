@@ -1,0 +1,152 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Gestion des Analyses — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding: 2rem;">
+
+    {# ── Flash Messages ── #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    {# ── Header ── #}
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h2 style="font-size:1.5rem; font-weight:700; color:#1a1a2e;">
+            <i class="fa-solid fa-flask" style="color:#2ecc71; margin-right:8px;"></i>
+            Gestion des Analyses
+        </h2>
+        <a href="{{ path('admin_analyse_new') }}" class="btn btn-dark">
+            <i class="fa-solid fa-plus"></i> Nouvelle Analyse
+        </a>
+    </div>
+
+    {# ── Search Bar ── #}
+    <form method="GET" style="margin-bottom:1.5rem; display:flex; gap:0.5rem;">
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Rechercher dans les résultats..."
+            class="form-control"
+            style="max-width:400px;"
+        >
+        <button type="submit" class="btn btn-dark">
+            <i class="fa-solid fa-magnifying-glass"></i> Chercher
+        </button>
+        {% if search %}
+            <a href="{{ path('admin_analyse_index') }}" class="btn btn-outline-green">
+                <i class="fa-solid fa-xmark"></i> Effacer
+            </a>
+        {% endif %}
+    </form>
+
+    {# ── Stats Row ── #}
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div class="stat-card">
+            <div style="font-size:2rem; font-weight:700; color:#2ecc71;">{{ analyses|length }}</div>
+            <div style="color:#666; font-size:0.9rem;">Analyses totales</div>
+        </div>
+        <div class="stat-card">
+            <div style="font-size:2rem; font-weight:700; color:#3498db;">
+                {{ analyses|filter(a => a.dateAnalyse and a.dateAnalyse|date('Y-m') == 'now'|date('Y-m'))|length }}
+            </div>
+            <div style="color:#666; font-size:0.9rem;">Ce mois-ci</div>
+        </div>
+        <div class="stat-card">
+            <div style="font-size:2rem; font-weight:700; color:#e74c3c;">
+                {{ analyses|filter(a => a.nbConseils == 0)|length }}
+            </div>
+            <div style="color:#666; font-size:0.9rem;">Sans conseils</div>
+        </div>
+    </div>
+
+    {# ── Table ── #}
+    <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow:hidden;">
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr style="background:#f8f9fa; border-bottom:2px solid #e9ecef;">
+                    <th style="padding:1rem; text-align:left; font-weight:600; color:#495057;">#ID</th>
+                    <th style="padding:1rem; text-align:left; font-weight:600; color:#495057;">Date</th>
+                    <th style="padding:1rem; text-align:left; font-weight:600; color:#495057;">Ferme</th>
+                    <th style="padding:1rem; text-align:left; font-weight:600; color:#495057;">Technicien</th>
+                    <th style="padding:1rem; text-align:left; font-weight:600; color:#495057;">Conseils</th>
+                    <th style="padding:1rem; text-align:left; font-weight:600; color:#495057;">Image</th>
+                    <th style="padding:1rem; text-align:center; font-weight:600; color:#495057;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for analyse in analyses %}
+                <tr class="user-row" style="border-bottom:1px solid #f0f0f0;">
+                    <td style="padding:1rem; color:#2ecc71; font-weight:600;">#{{ analyse.id }}</td>
+                    <td style="padding:1rem; color:#495057;">
+                        {{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y H:i') : 'N/A' }}
+                    </td>
+                    <td style="padding:1rem;">
+                        <span style="font-weight:500;">{{ analyse.ferme ? analyse.ferme.nomFerme : 'N/A' }}</span>
+                        {% if analyse.ferme %}
+                            <br><small style="color:#888;">{{ analyse.ferme.lieu }}</small>
+                        {% endif %}
+                    </td>
+                    <td style="padding:1rem;">
+                        {% if analyse.technicien %}
+                            {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
+                        {% else %}
+                            <span style="color:#aaa;">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:1rem;">
+                        <span style="background:#e8f8f0; color:#27ae60; padding:3px 10px; border-radius:12px; font-size:0.85rem;">
+                            {{ analyse.nbConseils }} conseil(s)
+                        </span>
+                    </td>
+                    <td style="padding:1rem;">
+                        {% if analyse.imageUrl %}
+                            <img src="{{ analyse.imageUrl }}" alt="Image"
+                                 style="width:45px; height:45px; border-radius:8px; object-fit:cover;"
+                                 onerror="this.style.display='none'">
+                        {% else %}
+                            <span style="color:#aaa; font-size:0.85rem;">Aucune</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:1rem; text-align:center;">
+                        <div style="display:flex; gap:0.5rem; justify-content:center;">
+                            <a href="{{ path('admin_analyse_show', {id: analyse.id}) }}"
+                               style="background:#3498db; color:#fff; padding:6px 12px; border-radius:6px; font-size:0.8rem; text-decoration:none;">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="{{ path('admin_analyse_edit', {id: analyse.id}) }}"
+                               class="action-btn-edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <form method="POST" action="{{ path('admin_analyse_delete', {id: analyse.id}) }}"
+                                  onsubmit="return confirm('Supprimer cette analyse et tous ses conseils ?')">
+                                <input type="hidden" name="_token"
+                                       value="{{ csrf_token('delete' ~ analyse.id) }}">
+                                <button type="submit" class="action-btn-delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="padding:3rem; text-align:center; color:#aaa;">
+                        <i class="fa-solid fa-flask" style="font-size:2rem; margin-bottom:0.5rem; display:block;"></i>
+                        Aucune analyse trouvée.
+                        <br>
+                        <a href="{{ path('admin_analyse_new') }}" class="btn btn-dark" style="margin-top:1rem;">
+                            Créer la première
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

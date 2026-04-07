@@ -1,0 +1,148 @@
+{% extends 'layouts/admin.html.twig' %}
+{% block title %}Dashboard Expert — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem;">
+
+    {# Welcome Banner #}
+    <div style="background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:16px; padding:2rem; color:#fff; margin-bottom:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h1 style="font-size:1.6rem; font-weight:700; margin:0 0 0.5rem;">
+                    🌿 Tableau de Bord Expert
+                </h1>
+                <p style="margin:0; opacity:0.85; font-size:0.95rem;">
+                    Bienvenue{% if app.user %}, {{ app.user.prenom }}{% endif %} —
+                    {{ "now"|date("d MMMM Y") }}
+                </p>
+            </div>
+            <div style="text-align:right;">
+                <a href="{{ path('app_analyse_new') }}"
+                   style="background:rgba(255,255,255,0.2); color:#fff; padding:10px 20px; border-radius:10px; text-decoration:none; font-size:0.9rem; display:inline-block;">
+                    <i class="fa-solid fa-plus"></i> Nouvelle Analyse
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Stats Row #}
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; border-top:4px solid #2ecc71;">
+            <div style="font-size:2.5rem; font-weight:700; color:#2ecc71;">{{ totalAnalyses }}</div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">
+                <i class="fa-solid fa-flask"></i> Analyses
+            </div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; border-top:4px solid #3498db;">
+            <div style="font-size:2.5rem; font-weight:700; color:#3498db;">{{ totalConseils }}</div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">
+                <i class="fa-solid fa-lightbulb"></i> Conseils
+            </div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; border-top:4px solid #e74c3c;">
+            <div style="font-size:2.5rem; font-weight:700; color:#e74c3c;">{{ priorityCounts['HAUTE'] }}</div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">
+                🔴 Haute priorité
+            </div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; border-top:4px solid #f39c12;">
+            <div style="font-size:2.5rem; font-weight:700; color:#f39c12;">{{ priorityCounts['MOYENNE'] }}</div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">
+                🟡 Moyenne priorité
+            </div>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:1.5rem;">
+
+        {# Recent Analyses #}
+        <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h3 style="font-size:1rem; font-weight:700; color:#1a1a2e; margin:0; text-transform:uppercase; letter-spacing:1px;">
+                    <i class="fa-solid fa-clock" style="color:#2ecc71;"></i>
+                    Analyses Récentes
+                </h3>
+                <a href="{{ path('app_analyse_index') }}"
+                   style="font-size:0.82rem; color:#2ecc71; text-decoration:none;">
+                    Voir tout →
+                </a>
+            </div>
+
+            {% for analyse in recentAnalyses %}
+            <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem 0; border-bottom:1px solid #f5f5f5;">
+                <div style="width:40px; height:40px; background:#f0fdf4; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="fa-solid fa-flask" style="color:#2ecc71;"></i>
+                </div>
+                <div style="flex:1; min-width:0;">
+                    <div style="font-weight:600; font-size:0.9rem; color:#1a1a2e;">
+                        #{{ analyse.id }}
+                        {% if analyse.ferme %} — {{ analyse.ferme.nomFerme }}{% endif %}
+                    </div>
+                    <div style="color:#888; font-size:0.8rem;">
+                        {{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y') : '' }}
+                        · {{ analyse.nbConseils }} conseil(s)
+                    </div>
+                </div>
+                <a href="{{ path('app_analyse_show', {id: analyse.id}) }}"
+                   style="color:#2ecc71; font-size:0.82rem; text-decoration:none; flex-shrink:0;">
+                    Voir →
+                </a>
+            </div>
+            {% else %}
+            <p style="color:#aaa; text-align:center; padding:2rem 0; font-size:0.9rem;">
+                Aucune analyse pour le moment.
+            </p>
+            {% endfor %}
+        </div>
+
+        {# Quick Actions + Farm Stats #}
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+
+            {# Quick Actions #}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem;">
+                <h3 style="font-size:0.85rem; font-weight:700; color:#1a1a2e; margin:0 0 1rem; text-transform:uppercase; letter-spacing:1px;">
+                    Actions Rapides
+                </h3>
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <a href="{{ path('app_analyse_new') }}"
+                       style="display:flex; align-items:center; gap:0.75rem; background:#f0fdf4; color:#27ae60; padding:10px 14px; border-radius:8px; text-decoration:none; font-size:0.88rem;">
+                        <i class="fa-solid fa-flask"></i> Nouvelle Analyse
+                    </a>
+                    <a href="{{ path('app_conseil_new') }}"
+                       style="display:flex; align-items:center; gap:0.75rem; background:#fffbf0; color:#d68910; padding:10px 14px; border-radius:8px; text-decoration:none; font-size:0.88rem;">
+                        <i class="fa-solid fa-lightbulb"></i> Nouveau Conseil
+                    </a>
+                    <a href="{{ path('admin_analyse_index') }}"
+                       style="display:flex; align-items:center; gap:0.75rem; background:#f0f0f0; color:#555; padding:10px 14px; border-radius:8px; text-decoration:none; font-size:0.88rem;">
+                        <i class="fa-solid fa-shield"></i> Administration
+                    </a>
+                </div>
+            </div>
+
+            {# Priority Breakdown #}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem;">
+                <h3 style="font-size:0.85rem; font-weight:700; color:#1a1a2e; margin:0 0 1rem; text-transform:uppercase; letter-spacing:1px;">
+                    Conseils par Priorité
+                </h3>
+                {% set total = priorityCounts['HAUTE'] + priorityCounts['MOYENNE'] + priorityCounts['BASSE'] %}
+                {% for label, color, key in [
+                    ['Haute', '#e74c3c', 'HAUTE'],
+                    ['Moyenne', '#f39c12', 'MOYENNE'],
+                    ['Basse', '#2ecc71', 'BASSE']
+                ] %}
+                <div style="margin-bottom:0.75rem;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:4px;">
+                        <span style="color:#555;">{{ label }}</span>
+                        <span style="font-weight:600; color:{{ color }};">{{ priorityCounts[key] }}</span>
+                    </div>
+                    <div style="background:#f0f0f0; border-radius:999px; height:6px;">
+                        <div style="background:{{ color }}; height:6px; border-radius:999px; width:{% if total > 0 %}{{ ((priorityCounts[key]/total)*100)|round }}{% else %}0{% endif %}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
