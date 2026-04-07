@@ -47,6 +47,9 @@ echo.
 echo  Press Ctrl+C to stop server when done.
 echo.
 
+:: Add PHP to PATH temporarily so Symfony CLI can detect it
+set "PATH=C:\xampp\New folder\php82;%PATH%"
+
 symfony server:start --no-tls
 
 pause
