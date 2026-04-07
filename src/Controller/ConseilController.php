@@ -25,9 +25,22 @@ class ConseilController extends AbstractController
         $search   = $request->query->get('search', '');
         $priorite = $request->query->get('priorite', '');
 
-        $conseils = $search
-            ? $this->repo->search($search, $priorite ?: null)
-            : $this->repo->findBy([], ['id' => 'DESC']);
+        $qb = $this->em->getRepository(\App\Entity\Conseil::class)
+            ->createQueryBuilder('c');
+
+        if ($search !== '') {
+            $qb->andWhere('c.descriptionConseil LIKE :term')
+               ->setParameter('term', '%' . $search . '%');
+        }
+
+        if ($priorite !== '') {
+            $qb->andWhere('c.prioriteRaw = :p')
+               ->setParameter('p', $priorite);
+        }
+
+        $conseils = $qb->orderBy('c.id', 'DESC')
+                       ->getQuery()
+                       ->getResult();
 
         return $this->render('conseil/index.html.twig', [
             'conseils' => $conseils,

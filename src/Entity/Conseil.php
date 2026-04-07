@@ -61,7 +61,16 @@ class Conseil
         return $this;
     }
 
-    public function getPrioriteRaw(): ?string { return $this->prioriteRaw; }
+    public function getPrioriteRaw(): ?string
+    {
+        return $this->prioriteRaw;
+    }
+
+    public function setPrioriteRaw(?string $prioriteRaw): static
+    {
+        $this->prioriteRaw = $prioriteRaw;
+        return $this;
+    }
 
     public function getAnalyse(): ?Analyse { return $this->analyse; }
     public function setAnalyse(?Analyse $a): static { $this->analyse = $a; return $this; }

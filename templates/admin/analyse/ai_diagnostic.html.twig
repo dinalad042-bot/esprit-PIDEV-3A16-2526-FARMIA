@@ -124,24 +124,44 @@
                     {% endif %}
                 </div>
 
-                {# Details #}
-                {% for label, value, icon in [
-                    ['Symptômes', result.symptoms, 'fa-stethoscope'],
-                    ['Traitement', result.treatment, 'fa-prescription-bottle-medical'],
-                    ['Prévention', result.prevention, 'fa-shield']
-                ] %}
-                {% if value %}
+                {# Symptoms #}
+                {% if result.symptoms %}
                 <div style="margin-bottom:1rem;">
                     <div style="font-size:0.8rem; font-weight:600; color:#444; margin-bottom:0.35rem;">
-                        <i class="fa-solid {{ icon }}" style="color:#2ecc71; margin-right:4px;"></i>
-                        {{ label }}
+                        <i class="fa-solid fa-stethoscope" style="color:#2ecc71; margin-right:4px;"></i>
+                        Symptômes
                     </div>
                     <div style="font-size:0.88rem; color:#555; line-height:1.6; background:#f9f9f9; padding:0.75rem; border-radius:6px;">
-                        {{ value }}
+                        {{ result.symptoms }}
                     </div>
                 </div>
                 {% endif %}
-                {% endfor %}
+
+                {# Treatment #}
+                {% if result.treatment %}
+                <div style="margin-bottom:1rem;">
+                    <div style="font-size:0.8rem; font-weight:600; color:#444; margin-bottom:0.35rem;">
+                        <i class="fa-solid fa-prescription-bottle-medical" style="color:#2ecc71; margin-right:4px;"></i>
+                        Traitement
+                    </div>
+                    <div style="font-size:0.88rem; color:#555; line-height:1.6; background:#f9f9f9; padding:0.75rem; border-radius:6px;">
+                        {{ result.treatment }}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Prevention #}
+                {% if result.prevention %}
+                <div style="margin-bottom:1rem;">
+                    <div style="font-size:0.8rem; font-weight:600; color:#444; margin-bottom:0.35rem;">
+                        <i class="fa-solid fa-shield" style="color:#2ecc71; margin-right:4px;"></i>
+                        Prévention
+                    </div>
+                    <div style="font-size:0.88rem; color:#555; line-height:1.6; background:#f9f9f9; padding:0.75rem; border-radius:6px;">
+                        {{ result.prevention }}
+                    </div>
+                </div>
+                {% endif %}
 
                 {# Save Button #}
                 <form method="POST" style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid #f0f0f0;">
