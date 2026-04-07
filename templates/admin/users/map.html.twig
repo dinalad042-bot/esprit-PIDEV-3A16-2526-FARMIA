@@ -61,7 +61,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialisation centrée sur la Tunisie par défaut
             var map = L.map('map').setView([35.67, 10.10], 7);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -87,28 +86,28 @@
                         var lat = {{ ferme.latitude|number_format(6, '.', '') }};
                         var lng = {{ ferme.longitude|number_format(6, '.', '') }};
 
-                        // 1. Préparation HTML des plantes
+                        // 1. Correction Plantes (nomEspece au lieu de nomPlante)
                         var plantesList = "";
                         {% if ferme.plantes is defined and ferme.plantes|length > 0 %}
                             plantesList = '<ul class="resource-list">';
                             {% for plante in ferme.plantes %}
-                                plantesList += '<li>🌿 {{ plante.nomPlante|escape("js") }}</li>';
+                                plantesList += '<li>🌿 {{ plante.nomEspece|escape("js") }} ({{ plante.quantite }})</li>';
                             {% endfor %}
                             plantesList += '</ul>';
                         {% else %}
-                            plantesList = '<p style="font-size:0.8rem; font-style:italic; color:#94a3b8;">Aucune plante</p>';
+                            plantesList = '<p style="font-size:0.8rem; font-style:italic; color:#94a3b8;">Aucune culture</p>';
                         {% endif %}
 
-                        // 2. Préparation HTML des animaux
+                        // 2. Correction Animaux (espece au lieu de type)
                         var animalsList = "";
                         {% if ferme.animals is defined and ferme.animals|length > 0 %}
                             animalsList = '<ul class="resource-list">';
                             {% for animal in ferme.animals %}
-                                animalsList += '<li>🐄 {{ animal.espece|escape("js") }} ({{ animal.etatSante|escape("js") }})</li>';
+                                animalsList += '<li>🐄 {{ animal.espece|escape("js") }} - {{ animal.etatSante|escape("js") }}</li>';
                             {% endfor %}
                             animalsList += '</ul>';
                         {% else %}
-                            animalsList = '<p style="font-size:0.8rem; font-style:italic; color:#94a3b8;">Aucun animal</p>';
+                            animalsList = '<p style="font-size:0.8rem; font-style:italic; color:#94a3b8;">Aucun cheptel</p>';
                         {% endif %}
 
                         var marker = L.marker([lat, lng], {icon: farmIcon}).addTo(map);
@@ -119,14 +118,14 @@
                                 <p><i class="fa-solid fa-location-dot"></i> <b>Lieu :</b> {{ ferme.lieu|escape('js') }}</p>
                                 <p><i class="fa-solid fa-expand"></i> <b>Surface :</b> {{ ferme.surface }} ha</p>
                                 
-                                <span class="section-title">🌿 Cultures :</span>
+                                <span class="section-title">🌿 Cultures associées :</span>
                                 ${plantesList}
 
-                                <span class="section-title">🐄 Cheptel :</span>
+                                <span class="section-title">🐄 Animaux présents :</span>
                                 ${animalsList}
 
                                 <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-                                <p style="font-size: 0.7rem; color: #94a3b8; text-align:center;">Coordonnées: ${lat}, ${lng}</p>
+                                <p style="font-size: 0.7rem; color: #94a3b8; text-align:center;">GPS: ${lat}, ${lng}</p>
                             </div>
                         `;
                         
@@ -135,14 +134,12 @@
                     {% endif %}
                 {% endfor %}
 
-                // Ajustement automatique du zoom pour voir tous les marqueurs
                 if (markersPositions.length > 0) {
                     var bounds = new L.LatLngBounds(markersPositions);
                     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
                 }
             {% endif %}
 
-            // Correctif pour s'assurer que la carte se charge bien dans les conteneurs dynamiques
             setTimeout(function() {
                 map.invalidateSize();
             }, 400);

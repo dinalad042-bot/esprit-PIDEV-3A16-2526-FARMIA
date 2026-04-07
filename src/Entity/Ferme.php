@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FermeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,24 +30,35 @@ class Ferme
     #[Assert\Positive(message: "La surface doit être supérieure à 0.")]
     private ?float $surface = null;
 
-    // --- NOUVELLES COLONNES POUR LA CARTE ---
-
     #[ORM\Column(type: "float", nullable: true)]
     private ?float $latitude = null;
 
     #[ORM\Column(type: "float", nullable: true)]
     private ?float $longitude = null;
 
-    // --- RELATION AVEC L'UTILISATEUR (MODIFIÉE POUR SCÉNARIO B) ---
-
+    // --- RELATION AVEC L'UTILISATEUR ---
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'fermes')]
     #[ORM\JoinColumn(
         name: "id_user", 
         referencedColumnName: "id_user", 
-        nullable: true,      // CHANGEMENT ICI : accepte les fermes sans propriétaire
-        onDelete: "SET NULL" // Si l'utilisateur est supprimé, la ferme reste
+        nullable: true,
+        onDelete: "SET NULL"
     )]
     private ?User $user = null;
+
+    // --- CORRECTION : AJOUT DES RELATIONS POUR LA CARTE ---
+
+    #[ORM\OneToMany(mappedBy: 'ferme', targetEntity: Plante::class)]
+    private Collection $plantes;
+
+    #[ORM\OneToMany(mappedBy: 'ferme', targetEntity: Animal::class)]
+    private Collection $animals;
+
+    public function __construct()
+    {
+        $this->plantes = new ArrayCollection();
+        $this->animals = new ArrayCollection();
+    }
 
     // --- GETTERS ET SETTERS ---
 
@@ -68,4 +81,38 @@ class Ferme
 
     public function getUser(): ?User { return $this->user; }
     public function setUser(?User $user): static { $this->user = $user; return $this; }
+
+    /**
+     * @return Collection<int, Plante>
+     */
+    public function getPlantes(): Collection
+    {
+        return $this->plantes;
+    }
+
+    public function addPlante(Plante $plante): static
+    {
+        if (!$this->plantes->contains($plante)) {
+            $this->plantes->add($plante);
+            $plante->setFerme($this);
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Animal>
+     */
+    public function getAnimals(): Collection
+    {
+        return $this->animals;
+    }
+
+    public function addAnimal(Animal $animal): static
+    {
+        if (!$this->animals->contains($animal)) {
+            $this->animals->add($animal);
+            $animal->setFerme($this);
+        }
+        return $this;
+    }
 }

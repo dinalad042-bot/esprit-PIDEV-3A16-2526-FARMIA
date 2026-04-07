@@ -28,9 +28,11 @@ class Animal
     #[Assert\LessThanOrEqual("today", message: "La date de naissance ne peut pas être dans le futur.")]
     private ?\DateTimeInterface $date_naissance = null;
 
-    #[ORM\Column(name: "id_ferme")]
+    // --- CORRECTION : Transformation de l'entier en Relation d'Objet ---
+    #[ORM\ManyToOne(targetEntity: Ferme::class, inversedBy: 'animals')]
+    #[ORM\JoinColumn(name: "id_ferme", referencedColumnName: "id_ferme", nullable: false)]
     #[Assert\NotNull(message: "Veuillez affecter l'animal à une ferme.")]
-    private ?int $id_ferme = null;
+    private ?Ferme $ferme = null;
 
     public function getIdAnimal(): ?int { return $this->id_animal; }
 
@@ -43,6 +45,11 @@ class Animal
     public function getDateNaissance(): ?\DateTimeInterface { return $this->date_naissance; }
     public function setDateNaissance(?\DateTimeInterface $date_naissance): static { $this->date_naissance = $date_naissance; return $this; }
 
-    public function getIdFerme(): ?int { return $this->id_ferme; }
-    public function setIdFerme(?int $id_ferme): static { $this->id_ferme = $id_ferme; return $this; }
+    // --- NOUVEAUX GETTERS / SETTERS POUR L'OBJET FERME ---
+    public function getFerme(): ?Ferme { return $this->ferme; }
+    
+    public function setFerme(?Ferme $ferme): static { 
+        $this->ferme = $ferme; 
+        return $this; 
+    }
 }

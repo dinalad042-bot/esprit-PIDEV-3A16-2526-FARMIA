@@ -26,9 +26,10 @@ class Plante
     #[Assert\NotBlank(message: "Le cycle de vie est obligatoire.")]
     private ?string $cycle_vie = null;
 
-    #[ORM\Column(name: "id_ferme")]
-    #[Assert\NotNull(message: "Veuillez sélectionner une ferme.")]
-    private ?int $id_ferme = null;
+    // --- CORRECTION CRUCIALE : Transformation du int en Relation ---
+    #[ORM\ManyToOne(targetEntity: Ferme::class, inversedBy: 'plantes')]
+    #[ORM\JoinColumn(name: "id_ferme", referencedColumnName: "id_ferme", nullable: false)]
+    private ?Ferme $ferme = null;
 
     #[ORM\Column(name: "quantite")]
     #[Assert\NotBlank(message: "La quantité est obligatoire.")]
@@ -45,7 +46,6 @@ class Plante
         return $this->nom_espece; 
     }
 
-    // Ajout du ? pour accepter null si le formulaire est vide
     public function setNomEspece(?string $nom_espece): static 
     { 
         $this->nom_espece = $nom_espece; 
@@ -57,22 +57,21 @@ class Plante
         return $this->cycle_vie; 
     }
 
-    // Ajout du ? pour accepter null
     public function setCycleVie(?string $cycle_vie): static 
     { 
         $this->cycle_vie = $cycle_vie; 
         return $this; 
     }
 
-    public function getIdFerme(): ?int 
+    // --- GETTER/SETTER MIS À JOUR POUR L'OBJET FERME ---
+    public function getFerme(): ?Ferme 
     { 
-        return $this->id_ferme; 
+        return $this->ferme; 
     }
 
-    // Correction CRUCIALE : Ajout du ? devant int
-    public function setIdFerme(?int $id_ferme): static 
+    public function setFerme(?Ferme $ferme): static 
     { 
-        $this->id_ferme = $id_ferme; 
+        $this->ferme = $ferme; 
         return $this; 
     }
 
