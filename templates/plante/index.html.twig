@@ -25,8 +25,8 @@
                 {% endif %}
             </form>
 
-            <a href="{{ path('app_plante_pdf') }}" target="_blank" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700;">
-                <i class="fa-solid fa-file-pdf"></i> PDF
+            <a href="{{ path('app_plante_pdf') }}" target="_blank" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
+                <i class="fa-solid fa-file-pdf"></i> Génerer PDF
             </a>
             
             <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px;">
@@ -48,17 +48,15 @@
             <form action="{{ action_url }}" method="POST" novalidate>
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Espèce</label>
-                    {# CORRIGÉ : plante_edit.nomEspece #}
                     <input type="text" name="nom_espece" value="{{ plante_edit ? plante_edit.nomEspece : '' }}" placeholder="Ex: Tomate" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ (errors.nom_espece is defined or errors.nomEspece is defined) ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_espece is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
                     {% if errors.nom_espece is defined %}<small style="color: #dc2626;">{{ errors.nom_espece }}</small>{% endif %}
                 </div>
 
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Cycle de vie</label>
-                    {# CORRIGÉ : plante_edit.cycleVie #}
                     <input type="text" name="cycle_vie" value="{{ plante_edit ? plante_edit.cycleVie : '' }}" placeholder="Ex: Annuelle" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ (errors.cycle_vie is defined or errors.cycleVie is defined) ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
+                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.cycle_vie is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 12px;">
                     {% if errors.cycle_vie is defined %}<small style="color: #dc2626;">{{ errors.cycle_vie }}</small>{% endif %}
                 </div>
 
@@ -73,7 +71,8 @@
                     <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer;">
                         <option value="">Choisir une ferme...</option>
                         {% for ferme in fermes %}
-                            <option value="{{ ferme.idFerme }}" {{ plante_edit and plante_edit.idFerme == ferme.idFerme ? 'selected' : '' }}>
+                            {# CORRECTION : plante_edit.ferme.idFerme au lieu de plante_edit.idFerme #}
+                            <option value="{{ ferme.idFerme }}" {{ plante_edit and plante_edit.ferme and plante_edit.ferme.idFerme == ferme.idFerme ? 'selected' : '' }}>
                                 {{ ferme.nomFerme }}
                             </option>
                         {% endfor %}
@@ -118,9 +117,7 @@
                     <tbody>
                         {% for plante in plantes %}
                             <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                                {# CORRIGÉ LIGNE 119 : plante.nomEspece #}
                                 <td style="padding: 15px; font-weight: 600; color: #1e293b;">{{ plante.nomEspece }}</td>
-                                {# CORRIGÉ : plante.cycleVie #}
                                 <td style="padding: 15px; color: #64748b;">{{ plante.cycleVie }}</td>
                                 <td style="padding: 15px;">
                                     <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85rem;">
@@ -128,13 +125,10 @@
                                     </span>
                                 </td>
                                 <td style="padding: 15px;">
-                                    {% set ferme_nom = 'Non affectée' %}
-                                    {% for f in fermes %}
-                                        {% if f.idFerme == plante.idFerme %}
-                                            {% set ferme_nom = f.nomFerme %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    <span style="color: #2d7a36; font-weight: 600;">{{ ferme_nom }}</span>
+                                    {# CORRECTION : Accès direct via plante.ferme #}
+                                    <span style="color: #2d7a36; font-weight: 600;">
+                                        {{ plante.ferme ? plante.ferme.nomFerme : 'Non affectée' }}
+                                    </span>
                                 </td>
                                 <td style="padding: 15px; text-align: center;">
                                     <div style="display: flex; gap: 8px; justify-content: center;">

@@ -46,7 +46,7 @@ class AnimalController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, AnimalRepository $aRepo, FermeRepository $fRepo): Response
     {
         $animal = new Animal();
-        $this->mapData($animal, $request);
+        $this->mapData($animal, $request, $fRepo); // Ajout de fRepo
 
         $violations = $validator->validate($animal);
 
@@ -114,7 +114,7 @@ class AnimalController extends AbstractController
     #[Route('/{id_animal}/update', name: 'app_animal_update', methods: ['POST'])]
     public function update(Request $request, Animal $animal, EntityManagerInterface $em, ValidatorInterface $validator, AnimalRepository $aRepo, FermeRepository $fRepo): Response
     {
-        $this->mapData($animal, $request);
+        $this->mapData($animal, $request, $fRepo); // Ajout de fRepo
         $violations = $validator->validate($animal);
 
         if (count($violations) > 0) {
@@ -143,9 +143,8 @@ class AnimalController extends AbstractController
     /**
      * Mapping des données du formulaire vers l'entité
      */
-    private function mapData(Animal $animal, Request $request): void
+    private function mapData(Animal $animal, Request $request, FermeRepository $fRepo): void
     {
-        // Utilisation de 'espece' (cohérent avec l'entité et le repository)
         $animal->setEspece($request->request->get('espece') ?: null);
         $animal->setEtatSante($request->request->get('etat_sante') ?: null);
         
@@ -156,8 +155,14 @@ class AnimalController extends AbstractController
             $animal->setDateNaissance(null);
         }
         
+        // CORRECTION ICI : On récupère l'objet Ferme via le repository
         $idFerme = $request->request->get('id_ferme');
-        $animal->setIdFerme($idFerme ? (int)$idFerme : null);
+        if ($idFerme) {
+            $ferme = $fRepo->find($idFerme);
+            $animal->setFerme($ferme);
+        } else {
+            $animal->setFerme(null);
+        }
     }
 
     /**

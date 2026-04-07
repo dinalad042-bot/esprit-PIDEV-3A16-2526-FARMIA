@@ -21,7 +21,7 @@ class PlanteController extends AbstractController
     public function index(Request $request, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
         $search = $request->query->get('search');
-        $sort = $request->query->get('sort', 'nom_espece'); // Modifié ici
+        $sort = $request->query->get('sort', 'nom_espece');
         $direction = $request->query->get('direction', 'ASC');
 
         return $this->render('plante/index.html.twig', [
@@ -39,7 +39,8 @@ class PlanteController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
         $plante = new Plante();
-        $this->mapData($plante, $request);
+        $this->mapData($plante, $request, $fRepo); // fRepo ajouté ici
+        
         $violations = $validator->validate($plante);
 
         if (count($violations) > 0) {
@@ -73,7 +74,7 @@ class PlanteController extends AbstractController
     #[Route('/{id_plante}/update', name: 'app_plante_update', methods: ['POST'])]
     public function update(Request $request, Plante $plante, EntityManagerInterface $em, ValidatorInterface $validator, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
-        $this->mapData($plante, $request);
+        $this->mapData($plante, $request, $fRepo); // fRepo ajouté ici
         $violations = $validator->validate($plante);
 
         if (count($violations) > 0) {
@@ -96,13 +97,23 @@ class PlanteController extends AbstractController
         return $this->redirectToRoute('app_plante_index');
     }
 
-    private function mapData(Plante $plante, Request $request): void
+    /**
+     * Mapping corrigé pour utiliser l'objet Ferme
+     */
+    private function mapData(Plante $plante, Request $request, FermeRepository $fRepo): void
     {
-        // On s'assure d'appeler les setters qui correspondent à vos propriétés
         $plante->setNomEspece($request->request->get('nom_espece') ?: null);
         $plante->setCycleVie($request->request->get('cycle_vie') ?: null);
         $plante->setQuantite($request->request->get('quantite') !== "" ? (int)$request->request->get('quantite') : null);
-        $plante->setIdFerme($request->request->get('id_ferme') !== "" ? (int)$request->request->get('id_ferme') : null);
+        
+        // CORRECTION : On cherche l'objet Ferme au lieu de passer l'ID directement
+        $idFerme = $request->request->get('id_ferme');
+        if ($idFerme) {
+            $ferme = $fRepo->find($idFerme);
+            $plante->setFerme($ferme); // On appelle setFerme()
+        } else {
+            $plante->setFerme(null);
+        }
     }
 
     private function renderErrors($violations, $pRepo, $fRepo, $plante_edit, Request $request): Response

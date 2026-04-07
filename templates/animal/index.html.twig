@@ -13,7 +13,6 @@
         </div>
 
         <div style="display: flex; align-items: center; gap: 15px;">
-            {# BARRE DE RECHERCHE DYNAMIQUE #}
             <form action="{{ path('app_animal_index') }}" method="GET" style="display: flex; align-items: center; background: white; padding: 5px 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
                 <input type="text" name="search" value="{{ searchTerm }}" placeholder="Espèce ou santé..." 
                        style="border: none; outline: none; padding: 8px; width: 180px; font-size: 0.9rem;">
@@ -25,9 +24,12 @@
                 {% endif %}
             </form>
 
-            <a href="{{ path('app_animal_pdf') }}" target="_blank" style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
-                <i class="fa-solid fa-file-pdf"></i> PDF
-            </a>
+{# BOUTON PDF CORRIGÉ #}
+<a href="{{ path('app_animal_pdf') }}" 
+   target="_blank" 
+   style="background-color: #dc2626; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
+    <i class="fa-solid fa-file-pdf"></i> Générer PDF
+</a>
             
             <a href="{{ path('app_exploitation_menu') }}" style="text-decoration: none; color: #2d7a36; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f0fdf4; border-radius: 10px;">
                 <i class="fa-solid fa-arrow-left"></i> Retour menu
@@ -75,82 +77,59 @@
                     <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: white;">
                         <option value="">Choisir une ferme...</option>
                         {% for ferme in fermes %}
-                            <option value="{{ ferme.idFerme }}" {{ animal_edit and animal_edit.idFerme == ferme.idFerme ? 'selected' : '' }}>
+                            {# CORRECTION ICI : On compare l'ID de la ferme de l'animal via l'objet relation #}
+                            <option value="{{ ferme.idFerme }}" {{ animal_edit and animal_edit.ferme and animal_edit.ferme.idFerme == ferme.idFerme ? 'selected' : '' }}>
                                 {{ ferme.nomFerme }}
                             </option>
                         {% endfor %}
                     </select>
                 </div>
 
-                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer;">
                     {{ animal_edit ? 'Mettre à jour' : 'Enregistrer l\'animal' }}
                 </button>
-                
-                {% if animal_edit %}
-                    <a href="{{ path('app_animal_index') }}" style="display: block; text-align: center; margin-top: 15px; color: #64748b; text-decoration: none; font-size: 0.9rem;">Annuler la modification</a>
-                {% endif %}
             </form>
         </div>
 
-        {# TABLEAU AVEC TRI #}
+        {# TABLEAU #}
         <div style="flex: 1;">
             <div style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                 <table style="width: 100%; border-collapse: collapse; text-align: left;">
                     <thead>
                         <tr style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0;">
-                            <th style="padding: 15px;">
-                                <a href="{{ path('app_animal_index', {sort: 'espece', direction: (currentSort == 'espece' and currentDirection == 'ASC') ? 'DESC' : 'ASC', search: searchTerm}) }}" style="text-decoration: none; color: #475569; display: flex; align-items: center; gap: 5px;">
-                                    Espèce <i class="fa-solid fa-sort" style="font-size: 0.8rem;"></i>
-                                </a>
-                            </th>
-                            <th style="padding: 15px;">
-                                <a href="{{ path('app_animal_index', {sort: 'etat_sante', direction: (currentSort == 'etat_sante' and currentDirection == 'ASC') ? 'DESC' : 'ASC', search: searchTerm}) }}" style="text-decoration: none; color: #475569; display: flex; align-items: center; gap: 5px;">
-                                    Santé <i class="fa-solid fa-sort" style="font-size: 0.8rem;"></i>
-                                </a>
-                            </th>
-                            <th style="padding: 15px; color: #475569;">Naissance</th>
-                            <th style="padding: 15px; color: #475569;">Ferme</th>
-                            <th style="padding: 15px; text-align: center; color: #475569;">Actions</th>
+                            <th style="padding: 15px;">Espèce</th>
+                            <th style="padding: 15px;">Santé</th>
+                            <th style="padding: 15px;">Naissance</th>
+                            <th style="padding: 15px;">Ferme</th>
+                            <th style="padding: 15px; text-align: center;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for animal in animals %}
-                            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
                                 <td style="padding: 15px; font-weight: 600; color: #1e293b;">{{ animal.espece }}</td>
                                 <td style="padding: 15px;">
-                                    <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #bbf7d0; text-transform: uppercase;">
+                                    <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
                                         {{ animal.etatSante }}
                                     </span>
                                 </td>
-                                <td style="padding: 15px; color: #64748b;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}</td>
+                                <td style="padding: 15px;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}</td>
+                                
                                 <td style="padding: 15px;">
-                                    {% set ferme_nom = 'Non affecté' %}
-                                    {% for f in fermes %}
-                                        {% if f.idFerme == animal.idFerme %}{% set ferme_nom = f.nomFerme %}{% endif %}
-                                    {% endfor %}
-                                    <span style="color: #2d7a36; font-weight: 700;">{{ ferme_nom }}</span>
+                                    {# CORRECTION MAJEURE ICI : Accès direct via l'objet Ferme #}
+                                    <span style="color: #2d7a36; font-weight: 700;">
+                                        {{ animal.ferme ? animal.ferme.nomFerme : 'Non affecté' }}
+                                    </span>
                                 </td>
+
                                 <td style="padding: 15px; display: flex; gap: 10px; justify-content: center;">
-                                    <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal, 'search': searchTerm, 'sort': currentSort, 'direction': currentDirection}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid #bbf7d0;">
+                                    <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal}) }}" style="color: #2d7a36;">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer cet animal ?');">
+                                    <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer ?');">
                                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ animal.idAnimal) }}">
-                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
+                                        <button style="color: #dc2626; border: none; background: none; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
                                     </form>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5" style="padding: 50px; text-align: center; color: #94a3b8;">
-                                    <i class="fa-solid fa-cow" style="font-size: 2.5rem; display: block; margin-bottom: 15px; opacity: 0.3;"></i>
-                                    {% if searchTerm %}
-                                        Aucun animal ne correspond à "{{ searchTerm }}".
-                                    {% else %}
-                                        Votre cheptel est vide. Commencez par ajouter un animal.
-                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
