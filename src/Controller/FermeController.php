@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ferme;
+use App\Form\FermeType;
 use App\Repository\FermeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,47 +18,47 @@ use Dompdf\Options;
 class FermeController extends AbstractController
 {
     /**
-     * Affichage de la liste avec recherche et tri
+     * PAGE PRINCIPALE : Affiche la liste ET gère l'ajout (POST)
      */
-    #[Route('/', name: 'app_ferme_index', methods: ['GET'])]
-    public function index(Request $request, FermeRepository $repo): Response
+    #[Route('/', name: 'app_ferme_index', methods: ['GET', 'POST'])]
+    public function index(FermeRepository $fermeRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
-        $search = $request->query->get('search');
-        $sort = $request->query->get('sort', 'nom_ferme'); 
+        $search = $request->query->get('search', '');
+        $sort = $request->query->get('sort', 'idFerme');
         $direction = $request->query->get('direction', 'ASC');
 
-        $fermes = $repo->findBySearchAndSort($search, $sort, $direction);
+        // --- PARTIE AJOUT (POST) ---
+        if ($request->isMethod('POST')) {
+            $ferme = new Ferme();
+            $this->mapData($ferme, $request); // Utilise la fonction de mapping existante
+            
+            // Validation
+            $violations = $validator->validate($ferme);
+            if (count($violations) > 0) {
+                return $this->renderWithErrors($violations, $fermeRepository, null, $request);
+            }
+
+            $em->persist($ferme);
+            $em->flush();
+
+            $this->addFlash('success', 'Ferme ajoutée avec succès !');
+            return $this->redirectToRoute('app_ferme_index');
+        }
+
+        // --- PARTIE AFFICHAGE (GET) ---
+        // Utilisation de findBySearchAndSort si elle existe dans ton repo, sinon findAll()
+        $fermes = method_exists($fermeRepository, 'findBySearchAndSort') 
+            ? $fermeRepository->findBySearchAndSort($search, $sort, $direction)
+            : $fermeRepository->findAll();
 
         return $this->render('ferme/index.html.twig', [
             'fermes' => $fermes,
-            'ferme_edit' => null,
-            'errors' => [],
             'searchTerm' => $search,
             'currentSort' => $sort,
-            'currentDirection' => $direction
+            'currentDirection' => $direction,
+            'errors' => [],
+            'ferme_edit' => null // Mode ajout par défaut
         ]);
-    }
-
-    /**
-     * Création d'une nouvelle ferme
-     */
-    #[Route('/new', name: 'app_ferme_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
-    {
-        $ferme = new Ferme();
-        $this->mapData($ferme, $request);
-        
-        $violations = $validator->validate($ferme);
-
-        if (count($violations) > 0) {
-            return $this->renderWithErrors($violations, $repo, null, $request);
-        }
-
-        $em->persist($ferme);
-        $em->flush();
-
-        $this->addFlash('success', 'La ferme a été ajoutée avec succès.');
-        return $this->redirectToRoute('app_ferme_index');
     }
 
     /**
@@ -87,18 +88,17 @@ class FermeController extends AbstractController
     }
 
     /**
-     * Chargement d'une ferme dans le formulaire de modification
+     * Mode édition : recharge la page index avec les données de la ferme choisie
      */
     #[Route('/{id_ferme}/edit', name: 'app_ferme_edit', methods: ['GET'])]
     public function edit(Ferme $ferme, Request $request, FermeRepository $repo): Response
     {
-        // On récupère les filtres actuels pour ne pas les perdre
-        $search = $request->query->get('search');
-        $sort = $request->query->get('sort', 'nom_ferme');
+        $search = $request->query->get('search', '');
+        $sort = $request->query->get('sort', 'idFerme');
         $direction = $request->query->get('direction', 'ASC');
 
         return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findBySearchAndSort($search, $sort, $direction),
+            'fermes' => $repo->findAll(), // Ou findBySearchAndSort
             'ferme_edit' => $ferme,
             'errors' => [],
             'searchTerm' => $search,
@@ -108,7 +108,7 @@ class FermeController extends AbstractController
     }
 
     /**
-     * Mise à jour des données en base
+     * Mise à jour effective en base
      */
     #[Route('/{id_ferme}/update', name: 'app_ferme_update', methods: ['POST'])]
     public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
@@ -142,19 +142,30 @@ class FermeController extends AbstractController
     }
 
     /**
-     * Mapping manuel des données du formulaire vers l'entité
+     * Mapping manuel des données (Évite d'utiliser FermeType pour rester sur l'index)
      */
     private function mapData(Ferme $ferme, Request $request): void
     {
         $ferme->setNomFerme($request->request->get('nom_ferme'));
         $ferme->setLieu($request->request->get('lieu'));
-        // Conversion sécurisée en float pour la surface
+        
         $surface = $request->request->get('surface');
         $ferme->setSurface($surface !== null ? (float)$surface : 0.0);
+
+        $lat = $request->request->get('latitude');
+        $lng = $request->request->get('longitude');
+
+        $ferme->setLatitude($lat !== null && $lat !== '' ? (float)$lat : null);
+        $ferme->setLongitude($lng !== null && $lng !== '' ? (float)$lng : null);
+        
+        // On lie l'utilisateur connecté
+        if ($this->getUser()) {
+            $ferme->setUser($this->getUser());
+        }
     }
 
     /**
-     * Centralisation de l'affichage en cas d'erreurs de validation
+     * Centralisation de l'affichage en cas d'erreurs
      */
     private function renderWithErrors($violations, FermeRepository $repo, ?Ferme $ferme_edit, Request $request): Response
     {
@@ -163,17 +174,13 @@ class FermeController extends AbstractController
             $errors[$v->getPropertyPath()] = $v->getMessage(); 
         }
 
-        $search = $request->query->get('search');
-        $sort = $request->query->get('sort', 'nom_ferme');
-        $direction = $request->query->get('direction', 'ASC');
-
         return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findBySearchAndSort($search, $sort, $direction),
+            'fermes' => $repo->findAll(),
             'ferme_edit' => $ferme_edit,
             'errors' => $errors,
-            'searchTerm' => $search,
-            'currentSort' => $sort,
-            'currentDirection' => $direction
+            'searchTerm' => $request->query->get('search'),
+            'currentSort' => $request->query->get('sort', 'idFerme'),
+            'currentDirection' => $request->query->get('direction', 'ASC')
         ]);
     }
 }

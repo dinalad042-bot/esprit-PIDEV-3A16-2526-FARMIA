@@ -68,9 +68,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
+    // --- RELATION AVEC LES FERMES ---
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class)]
+    private Collection $fermes;
+
     public function __construct()
     {
         $this->userLogs = new ArrayCollection();
+        $this->fermes = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -83,7 +88,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $dbRole = $this->role;
-        // The DB stores 'ADMIN', 'EXPERT', etc. — prefix with ROLE_ for Symfony
         if ($dbRole && !str_starts_with($dbRole, 'ROLE_')) {
             $dbRole = 'ROLE_' . $dbRole;
         }
@@ -97,123 +101,68 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     // ─── Getters / Setters ───────────────────────────────────────────────────
 
-    public function getId(): ?int
+    public function getId(): ?int { return $this->id; }
+
+    public function getNom(): ?string { return $this->nom; }
+    public function setNom(?string $nom): static { $this->nom = $nom; return $this; }
+
+    public function getPrenom(): ?string { return $this->prenom; }
+    public function setPrenom(?string $prenom): static { $this->prenom = $prenom; return $this; }
+
+    public function getEmail(): ?string { return $this->email; }
+    public function setEmail(string $email): static { $this->email = $email; return $this; }
+
+    public function getPassword(): ?string { return $this->password; }
+    public function setPassword(string $password): static { $this->password = $password; return $this; }
+
+    public function getCin(): ?string { return $this->cin; }
+    public function setCin(?string $cin): static { $this->cin = $cin; return $this; }
+
+    public function getRole(): ?string { return $this->role; }
+    public function setRole(?string $role): static { $this->role = $role; return $this; }
+
+    public function getTelephone(): ?string { return $this->telephone; }
+    public function setTelephone(?string $telephone): static { $this->telephone = $telephone; return $this; }
+
+    public function getAdresse(): ?string { return $this->adresse; }
+    public function setAdresse(?string $adresse): static { $this->adresse = $adresse; return $this; }
+
+    public function getImageUrl(): ?string { return $this->imageUrl; }
+    public function setImageUrl(?string $imageUrl): static { $this->imageUrl = $imageUrl; return $this; }
+
+    public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
+    public function setCreatedAt(?\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
+
+    public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
+
+    public function getUserLogs(): Collection { return $this->userLogs; }
+
+    /**
+     * @return Collection<int, Ferme>
+     */
+    public function getFermes(): Collection
     {
-        return $this->id;
+        return $this->fermes;
     }
 
-    public function getNom(): ?string
+    public function addFerme(Ferme $ferme): static
     {
-        return $this->nom;
-    }
-    public function setNom(?string $nom): static
-    {
-        $this->nom = $nom;
+        if (!$this->fermes->contains($ferme)) {
+            $this->fermes->add($ferme);
+            $ferme->setUser($this);
+        }
         return $this;
     }
 
-    public function getPrenom(): ?string
+    public function removeFerme(Ferme $ferme): static
     {
-        return $this->prenom;
-    }
-    public function setPrenom(?string $prenom): static
-    {
-        $this->prenom = $prenom;
+        if ($this->fermes->removeElement($ferme)) {
+            // set the owning side to null (unless already changed)
+            if ($ferme->getUser() === $this) {
+                $ferme->setUser(null);
+            }
+        }
         return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
-        return $this;
-    }
-
-    public function getCin(): ?string
-    {
-        return $this->cin;
-    }
-    public function setCin(?string $cin): static
-    {
-        $this->cin = $cin;
-        return $this;
-    }
-
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-    public function setRole(?string $role): static
-    {
-        $this->role = $role;
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-    public function setTelephone(?string $telephone): static
-    {
-        $this->telephone = $telephone;
-        return $this;
-    }
-
-    public function getAdresse(): ?string
-    {
-        return $this->adresse;
-    }
-    public function setAdresse(?string $adresse): static
-    {
-        $this->adresse = $adresse;
-        return $this;
-    }
-
-    public function getImageUrl(): ?string
-    {
-        return $this->imageUrl;
-    }
-    public function setImageUrl(?string $imageUrl): static
-    {
-        $this->imageUrl = $imageUrl;
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-    public function setCreatedAt(?\DateTimeInterface $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
-
-    public function getUserLogs(): Collection
-    {
-        return $this->userLogs;
     }
 }
