@@ -20,8 +20,12 @@
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .farm-popup h4 { color: #22c55e; margin: 0 0 8px 0; font-weight: 700; }
+        .farm-popup { min-width: 220px; }
+        .farm-popup h4 { color: #22c55e; margin: 0 0 8px 0; font-weight: 700; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
         .farm-popup p { margin: 4px 0; font-size: 0.9rem; color: #475569; }
+        .section-title { font-weight: 700; font-size: 0.85rem; margin-top: 10px; display: block; color: #1e293b; }
+        .resource-list { list-style: none; padding: 0; margin: 5px 0; font-size: 0.85rem; }
+        .resource-list li { padding: 2px 0; border-bottom: 1px dashed #f1f5f9; }
         .fa-solid { margin-right: 5px; color: #64748b; }
     </style>
 {% endblock %}
@@ -37,7 +41,7 @@
                 Exploitation de {{ user.prenom }} {{ user.nom }}
             </h2>
             <p style="margin: 5px 0 0 0; color: #64748b;">
-                {{ fermes|length }} parcelles enregistrées sur le territoire tunisien.
+                {{ fermes|length }} parcelles enregistrées sur le territoire.
             </p>
         </div>
         <a href="{{ path('admin_users_index') }}" class="btn" 
@@ -57,32 +61,55 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Initialisation sur la Tunisie
+            // Initialisation centrée sur la Tunisie par défaut
             var map = L.map('map').setView([35.67, 10.10], 7);
 
-            // 2. Calque OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 19
             }).addTo(map);
 
-            // 3. Icône personnalisée
             var farmIcon = L.icon({
-                iconUrl: 'https://cdn-icons-png.flaticon.com/512/2751/2751714.png',
-                iconSize: [40, 40],
-                iconAnchor: [20, 40],
-                popupAnchor: [0, -40]
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
             });
 
             var markersPositions = [];
 
-            {# Boucle Twig sur les fermes #}
             {% if fermes is defined and fermes is not empty %}
                 {% for ferme in fermes %}
                     {% if ferme.latitude and ferme.longitude %}
                         
                         var lat = {{ ferme.latitude|number_format(6, '.', '') }};
                         var lng = {{ ferme.longitude|number_format(6, '.', '') }};
+
+                        // 1. Préparation HTML des plantes
+                        var plantesList = "";
+                        {% if ferme.plantes is defined and ferme.plantes|length > 0 %}
+                            plantesList = '<ul class="resource-list">';
+                            {% for plante in ferme.plantes %}
+                                plantesList += '<li>🌿 {{ plante.nomPlante|escape("js") }}</li>';
+                            {% endfor %}
+                            plantesList += '</ul>';
+                        {% else %}
+                            plantesList = '<p style="font-size:0.8rem; font-style:italic; color:#94a3b8;">Aucune plante</p>';
+                        {% endif %}
+
+                        // 2. Préparation HTML des animaux
+                        var animalsList = "";
+                        {% if ferme.animals is defined and ferme.animals|length > 0 %}
+                            animalsList = '<ul class="resource-list">';
+                            {% for animal in ferme.animals %}
+                                animalsList += '<li>🐄 {{ animal.espece|escape("js") }} ({{ animal.etatSante|escape("js") }})</li>';
+                            {% endfor %}
+                            animalsList += '</ul>';
+                        {% else %}
+                            animalsList = '<p style="font-size:0.8rem; font-style:italic; color:#94a3b8;">Aucun animal</p>';
+                        {% endif %}
 
                         var marker = L.marker([lat, lng], {icon: farmIcon}).addTo(map);
                         
@@ -91,8 +118,15 @@
                                 <h4>{{ ferme.nomFerme|escape('js') }}</h4>
                                 <p><i class="fa-solid fa-location-dot"></i> <b>Lieu :</b> {{ ferme.lieu|escape('js') }}</p>
                                 <p><i class="fa-solid fa-expand"></i> <b>Surface :</b> {{ ferme.surface }} ha</p>
-                                <hr style="margin: 8px 0; border: 0; border-top: 1px solid #eee;">
-                                <p style="font-size: 0.75rem; color: #94a3b8;">GPS: ${lat}, ${lng}</p>
+                                
+                                <span class="section-title">🌿 Cultures :</span>
+                                ${plantesList}
+
+                                <span class="section-title">🐄 Cheptel :</span>
+                                ${animalsList}
+
+                                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+                                <p style="font-size: 0.7rem; color: #94a3b8; text-align:center;">Coordonnées: ${lat}, ${lng}</p>
                             </div>
                         `;
                         
@@ -101,17 +135,17 @@
                     {% endif %}
                 {% endfor %}
 
-                // 4. Ajustement automatique du zoom pour voir tous les marqueurs
+                // Ajustement automatique du zoom pour voir tous les marqueurs
                 if (markersPositions.length > 0) {
                     var bounds = new L.LatLngBounds(markersPositions);
                     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
                 }
             {% endif %}
 
-            // 5. Correction bug d'affichage (invalidateSize force le rendu des tuiles)
+            // Correctif pour s'assurer que la carte se charge bien dans les conteneurs dynamiques
             setTimeout(function() {
                 map.invalidateSize();
-            }, 300);
+            }, 400);
         });
     </script>
 {% endblock %}
