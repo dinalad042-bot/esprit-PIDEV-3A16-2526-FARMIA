@@ -12,7 +12,11 @@
         <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
             Analyse <span style="color:#2ecc71;">#{{ analyse.id }}</span>
         </h2>
-        <a href="{{ path('admin_analyse_edit', {id: analyse.id}) }}" class="action-btn-edit" style="margin-left:auto;">
+        <a href="{{ path('admin_analyse_ai_diagnostic', {id: analyse.id}) }}"
+           style="background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px; margin-left:auto;">
+            <i class="fa-solid fa-robot"></i> Diagnostic IA
+        </a>
+        <a href="{{ path('admin_analyse_edit', {id: analyse.id}) }}" class="action-btn-edit">
             <i class="fa-solid fa-pen"></i> Modifier
         </a>
     </div>

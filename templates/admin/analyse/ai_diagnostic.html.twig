@@ -1,0 +1,187 @@
+{% extends 'layouts/admin.html.twig' %}
+{% block title %}Diagnostic IA — Analyse #{{ analyse.id }}{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:900px;">
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    {# Header #}
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+        <a href="{{ path('admin_analyse_show', {id: analyse.id}) }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div>
+            <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
+                🤖 Diagnostic IA
+            </h2>
+            <p style="color:#888; margin:0; font-size:0.85rem;">
+                Analyse <span style="color:#2ecc71;">#{{ analyse.id }}</span>
+                {% if analyse.ferme %} — {{ analyse.ferme.nomFerme }}{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+
+        {# Left — Input Form #}
+        <div>
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem; margin-bottom:1rem;">
+                <h3 style="font-size:0.9rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1a1a2e; margin:0 0 1rem;">
+                    <i class="fa-solid fa-pen" style="color:#2ecc71;"></i>
+                    Mode Texte
+                </h3>
+                <form method="POST">
+                    <input type="hidden" name="mode" value="text">
+                    <div class="form-group" style="margin-bottom:1rem;">
+                        <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem; color:#444;">
+                            Décrivez vos observations
+                        </label>
+                        <textarea
+                            name="observation"
+                            class="form-control"
+                            rows="6"
+                            placeholder="Ex: Les feuilles de tomates présentent des taches jaunes sur les bords. La plante semble flétrir malgré un arrosage régulier..."
+                            style="resize:vertical;"
+                        >{{ observation }}</textarea>
+                        <small style="color:#888;">Minimum 10 caractères</small>
+                    </div>
+                    <button type="submit" class="btn btn-dark" style="width:100%;">
+                        <i class="fa-solid fa-robot"></i> Analyser avec IA
+                    </button>
+                </form>
+            </div>
+
+            {# Vision Mode — only if image exists #}
+            {% if analyse.imageUrl %}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem;">
+                <h3 style="font-size:0.9rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1a1a2e; margin:0 0 1rem;">
+                    <i class="fa-solid fa-eye" style="color:#3498db;"></i>
+                    Mode Vision (Image)
+                </h3>
+                <img src="{{ analyse.imageUrl }}" alt="Image à analyser"
+                     style="width:100%; border-radius:8px; margin-bottom:1rem; max-height:180px; object-fit:cover;"
+                     onerror="this.style.display='none'">
+                <form method="POST">
+                    <input type="hidden" name="mode" value="vision">
+                    <input type="hidden" name="observation" value="vision_mode">
+                    <button type="submit" class="btn btn-dark" style="width:100%; background:#3498db;">
+                        <i class="fa-solid fa-microscope"></i> Analyser l'image avec IA
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div style="background:#f9f9f9; border-radius:12px; padding:1.5rem; text-align:center; color:#aaa; border:2px dashed #ddd;">
+                <i class="fa-solid fa-image" style="font-size:2rem; margin-bottom:0.5rem; display:block;"></i>
+                <p style="font-size:0.85rem; margin:0;">
+                    Ajoutez une image URL à cette analyse<br>pour utiliser le mode vision IA.
+                </p>
+                <a href="{{ path('admin_analyse_edit', {id: analyse.id}) }}"
+                   style="color:#2ecc71; font-size:0.82rem; text-decoration:none;">
+                    Ajouter une image →
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        {# Right — Results #}
+        <div>
+            {% if result %}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem;">
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                    <h3 style="font-size:0.9rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1a1a2e; margin:0;">
+                        <i class="fa-solid fa-circle-check" style="color:#2ecc71;"></i>
+                        Résultat du Diagnostic
+                    </h3>
+                    <span style="{{ result.confidenceBadgeStyle() }}; font-size:0.78rem;">
+                        {{ result.confidence }}
+                    </span>
+                </div>
+
+                {# Condition #}
+                <div style="background:#f0fdf4; border-radius:8px; padding:1rem; margin-bottom:1rem; border-left:4px solid #2ecc71;">
+                    <div style="font-size:0.78rem; color:#888; text-transform:uppercase; letter-spacing:1px;">Condition détectée</div>
+                    <div style="font-size:1.1rem; font-weight:700; color:#1a1a2e; margin-top:0.25rem;">
+                        {{ result.condition }}
+                    </div>
+                </div>
+
+                {# Urgency + Expert Badge #}
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                    <span style="background:#fff3cd; color:#856404; padding:4px 12px; border-radius:12px; font-size:0.8rem;">
+                        ⏰ {{ result.urgency }}
+                    </span>
+                    {% if result.needsExpert %}
+                    <span style="background:#f8d7da; color:#842029; padding:4px 12px; border-radius:12px; font-size:0.8rem;">
+                        ⚠️ Consultation expert requise
+                    </span>
+                    {% endif %}
+                </div>
+
+                {# Details #}
+                {% for label, value, icon in [
+                    ['Symptômes', result.symptoms, 'fa-stethoscope'],
+                    ['Traitement', result.treatment, 'fa-prescription-bottle-medical'],
+                    ['Prévention', result.prevention, 'fa-shield']
+                ] %}
+                {% if value %}
+                <div style="margin-bottom:1rem;">
+                    <div style="font-size:0.8rem; font-weight:600; color:#444; margin-bottom:0.35rem;">
+                        <i class="fa-solid {{ icon }}" style="color:#2ecc71; margin-right:4px;"></i>
+                        {{ label }}
+                    </div>
+                    <div style="font-size:0.88rem; color:#555; line-height:1.6; background:#f9f9f9; padding:0.75rem; border-radius:6px;">
+                        {{ value }}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+                {# Save Button #}
+                <form method="POST" style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid #f0f0f0;">
+                    <input type="hidden" name="mode" value="{{ mode }}">
+                    <input type="hidden" name="observation" value="{{ observation }}">
+                    <input type="hidden" name="save_result" value="1">
+                    <button type="submit" class="btn btn-success" style="width:100%;">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Sauvegarder comme résultat technique
+                    </button>
+                </form>
+            </div>
+
+            {% else %}
+            {# Waiting state #}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:3rem; text-align:center; color:#aaa;">
+                <div style="font-size:4rem; margin-bottom:1rem;">🤖</div>
+                <p style="font-size:1rem; color:#888;">
+                    Décrivez vos observations<br>et lancez le diagnostic IA.
+                </p>
+                <div style="margin-top:1rem; font-size:0.8rem; color:#bbb;">
+                    Powered by Groq × Llama 4
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Existing result display #}
+    {% if analyse.resultatTechnique %}
+    <div style="margin-top:1.5rem; background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem;">
+        <h3 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1a1a2e; margin:0 0 1rem;">
+            <i class="fa-solid fa-history" style="color:#888;"></i>
+            Résultat Technique Actuel
+        </h3>
+        <div style="background:#f9f9f9; border-radius:8px; padding:1rem; font-size:0.88rem; line-height:1.7; white-space:pre-wrap; color:#444;">
+            {{ analyse.resultatTechnique }}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

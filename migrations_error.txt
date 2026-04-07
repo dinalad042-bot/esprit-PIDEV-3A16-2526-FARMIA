@@ -1,0 +1,3 @@
+[notice] Migrating up to DoctrineMigrations\Version20260407183249
+[info] ++ migrating DoctrineMigrations\Version20260401143157
+[debug] ALTER TABLE user_log DROP FOREIGN KEY user_log_ibfk_1 

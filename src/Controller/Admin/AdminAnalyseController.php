@@ -88,4 +88,60 @@ class AdminAnalyseController extends AbstractController
             'analyse' => $analyse,
         ]);
     }
+
+    // ─── AI Diagnostic ────────────────────────────────────────────────
+
+    #[Route('/{id}/ai-diagnostic', name: 'ai_diagnostic', methods: ['GET', 'POST'])]
+    public function aiDiagnostic(
+        Request $request,
+        Analyse $analyse,
+        \App\Service\GroqService $groq
+    ): Response {
+        $result      = null;
+        $observation = '';
+        $mode        = 'text'; // text or vision
+
+        if ($request->isMethod('POST')) {
+            $observation = trim($request->request->get('observation', ''));
+            $mode        = $request->request->get('mode', 'text');
+
+            if ($mode === 'vision' && $analyse->getImageUrl()) {
+                $result = $groq->generateVisionDiagnostic($analyse->getImageUrl());
+            } elseif (strlen($observation) >= 10) {
+                $result = $groq->generateTextDiagnostic($observation);
+            } else {
+                $this->addFlash('error', 'Veuillez saisir au moins 10 caractères.');
+            }
+
+            // If valid result → offer to save as resultat_technique
+            if ($result && $request->request->get('save_result')) {
+                $formatted = $this->formatResultForSaving($result);
+                $analyse->setResultatTechnique($formatted);
+                $this->em->flush();
+                $this->addFlash('success', 'Diagnostic IA sauvegardé dans l\'analyse.');
+                return $this->redirectToRoute('admin_analyse_show', ['id' => $analyse->getId()]);
+            }
+        }
+
+        return $this->render('admin/analyse/ai_diagnostic.html.twig', [
+            'analyse'     => $analyse,
+            'result'      => $result,
+            'observation' => $observation,
+            'mode'        => $mode,
+        ]);
+    }
+
+    private function formatResultForSaving(\App\DTO\DiagnosisResult $result): string
+    {
+        return implode("\n\n", array_filter([
+            "=== DIAGNOSTIC IA ===",
+            "Condition: " . $result->condition,
+            "Confiance: " . $result->confidence,
+            "Urgence: "   . $result->urgency,
+            $result->needsExpert ? "⚠️ Consultation expert requise" : "",
+            "\nSymptômes:\n" . $result->symptoms,
+            "\nTraitement:\n" . $result->treatment,
+            "\nPrévention:\n" . $result->prevention,
+        ]));
+    }
 }
