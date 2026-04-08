@@ -71,10 +71,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'technicien', targetEntity: Analyse::class)]
     private Collection $analyses;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class)]
+    private Collection $fermes;
+
     public function __construct()
     {
         $this->userLogs = new ArrayCollection();
         $this->analyses = new ArrayCollection();
+        $this->fermes   = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -219,5 +223,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserLogs(): Collection
     {
         return $this->userLogs;
+    }
+
+    public function getFermes(): Collection
+    {
+        return $this->fermes;
+    }
+
+    public function addFerme(Ferme $ferme): static
+    {
+        if (!$this->fermes->contains($ferme)) {
+            $this->fermes->add($ferme);
+            $ferme->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeFerme(Ferme $ferme): static
+    {
+        if ($this->fermes->removeElement($ferme)) {
+            if ($ferme->getUser() === $this) {
+                $ferme->setUser(null);
+            }
+        }
+        return $this;
     }
 }
