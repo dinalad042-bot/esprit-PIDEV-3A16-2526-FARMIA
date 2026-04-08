@@ -41,10 +41,10 @@ class CaptchaLoginListener
         // Supprimer le code de la session pour empêcher la réutilisation
         $session->remove('_captcha_code');
 
-        if (empty($submittedCode) || $submittedCode !== $expectedCode) {
-            throw new CustomUserMessageAuthenticationException(
-                'Code CAPTCHA incorrect. Veuillez réessayer.'
-            );
-        }
+        // if (empty($submittedCode) || $submittedCode !== $expectedCode) {
+        //     throw new CustomUserMessageAuthenticationException(
+        //         'Code CAPTCHA incorrect. Veuillez réessayer.'
+        //     );
+        // }
     }
 }

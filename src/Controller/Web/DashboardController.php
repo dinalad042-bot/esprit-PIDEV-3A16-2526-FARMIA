@@ -30,15 +30,7 @@ class DashboardController extends AbstractController
         ]);
     }
 
-
-    #[Route('/expert/dashboard', name: 'dashboard_expert')]
-    #[IsGranted('ROLE_EXPERT')]
-    public function expert(): Response
-    {
-        return $this->render('portal/expert/index.html.twig', [
-            'user' => $this->getUser()
-        ]);
-    }
+    // Expert dashboard route removed to resolve collision with App\Controller\DashboardController::expert
 
     #[Route('/agricole/dashboard', name: 'dashboard_agricole')]
     #[IsGranted('ROLE_AGRICOLE')]

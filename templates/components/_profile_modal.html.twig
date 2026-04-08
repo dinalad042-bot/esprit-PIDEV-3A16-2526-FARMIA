@@ -68,7 +68,7 @@
                                 <option value="FOURNISSEUR" {% if 'ROLE_FOURNISSEUR' in app.user.roles %}selected{% endif %}>FOURNISSEUR</option>
                             </select>
                         {% else %}
-                            <input type="text" class="profile-input readonly-input" value="{{ app.user ? app.user.role|default('User') : 'Guest' }}" disabled>
+                            <input type="text" class="profile-input readonly-input" value="{{ app.user ? (app.user.role is iterable ? app.user.role|join(', ') : app.user.role)|default('User') : 'Guest' }}" disabled>
                         {% endif %}
                     </div>
                 </div>

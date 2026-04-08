@@ -125,19 +125,18 @@
                     Conseils par Priorité
                 </h3>
                 {% set total = priorityCounts['HAUTE'] + priorityCounts['MOYENNE'] + priorityCounts['BASSE'] %}
-                {% set priorities = [
-                    {label: 'Haute', color: '#e74c3c', key: 'HAUTE'},
-                    {label: 'Moyenne', color: '#f39c12', key: 'MOYENNE'},
-                    {label: 'Basse', color: '#2ecc71', key: 'BASSE'}
+                {% for label, color, key in [
+                    ['Haute', '#e74c3c', 'HAUTE'],
+                    ['Moyenne', '#f39c12', 'MOYENNE'],
+                    ['Basse', '#2ecc71', 'BASSE']
                 ] %}
-                {% for p in priorities %}
                 <div style="margin-bottom:0.75rem;">
                     <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:4px;">
-                        <span style="color:#555;">{{ p.label }}</span>
-                        <span style="font-weight:600; color:{{ p.color }};">{{ priorityCounts[p.key] }}</span>
+                        <span style="color:#555;">{{ label }}</span>
+                        <span style="font-weight:600; color:{{ color }};">{{ priorityCounts[key] }}</span>
                     </div>
                     <div style="background:#f0f0f0; border-radius:999px; height:6px;">
-                        <div style="background:{{ p.color }}; height:6px; border-radius:999px; width:{% if total > 0 %}{{ ((priorityCounts[p.key]/total)*100)|round }}{% else %}0{% endif %}%;"></div>
+                        <div style="background:{{ color }}; height:6px; border-radius:999px; width:{% if total > 0 %}{{ ((priorityCounts[key]/total)*100)|round }}{% else %}0{% endif %}%;"></div>
                     </div>
                 </div>
                 {% endfor %}
