@@ -16,9 +16,9 @@ class CaptchaController extends AbstractController
         // Générer un nouveau texte CAPTCHA
         $text = $captchaService->generateText();
 
-        // Stocker en session (en minuscule pour faciliter la vérification)
+        // Stocker en session (en gardant la casse exacte)
         $session = $requestStack->getSession();
-        $session->set('_captcha_code', strtolower($text));
+        $session->set('_captcha_code', $text);
 
         // Générer l'image (PNG si GD, sinon SVG)
         $captchaData = $captchaService->generate($text);

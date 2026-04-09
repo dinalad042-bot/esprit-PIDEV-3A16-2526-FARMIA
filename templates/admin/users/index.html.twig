@@ -53,6 +53,13 @@
     .action-btn-edit:hover { background: #dbeafe; }
     .action-btn-delete { background: #fef2f2; color: #ef4444; }
     .action-btn-delete:hover { background: #fee2e2; }
+
+    /* Export buttons */
+    .btn-export { border-radius: 8px; font-weight: 600; padding: 9px 16px; transition: all 0.2s; border: 1px solid transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-export-pdf { background-color: #fef2f2; color: #ef4444; border-color: #fecaca; }
+    .btn-export-pdf:hover { background-color: #fee2e2; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15); }
+    .btn-export-excel { background-color: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+    .btn-export-excel:hover { background-color: #dcfce7; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.15); }
 </style>
 {% endblock %}
 
@@ -76,6 +83,12 @@
            style="border: 1px solid #e2e8f0; color: #475569; background: white; border-radius: 8px; font-weight: 600; padding: 9px 16px; text-decoration: none;">
             <i class="fa-solid fa-list-ul"></i> Audit
         </a>
+        <button onclick="exportData('pdf')" class="btn-export btn-export-pdf">
+            <i class="fa-solid fa-file-pdf"></i> Exporter PDF
+        </button>
+        <button onclick="exportData('excel')" class="btn-export btn-export-excel">
+            <i class="fa-solid fa-file-excel"></i> Exporter Excel
+        </button>
         <button onclick="openAdminUserModal()" class="btn"
                 style="background-color: var(--primary-green); color: white; border: none; border-radius: 8px; font-weight: 700; padding: 10px 20px; box-shadow: 0 4px 10px rgba(67, 160, 71, 0.25);">
             <i class="fa-solid fa-plus"></i> Ajouter Utilisateur
@@ -168,6 +181,30 @@
 {# ─── SweetAlert2 CDN ─────────────────────────────────────────────────────── #}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+// ── Export logic ─────────────────────────────────────────────────────────────
+function exportData(format) {
+    const search = document.getElementById('userSearch').value;
+    const role   = document.getElementById('roleFilter').value;
+    let url = '';
+    
+    if (format === 'pdf') {
+        url = '{{ path("admin_users_export_pdf") }}';
+    } else if (format === 'excel') {
+        url = '{{ path("admin_users_export_excel") }}';
+    }
+    
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (role) params.append('role', role);
+    
+    const queryStr = params.toString();
+    if (queryStr) {
+        url += '?' + queryStr;
+    }
+    
+    window.location.href = url;
+}
+
 // ── Filter logic ─────────────────────────────────────────────────────────────
 function filterUsers() {
     const search = document.getElementById('userSearch').value.toLowerCase();

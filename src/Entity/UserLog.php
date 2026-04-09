@@ -15,14 +15,14 @@ class UserLog
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'userLogs')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id_user', nullable: true)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id_user', nullable: true, onDelete: 'SET NULL')]
     private ?User $user = null;
 
     #[ORM\Column(name: 'action_type', type: 'string', length: 20, nullable: true)]
     private ?string $actionType = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'performed_by', referencedColumnName: 'id_user', nullable: true)]
+    #[ORM\JoinColumn(name: 'performed_by', referencedColumnName: 'id_user', nullable: true, onDelete: 'SET NULL')]
     private ?User $performedBy = null;
 
     #[ORM\Column(name: 'timestamp', type: 'datetime', nullable: true)]

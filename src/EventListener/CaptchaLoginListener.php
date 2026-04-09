@@ -36,14 +36,14 @@ class CaptchaLoginListener
 
         $session = $request->getSession();
         $expectedCode = $session->get('_captcha_code', '');
-        $submittedCode = strtolower(trim((string) $request->request->get('_captcha', '')));
+        $submittedCode = trim((string) $request->request->get('_captcha', ''));
 
         // Supprimer le code de la session pour empêcher la réutilisation
         $session->remove('_captcha_code');
 
         if (empty($submittedCode) || $submittedCode !== $expectedCode) {
             throw new CustomUserMessageAuthenticationException(
-                'Code CAPTCHA incorrect. Veuillez réessayer.'
+                'Code CAPTCHA incorrect. Veuillez respecter les majuscules et minuscules.'
             );
         }
     }
