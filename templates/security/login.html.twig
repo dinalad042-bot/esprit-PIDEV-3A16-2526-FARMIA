@@ -41,7 +41,20 @@
             </div>
         </div>
 
-        <button type="button" class="btn btn-face"><i class="fas fa-camera"></i> Se connecter avec le visage</button>
+        <button type="button" class="btn btn-face" id="btnFaceLogin"><i class="fas fa-camera"></i> Se connecter avec le visage</button>
+        
+        <div id="webcamContainer" style="display: none; margin-top: 15px; text-align: center;">
+            <div style="position: relative; width: 100%; max-width: 320px; margin: 0 auto; border-radius: 10px; overflow: hidden; border: 2px solid var(--accent-green); box-shadow: 0 0 15px rgba(46, 213, 115, 0.3);">
+                <video id="webcamVideo" autoplay playsinline style="width: 100%; height: auto; display: block;"></video>
+                <div id="faceScanOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(46, 213, 115, 0.2); display: none; align-items: center; justify-content: center; z-index: 10;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: white;"></i>
+                </div>
+            </div>
+            <button type="button" id="btnCaptureFace" class="btn btn-login" style="margin-top: 10px; padding: 10px;">Capturer et s'identifier</button>
+            <button type="button" id="btnCancelFace" class="btn btn-secondary" style="margin-top: 10px; padding: 10px; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2);">Annuler</button>
+            <canvas id="webcamCanvas" style="display: none;"></canvas>
+            <div id="faceError" class="alert alert-error" style="display: none; margin-top: 10px; font-size: 0.9rem;"></div>
+        </div>
         
         <div class="divider">OU</div>
 
@@ -80,6 +93,100 @@
             // Vider le champ de saisie
             var input = document.getElementById('captcha_input');
             if (input) input.value = '';
+        });
+    }
+
+    // --- FACE LOGIN LOGIC ---
+    var btnFaceLogin = document.getElementById('btnFaceLogin');
+    var webcamContainer = document.getElementById('webcamContainer');
+    var webcamVideo = document.getElementById('webcamVideo');
+    var webcamCanvas = document.getElementById('webcamCanvas');
+    var btnCaptureFace = document.getElementById('btnCaptureFace');
+    var btnCancelFace = document.getElementById('btnCancelFace');
+    var faceScanOverlay = document.getElementById('faceScanOverlay');
+    var faceError = document.getElementById('faceError');
+    var stream = null;
+
+    function stopWebcam() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+    }
+
+    if (btnFaceLogin) {
+        btnFaceLogin.addEventListener('click', async function() {
+            faceError.style.display = 'none';
+            btnFaceLogin.style.display = 'none';
+            // On peut cacher les autres champs si on veut, ou juste afficher la webcam
+            webcamContainer.style.display = 'block';
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                webcamVideo.srcObject = stream;
+            } catch (err) {
+                faceError.textContent = "Impossible d'accéder à la webcam : " + err.message;
+                faceError.style.display = 'block';
+                btnCaptureFace.disabled = true;
+            }
+        });
+    }
+
+    if (btnCancelFace) {
+        btnCancelFace.addEventListener('click', function() {
+            stopWebcam();
+            webcamContainer.style.display = 'none';
+            btnFaceLogin.style.display = 'block';
+            faceScanOverlay.style.display = 'none';
+        });
+    }
+
+    if (btnCaptureFace) {
+        btnCaptureFace.addEventListener('click', function() {
+            if (!stream) return;
+            
+            faceError.style.display = 'none';
+            faceScanOverlay.style.display = 'flex';
+            btnCaptureFace.disabled = true;
+
+            // Draw image on canvas
+            webcamCanvas.width = webcamVideo.videoWidth;
+            webcamCanvas.height = webcamVideo.videoHeight;
+            const ctx = webcamCanvas.getContext('2d');
+            ctx.drawImage(webcamVideo, 0, 0, webcamCanvas.width, webcamCanvas.height);
+            
+            // Get base64 representation
+            const base64Image = webcamCanvas.toDataURL('image/jpeg', 0.8);
+
+            // Send to server
+            fetch('{{ path("app_face_login") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ image: base64Image })
+            })
+            .then(response => response.json().then(data => ({status: response.status, body: data})))
+            .then(res => {
+                if (res.status === 200 && res.body.success) {
+                    // Success, redirect
+                    stopWebcam();
+                    window.location.href = res.body.redirect;
+                } else {
+                    // Failed
+                    faceError.textContent = res.body.error || "Visage non reconnu ou erreur serveur.";
+                    faceError.style.display = 'block';
+                    faceScanOverlay.style.display = 'none';
+                    btnCaptureFace.disabled = false;
+                }
+            })
+            .catch(err => {
+                faceError.textContent = "Erreur réseau: " + err.message;
+                faceError.style.display = 'block';
+                faceScanOverlay.style.display = 'none';
+                btnCaptureFace.disabled = false;
+            });
         });
     }
 })();

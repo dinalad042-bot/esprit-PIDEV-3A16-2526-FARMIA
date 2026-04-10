@@ -65,6 +65,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $faceDescriptor = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $faceAuthEnabled = false;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $faceRegisteredAt = null;
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
@@ -209,6 +218,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getFaceDescriptor(): ?string
+    {
+        return $this->faceDescriptor;
+    }
+    public function setFaceDescriptor(?string $faceDescriptor): static
+    {
+        $this->faceDescriptor = $faceDescriptor;
+        return $this;
+    }
+
+    public function isFaceAuthEnabled(): bool
+    {
+        return $this->faceAuthEnabled;
+    }
+    public function setFaceAuthEnabled(bool $faceAuthEnabled): static
+    {
+        $this->faceAuthEnabled = $faceAuthEnabled;
+        return $this;
+    }
+
+    public function getFaceRegisteredAt(): ?\DateTimeInterface
+    {
+        return $this->faceRegisteredAt;
+    }
+    public function setFaceRegisteredAt(?\DateTimeInterface $faceRegisteredAt): static
+    {
+        $this->faceRegisteredAt = $faceRegisteredAt;
         return $this;
     }
 

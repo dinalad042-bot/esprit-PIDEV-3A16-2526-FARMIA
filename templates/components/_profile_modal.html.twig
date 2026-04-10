@@ -23,6 +23,13 @@
                 
                 <!-- Right column: Forms -->
                 <div class="profile-form-section">
+                    
+                    <div style="margin-bottom: 20px; text-align: center;">
+                        <button type="button" class="btn btn-outline-green" style="width: 100%; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openFaceRegistrationModal(); closeProfileModal();">
+                            <i class="fas fa-camera"></i> Enregistrer mon visage (Login)
+                        </button>
+                    </div>
+
                     <div class="form-row">
                         <label>Nom:</label>
                         <input type="text" name="nom" class="profile-input" value="{{ app.user.nom }}">
@@ -115,3 +122,6 @@
         if(event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
     }
 </script>
+
+<!-- Inclusion de la modale d'enregistrement du visage -->
+{% include 'components/_face_registration_modal.html.twig' %}
