@@ -48,6 +48,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'L\'adresse est obligatoire.')]
     private ?string $adresse = null;
 
+    #[ORM\Column(name: 'latitude', type: 'float', nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(name: 'longitude', type: 'float', nullable: true)]
+    private ?float $longitude = null;
+
     #[ORM\Column(name: 'telephone', type: 'string', length: 8, nullable: true)]
     #[Assert\NotBlank(message: 'Le téléphone est obligatoire.')]
     #[Assert\Length(exactly: 8, exactMessage: 'Le téléphone doit contenir exactement 8 caractères.')]
@@ -192,6 +198,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAdresse(?string $adresse): static
     {
         $this->adresse = $adresse;
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+    public function setLatitude(?float $latitude): static
+    {
+        $this->latitude = $latitude;
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+    public function setLongitude(?float $longitude): static
+    {
+        $this->longitude = $longitude;
         return $this;
     }
 

@@ -59,6 +59,8 @@ class SecurityController extends AbstractController
                 'telephone' => $user->getTelephone(),
                 'cin'       => $user->getCin(),
                 'adresse'   => $user->getAdresse(),
+                'latitude'  => $user->getLatitude(),
+                'longitude' => $user->getLongitude(),
                 'role'      => $user->getRole(),
                 'verification_code' => $verificationCode,
                 'expires_at' => (new \DateTime('+15 minutes'))->format('Y-m-d H:i:s'),
