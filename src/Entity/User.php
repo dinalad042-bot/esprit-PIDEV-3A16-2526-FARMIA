@@ -65,6 +65,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\Column(name: 'reset_code', type: 'string', length: 6, nullable: true)]
+    private ?string $resetCode = null;
+
+    #[ORM\Column(name: 'reset_code_expires_at', type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $resetCodeExpiresAt = null;
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
@@ -216,6 +222,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getResetCode(): ?string
+    {
+        return $this->resetCode;
+    }
+    public function setResetCode(?string $resetCode): static
+    {
+        $this->resetCode = $resetCode;
+        return $this;
+    }
+
+    public function getResetCodeExpiresAt(): ?\DateTimeInterface
+    {
+        return $this->resetCodeExpiresAt;
+    }
+    public function setResetCodeExpiresAt(?\DateTimeInterface $resetCodeExpiresAt): static
+    {
+        $this->resetCodeExpiresAt = $resetCodeExpiresAt;
         return $this;
     }
 
