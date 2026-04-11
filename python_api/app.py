@@ -253,5 +253,64 @@ def recognize_face():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
+@app.route("/api/enroll/<string:user_id>", methods=["DELETE"])
+def delete_face(user_id: str):
+    """
+    Supprime toutes les images d'un utilisateur du dataset et ré-entraîne le modèle.
+    Appelé par Symfony quand l'utilisateur supprime son visage depuis son profil.
+    """
+    user_id = str(user_id).strip()
+    if not user_id:
+        return jsonify({"success": False, "message": "user_id manquant."}), 400
+
+    user_dir = DATASET_DIR / user_id
+
+    if not user_dir.exists():
+        return jsonify({"success": False, "message": "Aucune donnée trouvée pour cet utilisateur."}), 404
+
+    import shutil
+    try:
+        shutil.rmtree(str(user_dir))
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Erreur suppression: {str(e)}"}), 500
+
+    # Supprimer du mapping labels
+    label_to_user = load_labels()
+    # Reconstruit le mapping sans ce user_id
+    new_mapping = {k: v for k, v in label_to_user.items() if v != user_id}
+    save_labels(new_mapping)
+
+    # Ré-entraîner si d'autres utilisateurs existent encore
+    remaining_users = [d for d in DATASET_DIR.iterdir() if d.is_dir()]
+    if remaining_users:
+        train_model()
+    elif MODEL_PATH.exists():
+        MODEL_PATH.unlink()
+
+    return jsonify({"success": True, "message": f"Données de l'utilisateur {user_id} supprimées."})
+
+
+@app.route("/api/status/<string:user_id>", methods=["GET"])
+def user_status(user_id: str):
+    """
+    Vérifie si un utilisateur a des images enregistrées dans le dataset.
+    """
+    user_id = str(user_id).strip()
+    if not user_id:
+        return jsonify({"success": False, "message": "user_id manquant."}), 400
+
+    user_dir = DATASET_DIR / user_id
+    if not user_dir.exists():
+        return jsonify({"success": True, "has_face": False, "samples_count": 0})
+
+    samples = list(user_dir.glob("*.png"))
+    return jsonify({
+        "success": True,
+        "has_face": len(samples) > 0,
+        "samples_count": len(samples),
+        "dataset_path": str(user_dir)
+    })
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
