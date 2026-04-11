@@ -41,7 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(name: 'cin', type: 'string', length: 8, unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'Le CIN est obligatoire.')]
-    #[Assert\Length(exactly: 8, exactMessage: 'Le CIN doit contenir exactement 8 caractères.')]
+    #[Assert\Regex(pattern: '/^\d{8}$/', message: 'Le CIN doit contenir exactement 8 chiffres.')]
     private ?string $cin = null;
 
     #[ORM\Column(name: 'adresse', type: 'text', nullable: true)]
@@ -54,9 +54,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'longitude', type: 'float', nullable: true)]
     private ?float $longitude = null;
 
-    #[ORM\Column(name: 'telephone', type: 'string', length: 8, nullable: true)]
+    #[ORM\Column(name: 'telephone', type: 'string', length: 8, unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'Le téléphone est obligatoire.')]
-    #[Assert\Length(exactly: 8, exactMessage: 'Le téléphone doit contenir exactement 8 caractères.')]
+    #[Assert\Regex(pattern: '/^\d{8}$/', message: 'Le téléphone doit contenir exactement 8 chiffres.')]
     private ?string $telephone = null;
 
     #[ORM\Column(name: 'image_url', type: 'string', length: 255, nullable: true)]
@@ -147,7 +147,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function setEmail(string $email): static
     {
-        $this->email = $email;
+        $this->email = strtolower(trim($email));
         return $this;
     }
 
@@ -167,7 +167,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function setCin(?string $cin): static
     {
-        $this->cin = $cin;
+        $this->cin = $cin !== null ? str_replace(' ', '', trim($cin)) : null;
         return $this;
     }
 
@@ -187,7 +187,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function setTelephone(?string $telephone): static
     {
-        $this->telephone = $telephone;
+        $this->telephone = $telephone !== null ? str_replace(' ', '', trim($telephone)) : null;
         return $this;
     }
 

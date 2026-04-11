@@ -60,6 +60,86 @@
     .btn-export-pdf:hover { background-color: #fee2e2; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15); }
     .btn-export-excel { background-color: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
     .btn-export-excel:hover { background-color: #dcfce7; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.15); }
+
+    /* ── Modal Form Error Messages ─────────────────────────────────────── */
+    .modal-form-error {
+        color: #ef4444;
+        font-size: 0.8rem;
+        font-weight: 500;
+        min-height: 18px;           /* reserve space — fields don't jump */
+        line-height: 1.3;
+        margin-top: 3px;
+        margin-bottom: 2px;
+        word-break: break-word;     /* long emails won't overflow */
+        padding-left: 2px;
+    }
+    .modal-form-error ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .modal-form-error ul li::before {
+        content: '⚠ ';
+        font-size: 0.75rem;
+    }
+
+    /* ── Modal Avatar Preview ──────────────────────────────────────────── */
+    .profile-avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+        width: 130px;
+    }
+    .profile-avatar-preview {
+        width: 110px !important;
+        height: 110px !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        background: #f1f5f9;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 2px solid #e2e8f0;
+    }
+    #adminAvatarPreview {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        border-radius: 50%;
+        display: block;
+    }
+    #adminAvatarInitials {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 2rem;
+        text-transform: uppercase;
+        color: white;
+    }
+
+    /* ── Modal Form Column ─────────────────────────────────────────────── */
+    .profile-form-section {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+    }
+    .profile-modal-body .form-row {
+        margin-bottom: 2px;
+    }
+    .profile-modal-body .form-row label {
+        white-space: nowrap;
+    }
+    .profile-modal-body .form-row input,
+    .profile-modal-body .form-row select {
+        width: 100%;
+        box-sizing: border-box;
+    }
 </style>
 {% endblock %}
 
