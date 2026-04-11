@@ -65,21 +65,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $faceDescriptor = null;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $faceAuthEnabled = false;
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $faceRegisteredAt = null;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
+    /**
+     * Visages enregistrés pour cet utilisateur (données biométriques en BDD).
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $userFaces;
+
     public function __construct()
     {
-        $this->userLogs = new ArrayCollection();
+        $this->userLogs  = new ArrayCollection();
+        $this->userFaces = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -221,34 +219,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getFaceDescriptor(): ?string
+    /**
+     * Indique si l'utilisateur a un visage actif enregistré en base.
+     */
+    public function hasFaceAuth(): bool
     {
-        return $this->faceDescriptor;
-    }
-    public function setFaceDescriptor(?string $faceDescriptor): static
-    {
-        $this->faceDescriptor = $faceDescriptor;
-        return $this;
-    }
-
-    public function isFaceAuthEnabled(): bool
-    {
-        return $this->faceAuthEnabled;
-    }
-    public function setFaceAuthEnabled(bool $faceAuthEnabled): static
-    {
-        $this->faceAuthEnabled = $faceAuthEnabled;
-        return $this;
+        foreach ($this->userFaces as $face) {
+            if ($face->isActive()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public function getFaceRegisteredAt(): ?\DateTimeInterface
+    /**
+     * Retourne le visage actif de l'utilisateur, ou null.
+     */
+    public function getActiveFace(): ?\App\Entity\UserFace
     {
-        return $this->faceRegisteredAt;
+        foreach ($this->userFaces as $face) {
+            if ($face->isActive()) {
+                return $face;
+            }
+        }
+        return null;
     }
-    public function setFaceRegisteredAt(?\DateTimeInterface $faceRegisteredAt): static
+
+    public function getUserFaces(): Collection
     {
-        $this->faceRegisteredAt = $faceRegisteredAt;
-        return $this;
+        return $this->userFaces;
     }
 
     public function getUserLogs(): Collection

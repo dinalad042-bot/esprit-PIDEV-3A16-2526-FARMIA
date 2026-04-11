@@ -16,24 +16,20 @@ class UserAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom', TextType::class, ['attr' => ['class' => 'profile-input']])
-            ->add('prenom', TextType::class, ['attr' => ['class' => 'profile-input']])
-            ->add('email', EmailType::class, ['attr' => ['class' => 'profile-input']])
+            ->add('nom', TextType::class, ['required' => false, 'attr' => ['class' => 'profile-input']])
+            ->add('prenom', TextType::class, ['required' => false, 'attr' => ['class' => 'profile-input']])
+            ->add('email', EmailType::class, ['required' => false, 'attr' => ['class' => 'profile-input']])
             ->add('cin', TextType::class, [
-                'required' => true,
+                'required' => false,
                 'attr' => [
                     'class' => 'profile-input',
-                    'pattern' => '[0-9]{8}',
-                    'maxlength' => 8,
                     'inputmode' => 'numeric'
                 ]
             ])
             ->add('telephone', TextType::class, [
-                'required' => true,
+                'required' => false,
                 'attr' => [
                     'class' => 'profile-input',
-                    'pattern' => '[0-9]{8}',
-                    'maxlength' => 8,
                     'inputmode' => 'numeric'
                 ]
             ])

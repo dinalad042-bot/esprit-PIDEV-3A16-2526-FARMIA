@@ -22,3 +22,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\FaceEnrollmentService:
+        arguments:
+            $pythonApiUrl: '%env(string:PYTHON_API_URL)%'
+            $datasetBasePath: '%kernel.project_dir%/python_api/dataset'
+
+    App\Service\PythonFaceRecognitionService:
+        arguments:
+            $pythonApiUrl: '%env(string:PYTHON_API_URL)%'

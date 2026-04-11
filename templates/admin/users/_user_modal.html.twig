@@ -6,7 +6,7 @@
             <button type="button" class="close-modal-btn" onclick="closeAdminUserModal()">&times;</button>
         </div>
         
-        {{ form_start(form, {'action': path('admin_users_save'), 'attr': {'id': 'adminUserForm', 'enctype': 'multipart/form-data'}}) }}
+        {{ form_start(form, {'action': path('admin_users_save'), 'attr': {'id': 'adminUserForm', 'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
             <input type="hidden" name="id" id="modalUserId" value="{{ user_id|default('') }}">
             <div class="profile-modal-body">
                 <!-- Avatar Column -->
@@ -88,7 +88,7 @@
         document.getElementById('modalUserCin').value = cin;
         document.getElementById('modalUserTelephone').value = telephone;
         document.getElementById('modalUserAdresse').value = adresse;
-        document.getElementById('modalUserPassword').required = id ? false : true;
+        document.getElementById('modalUserPassword').value = ''; // Just reset the password field
         
         let roleSelect = document.getElementById('modalUserRole');
         for (let i = 0; i < roleSelect.options.length; i++) {
@@ -155,7 +155,6 @@
             // The form has errors, we need to re-open the modal
             document.getElementById('adminUserModalTitle').innerText = {{ is_edit ? '"Modifier Utilisateur"' : '"Ajouter Utilisateur"' }};
             document.getElementById('modalUserId').value = '{{ user_id|default('')|escape('js') }}';
-            document.getElementById('modalUserPassword').required = {{ is_edit ? 'false' : 'true' }};
 
             // Don't auto-fill via JS mapping to preserve the form's bad data and error messages !
             document.getElementById('adminUserModal').style.display = 'flex';
