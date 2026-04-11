@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'password', type: 'string', length: 255, nullable: false)]
     private ?string $password = null;
 
-    #[ORM\Column(name: 'cin', type: 'string', length: 20, unique: true, nullable: true)]
+    #[ORM\Column(name: 'cin', type: 'string', length: 8, unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'Le CIN est obligatoire.')]
     #[Assert\Length(exactly: 8, exactMessage: 'Le CIN doit contenir exactement 8 caractères.')]
     private ?string $cin = null;
@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'L\'adresse est obligatoire.')]
     private ?string $adresse = null;
 
-    #[ORM\Column(name: 'telephone', type: 'string', length: 20, nullable: true)]
+    #[ORM\Column(name: 'telephone', type: 'string', length: 8, nullable: true)]
     #[Assert\NotBlank(message: 'Le téléphone est obligatoire.')]
     #[Assert\Length(exactly: 8, exactMessage: 'Le téléphone doit contenir exactement 8 caractères.')]
     private ?string $telephone = null;
