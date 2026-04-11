@@ -6,86 +6,88 @@
             <button type="button" class="close-modal-btn" onclick="closeProfileModal()">&times;</button>
         </div>
         
-        <form id="profileUpdateForm" enctype="multipart/form-data">
+        <form id="profileUpdateForm" enctype="multipart/form-data" novalidate="novalidate">
             <div class="profile-modal-body">
                 <!-- Colonne Gauche : Avatar -->
                 <div class="profile-avatar-section">
-                    <div class="profile-avatar-preview" id="avatarPreviewContainer" style="overflow: hidden; border-radius: 50%;">
+                    <div class="profile-avatar-preview" id="avatarPreviewContainer">
                         <div id="currentAvatarWrapper" style="width: 100%; height: 100%;">
                             {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '2rem'} %}
                         </div>
                         <img src="#" id="avatarPreview" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                     </div>
-                    <label class="btn-outline-green btn-file-upload" style="cursor: pointer; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--primary-green); color: var(--primary-green);">
+                    <label class="btn-outline-green btn-file-upload" style="cursor: pointer; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--primary-green); color: var(--primary-green); white-space: nowrap; font-size: 0.85rem; margin-top: 8px;">
                         Choisir Photo <input type="file" name="photo" accept="image/*" style="display: none;" onchange="previewImage(event)">
                     </label>
-                </div>
-                
-                <!-- Right column: Forms -->
-                <div class="profile-form-section">
-                    
-                    <div style="margin-bottom: 20px; text-align: center; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 12px; border: 1px dashed #ddd;">
-                        <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Sécurité Biométrique</h4>
-                        
+                    {% if app.user.hasFaceAuth is defined %}
+                    <div style="margin-top: 12px; width: 100%; background: rgba(0,0,0,0.03); padding: 12px; border-radius: 10px; border: 1px dashed #ddd; text-align: center;">
+                        <h4 style="margin: 0 0 8px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Biométrie</h4>
                         {% if app.user.hasFaceAuth() %}
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--accent-green); font-weight: 600; font-size: 0.9rem; margin-bottom: 5px;">
-                                    <i class="fas fa-check-circle"></i> Visage enregistré
-                                </div>
-                                <button type="button" class="btn btn-outline-green" style="width: 100%; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openFaceRegistrationModal(); closeProfileModal();">
-                                    <i class="fas fa-sync-alt"></i> Mettre à jour le visage
-                                </button>
-                                <button type="button" class="btn" style="width: 100%; border: 1px solid #ef4444; color: #ef4444; background: transparent; padding: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="if(confirm('Voulez-vous vraiment supprimer votre empreinte faciale ?')) deleteFaceData();">
-                                    <i class="fas fa-trash-alt"></i> Supprimer l'empreinte
-                                </button>
-                            </div>
+                            <div style="color: var(--accent-green); font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;"><i class="fas fa-check-circle"></i> Visage enregistré</div>
+                            <button type="button" class="btn btn-outline-green" style="width: 100%; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 6px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="openFaceRegistrationModal(); closeProfileModal();">
+                                <i class="fas fa-sync-alt"></i> Mettre à jour
+                            </button>
+                            <button type="button" class="btn" style="width: 100%; margin-top: 4px; border: 1px solid #ef4444; color: #ef4444; background: transparent; padding: 6px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="if(confirm('Supprimer l\'empreinte faciale ?')) deleteFaceData();">
+                                <i class="fas fa-trash-alt"></i> Supprimer
+                            </button>
                         {% else %}
-                            <button type="button" class="btn btn-outline-green" style="width: 100%; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openFaceRegistrationModal(); closeProfileModal();">
-                                <i class="fas fa-camera"></i> Activer le Login Facial
+                            <button type="button" class="btn btn-outline-green" style="width: 100%; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 6px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="openFaceRegistrationModal(); closeProfileModal();">
+                                <i class="fas fa-camera"></i> Activer Login Facial
                             </button>
                         {% endif %}
                     </div>
-
-                    <div id="profileErrors" style="display: none; margin-bottom: 20px; background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; border-radius: 8px; padding: 15px; color: #b91c1c; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                        <div style="display: flex; align-items: flex-start; gap: 10px;">
-                            <i class="fas fa-exclamation-circle" style="font-size: 1.2rem; margin-top: 2px;"></i>
-                            <div id="profileErrorsList" style="flex: 1; font-size: 0.95rem; line-height: 1.5; font-weight: 500;"></div>
-                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Right column: Form fields -->
+                <div class="profile-form-section">
+                    
+                    {# Global error banner (only used for unknown errors) #}
+                    <div id="profileErrors" style="display: none; margin-bottom: 12px; background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; border-radius: 6px; padding: 10px 14px; color: #b91c1c; font-size: 0.88rem;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="profileErrorsList"></span>
                     </div>
 
                     <div class="form-row">
                         <label>Nom:</label>
-                        <input type="text" name="nom" class="profile-input" value="{{ app.user.nom }}">
+                        <input type="text" name="nom" id="pf-nom" class="profile-input" value="{{ app.user.nom }}">
+                        <div class="pf-field-error" id="err-nom"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Prénom:</label>
-                        <input type="text" name="prenom" class="profile-input" value="{{ app.user.prenom }}">
+                        <input type="text" name="prenom" id="pf-prenom" class="profile-input" value="{{ app.user.prenom }}">
+                        <div class="pf-field-error" id="err-prenom"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Email:</label>
-                        <input type="email" name="email" class="profile-input" value="{{ app.user.email }}">
+                        <input type="email" name="email" id="pf-email" class="profile-input" value="{{ app.user.email }}">
+                        <div class="pf-field-error" id="err-email"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>CIN:</label>
-                        <input type="text" name="cin" class="profile-input" value="{{ app.user.cin }}">
+                        <input type="text" name="cin" id="pf-cin" class="profile-input" value="{{ app.user.cin }}">
+                        <div class="pf-field-error" id="err-cin"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Téléphone:</label>
-                        <input type="text" name="telephone" class="profile-input" value="{{ app.user.telephone }}">
+                        <input type="text" name="telephone" id="pf-telephone" class="profile-input" value="{{ app.user.telephone }}">
+                        <div class="pf-field-error" id="err-telephone"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Adresse:</label>
-                        <input type="text" name="adresse" class="profile-input" value="{{ app.user.adresse }}">
+                        <input type="text" name="adresse" id="pf-adresse" class="profile-input" value="{{ app.user.adresse }}">
+                        <div class="pf-field-error" id="err-adresse"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Mot de passe:</label>
-                        <input type="password" name="password" class="profile-input" placeholder="Nouveau mot de passe...">
+                        <input type="password" name="password" id="pf-password" class="profile-input" placeholder="Nouveau mot de passe (min. 6 caract.)">
+                        <div class="pf-field-error" id="err-password"></div>
                     </div>
                     
                     <div class="form-row">
@@ -98,27 +100,98 @@
                                 <option value="FOURNISSEUR" {% if 'ROLE_FOURNISSEUR' in app.user.roles %}selected{% endif %}>FOURNISSEUR</option>
                             </select>
                         {% else %}
-                            <input type="text" class="profile-input readonly-input" value="{{ app.user.role|default('User') }}" disabled>
+                            <input type="text" class="profile-input" value="{{ app.user.role|default('User') }}" disabled style="opacity: 0.7; cursor: not-allowed;">
                         {% endif %}
                     </div>
                     
-                    <!-- Ligne checkbox des conditions -->
-                    <div class="form-row" style="margin-top: 15px;">
-                        <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-weight: normal; color: #64748b; line-height: 1.4;">
-                            <input type="checkbox" name="agreeTerms" id="agreeTerms" style="margin-top: 3px; min-width: 16px; min-height: 16px; cursor: pointer; accent-color: var(--primary-green);">
-                            <span style="font-size: 0.85rem;">J'accepte les conditions d'utilisation et la politique de confidentialité du service.</span>
-                        </label>
-                    </div>
+                    <div class="pf-field-error" id="err-photo" style="margin-top: 6px;"></div>
                 </div>
             </div>
             
             <div class="profile-modal-footer">
-                <button type="submit" class="btn btn-solid-blue">Enregistrer</button>
+                <button type="submit" class="btn btn-solid-blue" id="profileSubmitBtn">Enregistrer</button>
                 <button type="button" class="btn btn-outline-gray" onclick="closeProfileModal()">Annuler</button>
             </div>
         </form>
     </div>
 </div>
+
+<style>
+/* ── Profile Modal Responsive ─────────────────────────────────────── */
+#profileModal .profile-modal {
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#profileModal .profile-modal-body {
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+}
+#profileModal .profile-avatar-section {
+    flex-shrink: 0;
+    min-width: 130px;
+    max-width: 140px;
+}
+#profileModal .profile-avatar-preview {
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    flex-shrink: 0;
+    border: 2px solid #e2e8f0;
+}
+#profileModal #avatarPreview {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50%;
+    display: block;
+}
+#profileModal .profile-form-section {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+/* Per-field error messages */
+.pf-field-error {
+    color: #ef4444;
+    font-size: 0.78rem;
+    font-weight: 500;
+    min-height: 16px;
+    line-height: 1.3;
+    margin-top: 2px;
+    padding-left: 2px;
+    word-break: break-word;
+}
+.pf-field-error:empty {
+    min-height: 0;
+    margin: 0;
+}
+/* Input error state */
+.pf-input-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239,68,68,0.15) !important;
+}
+/* Responsive: stack on small screens */
+@media (max-width: 580px) {
+    #profileModal .profile-modal-body {
+        flex-direction: column;
+        align-items: center;
+    }
+    #profileModal .profile-avatar-section {
+        max-width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        gap: 16px;
+    }
+}
+</style>
 
 <script>
     function openProfileModal() {
@@ -129,111 +202,113 @@
         document.getElementById('profileModal').style.display = 'none';
     }
 
-    // Fermer quand on clique à l'extérieur
-    window.onclick = function(event) {
+    window.addEventListener('click', function(event) {
         var modal = document.getElementById('profileModal');
-        if (event.target == modal) {
-            closeProfileModal();
-        }
-    }
+        if (event.target === modal) closeProfileModal();
+    });
 
     function previewImage(event) {
+        var file = event.target.files[0];
+        if (!file) return;
         var reader = new FileReader();
-        reader.onload = function() {
-            var output = document.getElementById('avatarPreview');
+        reader.onload = function(e) {
+            var output  = document.getElementById('avatarPreview');
             var wrapper = document.getElementById('currentAvatarWrapper');
-            if(output) { 
-                output.src = reader.result; 
-                output.style.display = 'block';
-            }
-            if(wrapper) {
-                wrapper.style.display = 'none';
-            }
-        }
-        if(event.target.files[0]) { reader.readAsDataURL(event.target.files[0]); }
+            if (output)  { output.src = e.target.result; output.style.display = 'block'; }
+            if (wrapper) { wrapper.style.display = 'none'; }
+        };
+        reader.readAsDataURL(file);
     }
 
     function deleteFaceData() {
         fetch("{{ path('app_face_delete') }}", {
-            method: 'POST', // or DELETE if supported by your config
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                alert(data.error || "Erreur lors de la suppression.");
-            }
+            if (data.success) window.location.reload();
+            else alert(data.error || "Erreur lors de la suppression.");
         })
-        .catch(err => {
-            alert("Erreur réseau : " + err.message);
-        });
+        .catch(err => alert("Erreur réseau : " + err.message));
     }
 
+    // ── Form submit ─────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('profileUpdateForm');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const errorsContainer = document.getElementById('profileErrors');
-                errorsContainer.style.display = 'none';
-                errorsContainer.innerHTML = '';
-                
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalBtnText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
-                submitBtn.disabled = true;
+        if (!form) return;
 
-                const formData = new FormData(form);
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-                fetch("{{ path('app_profile_update') }}", {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'same-origin',
-                    body: formData
-                })
-                .then(response => {
-                    if (response.status === 401) {
-                        window.location.href = "{{ path('app_login') }}";
-                        return Promise.reject("Non authentifié");
-                    }
-                    return response.json().then(data => ({status: response.status, body: data}));
-                })
-                .then(res => {
-                    submitBtn.innerHTML = originalBtnText;
-                    submitBtn.disabled = false;
+            // Clear all errors
+            document.querySelectorAll('.pf-field-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.pf-input-error').forEach(el => el.classList.remove('pf-input-error'));
+            const globalErrors = document.getElementById('profileErrors');
+            globalErrors.style.display = 'none';
+            document.getElementById('profileErrorsList').textContent = '';
 
-                    if (res.status === 200 && res.body?.success) {
-                        window.location.reload();
-                    } else {
-                        if (res.body?.errors && res.body.errors.length > 0) {
-                            document.getElementById('profileErrorsList').innerHTML = '<ul style="margin:0; padding-left:20px;">' + res.body.errors.map(err => '<li style="margin-bottom: 4px;">' + err + '</li>').join('') + '</ul>';
-                        } else {
-                            document.getElementById('profileErrorsList').innerHTML = 'Une erreur inconnue est survenue.';
-                        }
-                        errorsContainer.style.display = 'block';
-                        
-                        // Scroll to errors container gently
-                        document.querySelector('.profile-modal-body').scrollTop = 0;
-                    }
-                })
-                .catch(err => {
-                    if (err === "Non authentifié") return;
-                    submitBtn.innerHTML = originalBtnText;
-                    submitBtn.disabled = false;
-                    document.getElementById('profileErrorsList').innerHTML = 'Erreur réseau de communication avec le serveur.';
-                    errorsContainer.style.display = 'block';
-                });
+            const submitBtn = document.getElementById('profileSubmitBtn');
+            const original  = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+            submitBtn.disabled  = true;
+
+            fetch("{{ path('app_profile_update') }}", {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin',
+                body: new FormData(form)
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = "{{ path('app_login') }}";
+                    return Promise.reject('logout');
+                }
+                return response.json().then(data => ({ status: response.status, body: data }));
+            })
+            .then(res => {
+                submitBtn.innerHTML = original;
+                submitBtn.disabled  = false;
+
+                if (res.status === 200 && res.body?.success) {
+                    window.location.reload();
+                    return;
+                }
+
+                const errs = res.body?.errors || {};
+                let hasFieldError = false;
+
+                // errors is now a key->message dict
+                if (typeof errs === 'object' && !Array.isArray(errs)) {
+                    Object.entries(errs).forEach(([field, msg]) => {
+                        const errDiv = document.getElementById('err-' + field);
+                        const input  = document.getElementById('pf-' + field)
+                                    || form.querySelector('[name="' + field + '"]');
+                        if (errDiv) { errDiv.textContent = msg; hasFieldError = true; }
+                        if (input)  { input.classList.add('pf-input-error'); }
+                    });
+                }
+
+                if (!hasFieldError) {
+                    // Fallback: show as list
+                    const msgs = Array.isArray(errs) ? errs : Object.values(errs);
+                    document.getElementById('profileErrorsList').textContent = msgs.join(' | ') || 'Erreur inconnue.';
+                    globalErrors.style.display = 'block';
+                }
+
+                // Scroll to top of body to reveal errors
+                document.querySelector('#profileModal .profile-modal-body').scrollTop = 0;
+            })
+            .catch(err => {
+                if (err === 'logout') return;
+                submitBtn.innerHTML = original;
+                submitBtn.disabled  = false;
+                document.getElementById('profileErrorsList').textContent = 'Erreur réseau de communication avec le serveur.';
+                document.getElementById('profileErrors').style.display = 'block';
             });
-        }
+        });
     });
 </script>
 
-<!-- Inclusion de la modale d'enregistrement du visage -->
+<!-- Face registration modal -->
 {% include 'components/_face_registration_modal.html.twig' %}
