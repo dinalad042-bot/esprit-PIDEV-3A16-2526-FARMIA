@@ -9,7 +9,7 @@
             --primary-color: #2e7d32; /* Vert */
             --primary-light: #60ad5e;
             --primary-dark: #005005;
-            --bg-color: #f4fcf5; /* Blanc teinté vert très clair */
+            --bg-color: #f4fcf5; /* Blanc teint├⌐ vert tr├¿s clair */
             --card-bg: #ffffff;
             --text-main: #333333;
             --text-muted: #666666;
@@ -191,12 +191,12 @@
 <body>
 
     <nav class="navbar">
-        <div class="brand"><a href="{{ path('app_home') }}" style="margin:0; text-decoration:none;">🌱 FarmAI</a></div>
+        <div class="brand"><a href="{{ path('app_home') }}" style="margin:0; text-decoration:none;">≡ƒî▒ FarmAI</a></div>
         <div>
             {% if app.user %}
                 <a href="{{ path('dashboard_default') }}">Tableau de bord</a>
                 <span>| {{ app.user.prenom }} {{ app.user.nom }}</span>
-                <a href="{{ path('app_logout') }}" style="margin-left: 15px; text-decoration: underline;">Déconnexion</a>
+                <a href="{{ path('app_logout') }}" style="margin-left: 15px; text-decoration: underline;">D├⌐connexion</a>
             {% else %}
                 <a href="{{ path('app_login') }}">Connexion</a>
                 <a href="{{ path('app_signup') }}">Inscription</a>

@@ -70,14 +70,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Visages enregistrés pour cet utilisateur (données biométriques en BDD).
+     * PRESERVED FROM MAIN - Facial Authentication
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $userFaces;
 
+    /**
+     * ANALYSES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH
+     * Analyses réalisées par ce technicien
+     */
+    #[ORM\OneToMany(mappedBy: 'technicien', targetEntity: Analyse::class)]
+    private Collection $analyses;
+
+    /**
+     * FERMES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH
+     * Fermes gérées par cet utilisateur
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $fermes;
+
     public function __construct()
     {
         $this->userLogs  = new ArrayCollection();
-        $this->userFaces = new ArrayCollection();
+        $this->userFaces = new ArrayCollection();        // PRESERVED: Facial auth
+        $this->analyses = new ArrayCollection();       // ADDED: Analyses module
+        $this->fermes   = new ArrayCollection();       // ADDED: Ferme module
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -94,8 +111,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($dbRole && !str_starts_with($dbRole, 'ROLE_')) {
             $dbRole = 'ROLE_' . $dbRole;
         }
-        
-        return $dbRole ? [$dbRole] : [];
+        // MODIFIED: Ensure ROLE_USER is always present (from Alaeddin)
+        $r = $dbRole ?: 'ROLE_USER';
+        return array_unique([$r, 'ROLE_USER']);
     }
 
     public function eraseCredentials(): void
@@ -220,7 +238,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Indique si l'utilisateur a un visage actif enregistré en base.
+     * PRESERVED FROM MAIN: Facial authentication methods
      */
     public function hasFaceAuth(): bool
     {
@@ -232,9 +250,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return false;
     }
 
-    /**
-     * Retourne le visage actif de l'utilisateur, ou null.
-     */
     public function getActiveFace(): ?\App\Entity\UserFace
     {
         foreach ($this->userFaces as $face) {
@@ -253,5 +268,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserLogs(): Collection
     {
         return $this->userLogs;
+    }
+
+    /**
+     * ADDED FROM ALAEDDIN: Analyses management
+     */
+    public function getAnalyses(): Collection
+    {
+        return $this->analyses;
+    }
+
+    /**
+     * ADDED FROM ALAEDDIN: Ferme management
+     */
+    public function getFermes(): Collection
+    {
+        return $this->fermes;
+    }
+
+    public function addFerme(Ferme $ferme): static
+    {
+        if (!$this->fermes->contains($ferme)) {
+            $this->fermes->add($ferme);
+            $ferme->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeFerme(Ferme $ferme): static
+    {
+        if ($this->fermes->removeElement($ferme)) {
+            if ($ferme->getUser() === $this) {
+                $ferme->setUser(null);
+            }
+        }
+        return $this;
     }
 }

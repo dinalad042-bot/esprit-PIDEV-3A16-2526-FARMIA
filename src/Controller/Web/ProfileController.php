@@ -26,10 +26,6 @@ class ProfileController extends AbstractController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        if (!$request->request->get('agreeTerms')) {
-            return new JsonResponse(['success' => false, 'errors' => ['Vous devez accepter les conditions d\'utilisation pour modifier votre profil.']], Response::HTTP_BAD_REQUEST);
-        }
-
         // Base fields
         $user->setNom($request->request->get('nom'));
         $user->setPrenom($request->request->get('prenom'));

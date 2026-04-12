@@ -6,7 +6,7 @@
             <button type="button" class="close-modal-btn" onclick="closeAdminUserModal()">&times;</button>
         </div>
         
-        {{ form_start(form, {'action': path('admin_users_save'), 'attr': {'id': 'adminUserForm', 'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {'action': path('admin_users_save'), 'attr': {'id': 'adminUserForm', 'enctype': 'multipart/form-data'}}) }}
             <input type="hidden" name="id" id="modalUserId" value="{{ user_id|default('') }}">
             <div class="profile-modal-body">
                 <!-- Avatar Column -->
@@ -32,7 +32,7 @@
                         <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.nom) }}</div>
                     </div>
                     <div class="form-row" style="position: relative;">
-                        <label>Prénom:</label>
+                        <label>Pr├⌐nom:</label>
                         {{ form_widget(form.prenom, {'id': 'modalUserPrenom'}) }}
                         <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.prenom) }}</div>
                     </div>
@@ -47,7 +47,7 @@
                         <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.cin) }}</div>
                     </div>
                     <div class="form-row" style="position: relative;">
-                        <label>Téléphone:</label>
+                        <label>T├⌐l├⌐phone:</label>
                         {{ form_widget(form.telephone, {'id': 'modalUserTelephone'}) }}
                         <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.telephone) }}</div>
                     </div>
@@ -61,7 +61,7 @@
                         <div style="color: #ef4444; font-size: 0.85rem; margin-top: 4px; font-weight: 500;">{{ form_errors(form.password) }}</div>
                     </div>
                     <div class="form-row" style="position: relative;">
-                        <label>Rôle:</label>
+                        <label>R├┤le:</label>
                         {{ form_widget(form.role, {'id': 'modalUserRole'}) }}
                     </div>
                     
@@ -88,7 +88,7 @@
         document.getElementById('modalUserCin').value = cin;
         document.getElementById('modalUserTelephone').value = telephone;
         document.getElementById('modalUserAdresse').value = adresse;
-        document.getElementById('modalUserPassword').value = ''; // Just reset the password field
+        document.getElementById('modalUserPassword').required = id ? false : true;
         
         let roleSelect = document.getElementById('modalUserRole');
         for (let i = 0; i < roleSelect.options.length; i++) {
@@ -155,6 +155,7 @@
             // The form has errors, we need to re-open the modal
             document.getElementById('adminUserModalTitle').innerText = {{ is_edit ? '"Modifier Utilisateur"' : '"Ajouter Utilisateur"' }};
             document.getElementById('modalUserId').value = '{{ user_id|default('')|escape('js') }}';
+            document.getElementById('modalUserPassword').required = {{ is_edit ? 'false' : 'true' }};
 
             // Don't auto-fill via JS mapping to preserve the form's bad data and error messages !
             document.getElementById('adminUserModal').style.display = 'flex';

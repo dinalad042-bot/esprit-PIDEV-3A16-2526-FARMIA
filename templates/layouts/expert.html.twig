@@ -38,21 +38,15 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#">
+                <a href="{{ path('expert_analyses_list') }}" class="{% if current_route starts with 'expert_analyse' %}active{% endif %}">
                     <i class="fa-solid fa-vial"></i>
                     <span>Analyses</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#">
+                <a href="{{ path('expert_conseils_list') }}" class="{% if current_route starts with 'expert_conseil' %}active{% endif %}">
                     <i class="fa-solid fa-lightbulb"></i>
                     <span>Recommandations</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>Sécurité</span>
                 </a>
             </li>
         </ul>

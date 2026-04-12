@@ -2,6 +2,8 @@
 
 namespace App\Controller\Web;
 
+use App\Repository\AnalyseRepository;
+use App\Repository\ConseilRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,6 +11,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardController extends AbstractController
 {
+    public function __construct(
+        private AnalyseRepository $analyseRepo,
+        private ConseilRepository $conseilRepo
+    ) {}
+
     #[Route('/dashboard', name: 'dashboard_default')]
     public function index(): Response
     {
@@ -30,13 +37,24 @@ class DashboardController extends AbstractController
         ]);
     }
 
-
     #[Route('/expert/dashboard', name: 'dashboard_expert')]
     #[IsGranted('ROLE_EXPERT')]
     public function expert(): Response
     {
+        $user = $this->getUser();
+        $userId = $user->getId();
+
+        $stats = [
+            'analysesThisMonth' => $this->analyseRepo->countByTechnicienThisMonth($userId),
+            'analysesTotal' => $this->analyseRepo->countByTechnicien($userId),
+            'conseilsTotal' => $this->conseilRepo->countByTechnicien($userId),
+            'conseilsUrgent' => $this->conseilRepo->countByTechnicienAndPriorite($userId, 'HAUTE'),
+            'pendingRequests' => $this->analyseRepo->countPendingRequests(),
+        ];
+
         return $this->render('portal/expert/index.html.twig', [
-            'user' => $this->getUser()
+            'user' => $user,
+            'stats' => $stats
         ]);
     }
 
@@ -44,8 +62,31 @@ class DashboardController extends AbstractController
     #[IsGranted('ROLE_AGRICOLE')]
     public function agricole(): Response
     {
+        $user = $this->getUser();
+        $fermes = $user->getFermes();
+        
+        // Calculate real stats
+        $fermeCount = $fermes->count();
+        $planteCount = 0;
+        $animalCount = 0;
+        $conseilCount = 0;
+        
+        foreach ($fermes as $ferme) {
+            $planteCount += $ferme->getPlantes()->count();
+            $animalCount += $ferme->getAnimals()->count();
+            // Count conseils from analyses of this ferme
+            foreach ($ferme->getAnalyses() as $analyse) {
+                $conseilCount += $analyse->getConseils()->count();
+            }
+        }
+        
         return $this->render('portal/agricole/index.html.twig', [
-            'user' => $this->getUser()
+            'user' => $user,
+            'fermeCount' => $fermeCount,
+            'planteCount' => $planteCount,
+            'animalCount' => $animalCount,
+            'conseilCount' => $conseilCount,
+            'hasFermes' => $fermeCount > 0
         ]);
     }
 

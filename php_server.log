@@ -1,0 +1,36 @@
+[Sun Apr 12 17:49:07 2026] PHP 8.2.12 Development Server (http://localhost:8000) started
+[Sun Apr 12 17:49:40 2026] [::1]:62673 Accepted
+[Sun Apr 12 17:49:41 2026] [::1]:62673 Closing
+[Sun Apr 12 17:49:41 2026] [::1]:62060 Accepted
+[Sun Apr 12 17:49:41 2026] [::1]:62060 Closed without sending a request; it was probably just an unused speculative preconnection
+[Sun Apr 12 17:49:41 2026] [::1]:62060 Closing
+[Sun Apr 12 17:49:41 2026] [::1]:64854 Accepted
+[Sun Apr 12 17:49:41 2026] [::1]:64854 Closing
+[Sun Apr 12 17:51:37 2026] [::1]:55730 Accepted
+[Sun Apr 12 17:51:37 2026] [::1]:55730 Closing
+[Sun Apr 12 17:51:37 2026] [::1]:59449 Accepted
+[Sun Apr 12 17:51:37 2026] [::1]:59449 Closed without sending a request; it was probably just an unused speculative preconnection
+[Sun Apr 12 17:51:37 2026] [::1]:59449 Closing
+[Sun Apr 12 17:51:37 2026] [::1]:56925 Accepted
+[Sun Apr 12 17:51:38 2026] [::1]:56925 Closing
+[Sun Apr 12 17:52:07 2026] [::1]:63472 Accepted
+[Sun Apr 12 17:52:07 2026] [::1]:51579 Accepted
+[Sun Apr 12 17:52:07 2026] [::1]:63472 Closing
+[Sun Apr 12 17:52:07 2026] [::1]:57262 Accepted
+[Sun Apr 12 17:52:07 2026] [::1]:51579 [200]: GET /assets/css/landing.css
+[Sun Apr 12 17:52:07 2026] [::1]:57262 [200]: GET /assets/images/hero-agriculture-tech.png
+[Sun Apr 12 17:52:07 2026] [::1]:51579 Closing
+[Sun Apr 12 17:52:07 2026] [::1]:57262 Closing
+[Sun Apr 12 17:52:16 2026] [::1]:53181 Accepted
+[Sun Apr 12 17:52:16 2026] [::1]:53181 Closing
+[Sun Apr 12 17:52:19 2026] [::1]:50871 Accepted
+[Sun Apr 12 17:52:19 2026] [::1]:50871 Closing
+[Sun Apr 12 17:53:44 2026] [::1]:55018 Accepted
+[Sun Apr 12 17:53:44 2026] [::1]:55018 Closing
+[Sun Apr 12 17:53:44 2026] [::1]:49192 Accepted
+[Sun Apr 12 17:53:44 2026] [::1]:49192 Closed without sending a request; it was probably just an unused speculative preconnection
+[Sun Apr 12 17:53:44 2026] [::1]:49192 Closing
+[Sun Apr 12 17:53:44 2026] [::1]:49316 Accepted
+[Sun Apr 12 17:53:45 2026] [::1]:49316 Closing
+[Sun Apr 12 17:55:29 2026] [::1]:61363 Accepted
+[Sun Apr 12 17:55:29 2026] [::1]:61363 Closing

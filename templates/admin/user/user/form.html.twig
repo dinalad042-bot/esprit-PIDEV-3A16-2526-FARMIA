@@ -4,7 +4,7 @@
 
 {% block body %}
     <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-        <a href="{{ path('user_index') }}" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
+        <a href="{{ path('user_index') }}" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i> Retour ├á la liste</a>
     </div>
 
     <div class="card form-card" style="padding: 40px;">
@@ -22,7 +22,7 @@
                 <!-- Form fields -->
                 <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
-                        <label for="prenom">Prénom</label>
+                        <label for="prenom">Pr├⌐nom</label>
                         <input type="text" id="prenom" name="prenom" class="form-control" value="{{ user.prenom ?? '' }}" required>
                     </div>
                     <div class="form-group">
@@ -36,12 +36,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="telephone">Téléphone</label>
+                        <label for="telephone">T├⌐l├⌐phone</label>
                         <input type="text" id="telephone" name="telephone" class="form-control" value="{{ user.telephone ?? '' }}">
                     </div>
 
                     <div class="form-group">
-                        <label for="role">Rôle</label>
+                        <label for="role">R├┤le</label>
                         <select id="role" name="role" class="form-control">
                             <option value="USER" {% if user is defined and (user.role == 'USER' or not user.role) %}selected{% endif %}>Utilisateur simple</option>
                             <option value="ADMIN" {% if user is defined and user.role == 'ADMIN' %}selected{% endif %}>Administrateur</option>

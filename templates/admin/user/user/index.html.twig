@@ -19,7 +19,7 @@
             </div>
             <div>
                 <select class="form-control" style="width: auto; padding: 8px 32px 8px 16px; border-radius: 20px;">
-                    <option value="">Tous les rôles</option>
+                    <option value="">Tous les r├┤les</option>
                     <option value="ROLE_ADMIN">Admin</option>
                     <option value="ROLE_EXPERT">Expert</option>
                 </select>
@@ -31,8 +31,8 @@
                 <tr style="background-color: #f8f9fa; border-bottom: 2px solid var(--border-color); text-align: left;">
                     <th style="padding: 16px 20px; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Utilisateur</th>
                     <th style="padding: 16px 20px; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Email</th>
-                    <th style="padding: 16px 20px; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Rôle</th>
-                    <th style="padding: 16px 20px; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Téléphone</th>
+                    <th style="padding: 16px 20px; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">R├┤le</th>
+                    <th style="padding: 16px 20px; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">T├⌐l├⌐phone</th>
                     <th style="padding: 16px 20px; text-align: right; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Actions</th>
                 </tr>
             </thead>
@@ -52,7 +52,7 @@
                     <td style="padding: 16px 20px; color: var(--text-muted);">{{ u.telephone|default('-') }}</td>
                     <td style="padding: 16px 20px; text-align: right;">
                         <a href="{{ path('user_edit', {'id': u.id}) }}" class="btn btn-outline-dark" style="padding: 6px 10px; font-size: 0.85rem; margin-right: 4px;"><i class="fas fa-edit"></i></a>
-                        <form method="post" action="{{ path('api_users_delete', {'id': u.id}) }}" onsubmit="return confirm('Sûr ?');" style="display:inline-block;">
+                        <form method="post" action="{{ path('api_users_delete', {'id': u.id}) }}" onsubmit="return confirm('S├╗r ?');" style="display:inline-block;">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-outline-dark" style="padding: 6px 10px; font-size: 0.85rem; color: var(--danger-color); border-color: rgba(244, 67, 54, 0.2);"><i class="fas fa-trash"></i></button>
                         </form>
@@ -60,7 +60,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" style="padding: 32px; text-align: center; color: var(--text-muted);">Aucun utilisateur trouvé.</td>
+                    <td colspan="5" style="padding: 32px; text-align: center; color: var(--text-muted);">Aucun utilisateur trouv├⌐.</td>
                 </tr>
                 {% endfor %}
             </tbody>

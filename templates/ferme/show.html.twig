@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ferme{% endblock %}
+
+{% block body %}
+    <h1>Ferme</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ ferme.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ ferme.nomFerme }}</td>
+            </tr>
+            <tr>
+                <th>Lieu</th>
+                <td>{{ ferme.lieu }}</td>
+            </tr>
+            <tr>
+                <th>Surface</th>
+                <td>{{ ferme.surface }}</td>
+            </tr>
+            <tr>
+                <th>Latitude</th>
+                <td>{{ ferme.latitude }}</td>
+            </tr>
+            <tr>
+                <th>Longitude</th>
+                <td>{{ ferme.longitude }}</td>
+            </tr>
+            <tr>
+                <th>Propriétaire</th>
+                <td>{{ ferme.user ? ferme.user.nom ~ ' ' ~ ferme.user.prenom : 'Non assigné' }}</td>
+            </tr>
+            <tr>
+                <th>Nombre d'animaux</th>
+                <td>{{ ferme.animals|length }}</td>
+            </tr>
+            <tr>
+                <th>Nombre de plantes</th>
+                <td>{{ ferme.plantes|length }}</td>
+            </tr>
+            <tr>
+                <th>Nombre d'analyses</th>
+                <td>{{ ferme.analyses|length }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_ferme_index') }}">back to list</a>
+
+    <a href="{{ path('app_ferme_edit', {'id': ferme.id}) }}">edit</a>
+
+    {{ include('ferme/_delete_form.html.twig') }}
+{% endblock %}
+

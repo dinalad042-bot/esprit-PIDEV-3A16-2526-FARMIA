@@ -1,0 +1,133 @@
+{% extends 'layouts/expert.html.twig' %}
+
+{% block title %}Demandes en attente — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem;">
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <div>
+            <a href="{{ path('dashboard_expert') }}" style="color:#666; text-decoration:none; font-size:0.9rem;">
+                <i class="fa-solid fa-arrow-left"></i> Retour au tableau de bord
+            </a>
+            <h2 style="font-size:1.5rem; font-weight:700; color:#1a1a2e; margin:0.5rem 0 0;">
+                <i class="fa-solid fa-bell" style="color:#e74c3c;"></i>
+                Demandes en attente
+            </h2>
+            <p style="color:#888; margin:0.25rem 0 0; font-size:0.9rem;">
+                Consultez et prenez en charge les demandes d'analyse des agriculteurs
+            </p>
+        </div>
+        <span style="background:#ffebee; color:#e74c3c; padding:8px 16px; border-radius:20px; font-size:1rem; font-weight:600;">
+            {{ requests|length }} demande(s)
+        </span>
+    </div>
+
+    {% if requests|length == 0 %}
+        <div style="text-align:center; padding:4rem; background:#fff; border-radius:12px; color:#aaa;">
+            <i class="fa-solid fa-check-circle" style="font-size:4rem; margin-bottom:1rem; display:block; color:#2ecc71;"></i>
+            <p style="font-size:1.2rem; color:#666;">Aucune demande en attente</p>
+            <p style="font-size:0.9rem; color:#888; margin-top:0.5rem;">Toutes les demandes ont été prises en charge</p>
+        </div>
+    {% else %}
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(350px,1fr)); gap:1.5rem;">
+            {% for request in requests %}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; border-left:4px solid #e74c3c;">
+                
+                {# Header with status badge #}
+                <div style="background:linear-gradient(135deg,#ffebee,#ffcdd2); padding:1rem; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; color:#c62828; font-size:0.9rem;">
+                        <i class="fa-solid fa-clock"></i> En attente
+                    </span>
+                    <span style="color:#888; font-size:0.8rem;">
+                        {{ request.dateAnalyse ? request.dateAnalyse|date('d/m/Y H:i') : 'N/A' }}
+                    </span>
+                </div>
+
+                <div style="padding:1.25rem;">
+                    {# Requester info #}
+                    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid #f0f0f0;">
+                        <div style="width:40px; height:40px; background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600;">
+                            {{ request.demandeur.prenom|first }}{{ request.demandeur.nom|first }}
+                        </div>
+                        <div>
+                            <div style="font-weight:600; color:#333;">{{ request.demandeur.prenom }} {{ request.demandeur.nom }}</div>
+                            <div style="font-size:0.8rem; color:#888;">{{ request.demandeur.email }}</div>
+                        </div>
+                    </div>
+
+                    {# Farm info #}
+                    {% if request.ferme %}
+                    <div style="margin-bottom:0.75rem;">
+                        <div style="color:#888; font-size:0.8rem; margin-bottom:0.25rem;">Ferme</div>
+                        <div style="color:#333; font-weight:500;">
+                            <i class="fa-solid fa-map-marker-alt" style="color:#2ecc71; margin-right:4px;"></i>
+                            {{ request.ferme.nomFerme }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {# Target info (Animal or Plante) #}
+                    {% if request.animalCible %}
+                    <div style="margin-bottom:0.75rem;">
+                        <div style="color:#888; font-size:0.8rem; margin-bottom:0.25rem;">Animal concerné</div>
+                        <div style="color:#333; font-weight:500;">
+                            <i class="fa-solid fa-paw" style="color:#2ecc71; margin-right:4px;"></i>
+                            {{ request.animalCible.nom }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if request.planteCible %}
+                    <div style="margin-bottom:0.75rem;">
+                        <div style="color:#888; font-size:0.8rem; margin-bottom:0.25rem;">Plante concernée</div>
+                        <div style="color:#333; font-weight:500;">
+                            <i class="fa-solid fa-seedling" style="color:#2ecc71; margin-right:4px;"></i>
+                            {{ request.planteCible.nom }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {# Description #}
+                    {% if request.descriptionDemande %}
+                    <div style="margin-bottom:1rem;">
+                        <div style="color:#888; font-size:0.8rem; margin-bottom:0.25rem;">Description</div>
+                        <p style="color:#555; font-size:0.85rem; line-height:1.5; margin:0; background:#f8f9fa; padding:0.75rem; border-radius:6px;">
+                            {{ request.descriptionDemande|slice(0, 150) }}{% if request.descriptionDemande|length > 150 %}...{% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {# Image preview #}
+                    {% if request.imageUrl %}
+                    <div style="margin-bottom:1rem;">
+                        <div style="color:#888; font-size:0.8rem; margin-bottom:0.5rem;">Image jointe</div>
+                        <img src="{{ request.imageUrl }}" alt="Image de la demande"
+                             style="width:100%; height:120px; object-fit:cover; border-radius:6px;"
+                             onerror="this.style.display='none';">
+                    </div>
+                    {% endif %}
+
+                    {# Action button #}
+                    <form method="POST" action="{{ path('expert_take_request', {id: request.id}) }}">
+                        <button type="submit" 
+                                style="width:100%; background:#e74c3c; color:#fff; border:none; padding:12px; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background 0.2s;"
+                                onmouseover="this.style.background='#c0392b'"
+                                onmouseout="this.style.background='#e74c3c'">
+                            <i class="fa-solid fa-hand-holding-medical"></i> Prendre en charge
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

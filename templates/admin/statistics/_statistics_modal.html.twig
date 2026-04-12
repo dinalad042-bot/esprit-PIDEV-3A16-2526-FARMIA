@@ -2,7 +2,7 @@
 <div class="profile-modal-overlay" id="statsModal" style="display: none; z-index: 10000; align-items: center; justify-content: center;">
     <div class="profile-modal" style="width: 700px; padding: 40px; text-align: center;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h2 style="margin: 0; color: #1e293b; font-weight: 800; text-align: center; width: 100%;">Distribution des Utilisateurs par Rôle</h2>
+            <h2 style="margin: 0; color: #1e293b; font-weight: 800; text-align: center; width: 100%;">Distribution des Utilisateurs par R├┤le</h2>
             <button type="button" onclick="closeStatsModal()" style="background: none; border: none; font-size: 28px; color: #94a3b8; cursor: pointer; position: absolute; right: 25px; top: 25px;">&times;</button>
         </div>
         
@@ -12,7 +12,7 @@
         
         <div style="margin-top: 30px;">
             <button onclick="loadStatsData()" class="btn" style="background-color: #4ade80; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 6px rgba(74, 222, 128, 0.2);">
-                <i class="fa-solid fa-arrows-rotate"></i> Actualiser les données
+                <i class="fa-solid fa-arrows-rotate"></i> Actualiser les donn├⌐es
             </button>
         </div>
     </div>
@@ -80,7 +80,7 @@
         });
     }
 
-    // Fermeture en cliquant à l'extérieur
+    // Fermeture en cliquant ├á l'ext├⌐rieur
     window.addEventListener('click', function(event) {
         let modal = document.getElementById('statsModal');
         if (event.target === modal) {

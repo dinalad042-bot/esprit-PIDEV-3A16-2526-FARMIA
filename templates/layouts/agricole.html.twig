@@ -38,21 +38,27 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#">
+                <a href="{{ path('app_ferme_index') }}" class="{% if current_route starts with 'app_ferme' %}active{% endif %}">
                     <i class="fa-solid fa-tractor"></i>
-                    <span>Mon Exploitation</span>
+                    <span>Mes Fermes</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#">
+                <a href="{{ path('app_plante_index') }}" class="{% if current_route starts with 'app_plante' %}active{% endif %}">
                     <i class="fa-solid fa-seedling"></i>
                     <span>Cultures</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#">
-                    <i class="fa-solid fa-lightbulb"></i>
-                    <span>Recommandations</span>
+                <a href="{{ path('farmer_my_requests') }}" class="{% if current_route starts with 'farmer' %}active{% endif %}">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Mes Analyses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_animal_index') }}" class="{% if current_route starts with 'app_animal' %}active{% endif %}">
+                    <i class="fa-solid fa-cow"></i>
+                    <span>Animaux</span>
                 </a>
             </li>
         </ul>

@@ -1,0 +1,137 @@
+<?php
+
+namespace App\Tests\Functional\Controller;
+
+use App\Entity\Ferme;
+use App\Entity\Plante;
+use App\Tests\BaseWebTestCase;
+
+/**
+ * Functional tests for PlanteController.
+ *
+ * TEST: CRUD operations for Plante
+ * Reason: Plant management is essential for farm operations
+ * Fat tail covered: Quantity validation, ferme relationship
+ *
+ * @covers \App\Controller\PlanteController
+ */
+class PlanteControllerTest extends BaseWebTestCase
+{
+    public function testIndexPageLoads(): void
+    {
+        $this->loginWithRole('ROLE_ADMIN');
+        $this->client->request('GET', '/plante/');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testCanCreatePlante(): void
+    {
+        $this->loginWithRole('ROLE_ADMIN');
+
+        $ferme = $this->createTestFerme();
+        $this->em->flush();
+
+        $this->client->request('POST', '/plante/new', [
+            'nom_espece' => 'Tomate Test',
+            'cycle_vie' => 'Annuel',
+            'quantite' => '50',
+            'id_ferme' => $ferme->getIdFerme()
+        ]);
+
+        $this->assertResponseRedirects('/plante/');
+
+        $plante = $this->em->getRepository(Plante::class)->findOneBy(['nomEspece' => 'Tomate Test']);
+        $this->assertNotNull($plante);
+        $this->assertEquals(50, $plante->getQuantite());
+    }
+
+    public function testCreateWithInvalidData(): void
+    {
+        $this->loginWithRole('ROLE_ADMIN');
+        $this->client->request('POST', '/plante/new', [
+            'nom_espece' => '',
+            'cycle_vie' => '',
+            'quantite' => '0'
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testEditPageLoads(): void
+    {
+        $this->loginWithRole('ROLE_ADMIN');
+        $plante = $this->createTestPlante();
+        $this->em->flush();
+
+        $this->client->request('GET', '/plante/' . $plante->getIdPlante() . '/edit');
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testCanUpdatePlante(): void
+    {
+        $this->loginWithRole('ROLE_ADMIN');
+        $plante = $this->createTestPlante();
+        $this->em->flush();
+
+        $this->client->request('POST', '/plante/' . $plante->getIdPlante() . '/update', [
+            'nom_espece' => 'Updated Plant',
+            'cycle_vie' => 'Perenne',
+            'quantite' => '100'
+        ]);
+
+        $this->assertResponseRedirects('/plante/');
+    }
+
+    public function testCanDeletePlante(): void
+    {
+        $this->loginWithRole('ROLE_ADMIN');
+        $plante = $this->createTestPlante();
+        $this->em->flush();
+        $id = $plante->getIdPlante();
+
+        $token = $this->client->getContainer()->get('security.csrf.token_manager')
+            ->getToken('delete' . $id)->getValue();
+
+        $this->client->request('POST', '/plante/delete/' . $id, ['_token' => $token]);
+        $this->assertResponseRedirects('/plante/');
+    }
+
+    public function testPdfGeneration(): void
+    {
+        $this->loginWithRole('ROLE_ADMIN');
+        $this->createTestPlante();
+        $this->em->flush();
+
+        $this->client->request('GET', '/plante/pdf');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('Content-Type', 'application/pdf');
+    }
+
+    public function testUnauthenticatedRedirect(): void
+    {
+        $this->client->request('GET', '/plante/');
+        $this->assertResponseRedirects();
+    }
+
+    private function createTestFerme(): Ferme
+    {
+        $ferme = new Ferme();
+        $ferme->setNomFerme('Test Farm');
+        $ferme->setLieu('Test Location');
+        $ferme->setSurface(100.0);
+        $this->em->persist($ferme);
+        return $ferme;
+    }
+
+    private function createTestPlante(): Plante
+    {
+        $ferme = $this->createTestFerme();
+        $plante = new Plante();
+        $plante->setNomEspece('Blé');
+        $plante->setCycleVie('Annuel');
+        $plante->setQuantite(100);
+        $plante->setFerme($ferme);
+        $this->em->persist($plante);
+        return $plante;
+    }
+}

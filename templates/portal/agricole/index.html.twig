@@ -11,7 +11,7 @@
 {# ─── Stats Cards ─────────────────────────────────────────────────────────── #}
 <div class="stats-grid">
     <div class="stat-card green">
-        <div class="stat-value">4</div>
+        <div class="stat-value">{{ fermeCount }}</div>
         <div class="stat-label">Parcelles</div>
         <div class="stat-sublabel">Actives</div>
         <div class="stat-footer stat-footer-line">
@@ -20,28 +20,44 @@
     </div>
 
     <div class="stat-card">
-        <div class="stat-value" style="color: var(--dark-bg);">7</div>
+        <div class="stat-value" style="color: var(--dark-bg);">{{ planteCount }}</div>
         <div class="stat-label" style="color: var(--dark-bg);">Cultures</div>
         <div class="stat-sublabel">En cours</div>
         <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">Saison 2026</div>
     </div>
 
     <div class="stat-card light-gray">
-        <div class="stat-value" style="color: var(--dark-bg);">3</div>
+        <div class="stat-value" style="color: var(--dark-bg);">{{ conseilCount }}</div>
         <div class="stat-label" style="color: var(--dark-bg);">Recommandations</div>
         <div class="stat-sublabel">Reçues</div>
         <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">À consulter</div>
     </div>
 
     <div class="stat-card dark">
-        <div class="stat-value">2</div>
-        <div class="stat-label">Alertes</div>
-        <div class="stat-sublabel">Météo</div>
+        <div class="stat-value">{{ animalCount }}</div>
+        <div class="stat-label">Animaux</div>
+        <div class="stat-sublabel">Enregistrés</div>
         <div class="stat-footer stat-footer-line">
-            <i class="fa-solid fa-cloud-sun-rain" style="color: #f59e0b;"></i> Pluie prévue
+            <i class="fa-solid fa-cow" style="color: #f59e0b;"></i> Bétail
         </div>
     </div>
 </div>
+
+{# ─── Conditional Message for New Users ───────────────────────────────────── #}
+{% if not hasFermes %}
+<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin: 20px 0; border-radius: 8px;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <i class="fa-solid fa-lightbulb" style="color: #f59e0b; font-size: 1.5rem;"></i>
+        <div>
+            <h3 style="margin: 0; color: #92400e; font-size: 1.1rem;">Commencez par créer votre première ferme</h3>
+            <p style="margin: 5px 0 0 0; color: #a16207;">Pour ajouter des cultures ou demander des analyses, vous devez d'abord créer une ferme.</p>
+        </div>
+        <a href="{{ path('app_ferme_new') }}" style="margin-left: auto; background: #f59e0b; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            <i class="fa-solid fa-plus"></i> Créer une ferme
+        </a>
+    </div>
+</div>
+{% endif %}
 
 {# ─── Bottom Section ──────────────────────────────────────────────────────── #}
 <div class="bottom-grid">
@@ -52,8 +68,8 @@
         </div>
 
         <div class="btn-group">
-            <a href="#" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouvelle Parcelle</a>
-            <a href="#" class="btn btn-outline-green"><i class="fa-solid fa-seedling"></i> Ajouter Culture</a>
+            <a href="{{ path('app_ferme_new') }}" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouvelle Parcelle</a>
+            <a href="{{ hasFermes ? path('app_plante_index') : path('app_ferme_new') }}" class="btn btn-outline-green"><i class="fa-solid fa-seedling"></i> Ajouter Culture</a>
         </div>
 
         <div class="action-list">
@@ -73,6 +89,11 @@
         <p class="enterprise-text">
             Suivez l'état de vos parcelles, consultez les recommandations d'experts et optimisez vos rendements.
         </p>
+        {% if hasFermes %}
+        <a href="{{ path('app_ferme_index') }}" style="display: inline-block; margin-top: 15px; color: #2d7a36; text-decoration: none; font-weight: 600;">
+            Voir mes fermes <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        {% endif %}
         <i class="fa-solid fa-wheat-awn enterprise-icon"></i>
     </div>
 </div>

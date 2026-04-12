@@ -1,0 +1,129 @@
+{% extends 'layouts/expert.html.twig' %}
+
+{% block title %}Mes Recommandations — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem;">
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <div>
+            <h2 style="font-size:1.5rem; font-weight:700; color:#1a1a2e; margin:0;">
+                <i class="fa-solid fa-lightbulb" style="color:#f39c12;"></i>
+                Mes Recommandations
+            </h2>
+            <p style="color:#888; margin:0.25rem 0 0; font-size:0.9rem;">
+                Consultez et gérez vos conseils agricoles
+            </p>
+        </div>
+        <a href="{{ path('app_conseil_new') }}" class="btn btn-dark">
+            <i class="fa-solid fa-plus"></i> Nouveau Conseil
+        </a>
+    </div>
+
+    {# Search & Filter #}
+    <form method="GET" style="margin-bottom:1.5rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <input type="text" name="search" value="{{ search }}"
+               placeholder="Rechercher un conseil..."
+               class="form-control" style="max-width:300px;">
+        <select name="priorite" class="form-control" style="max-width:150px;">
+            <option value="">Toutes priorités</option>
+            {% for p in priorites %}
+                <option value="{{ p.value }}" {% if priorite == p.value %}selected{% endif %}>
+                    {{ p.label }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-dark">
+            <i class="fa-solid fa-filter"></i> Filtrer
+        </button>
+        {% if search or priorite %}
+            <a href="{{ path('expert_conseils_list') }}" class="btn btn-secondary">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        {% endif %}
+    </form>
+
+    {# Stats #}
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #e74c3c;">
+            <div style="font-size:2rem; font-weight:700; color:#e74c3c;">
+                {{ conseils|filter(c => c.priorite.value == 'HAUTE')|length }}
+            </div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">Haute priorité</div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #f39c12;">
+            <div style="font-size:2rem; font-weight:700; color:#f39c12;">
+                {{ conseils|filter(c => c.priorite.value == 'MOYENNE')|length }}
+            </div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">Moyenne priorité</div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #2ecc71;">
+            <div style="font-size:2rem; font-weight:700; color:#2ecc71;">
+                {{ conseils|filter(c => c.priorite.value == 'BASSE')|length }}
+            </div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">Basse priorité</div>
+        </div>
+    </div>
+
+    {# Cards Grid #}
+    {% if conseils|length == 0 %}
+        <div style="text-align:center; padding:4rem; background:#fff; border-radius:12px; color:#aaa;">
+            <i class="fa-solid fa-lightbulb" style="font-size:3rem; margin-bottom:1rem; display:block;"></i>
+            <p style="font-size:1.1rem;">Aucun conseil trouvé.</p>
+            <a href="{{ path('app_conseil_new') }}" class="btn btn-dark" style="margin-top:1rem;">
+                Créer le premier conseil
+            </a>
+        </div>
+    {% else %}
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:1.5rem;">
+            {% for conseil in conseils %}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; transition:transform 0.2s; border-left:4px solid {% if conseil.priorite.value == 'HAUTE' %}#e74c3c{% elseif conseil.priorite.value == 'MOYENNE' %}#f39c12{% else %}#2ecc71{% endif %};"
+                 onmouseover="this.style.transform='translateY(-3px)'"
+                 onmouseout="this.style.transform='translateY(0)'">
+
+                <div style="padding:1.25rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+                        <span style="color:#666; font-weight:700; font-size:0.9rem;">
+                            #{{ conseil.id }}
+                        </span>
+                        <span style="background:{% if conseil.priorite.value == 'HAUTE' %}#ffebee{% elseif conseil.priorite.value == 'MOYENNE' %}#fff3e0{% else %}#e8f8f0{% endif %}; 
+                                     color:{% if conseil.priorite.value == 'HAUTE' %}#e74c3c{% elseif conseil.priorite.value == 'MOYENNE' %}#f39c12{% else %}#27ae60{% endif %}; 
+                                     padding:2px 10px; border-radius:12px; font-size:0.78rem; font-weight:600;">
+                            {{ conseil.priorite.label }}
+                        </span>
+                    </div>
+
+                    {% if conseil.analyse %}
+                    <div style="color:#555; font-size:0.85rem; margin-bottom:0.5rem;">
+                        <i class="fa-solid fa-flask" style="color:#2ecc71; margin-right:4px;"></i>
+                        Analyse #{{ conseil.analyse.id }}
+                        {% if conseil.analyse.ferme %}
+                            - {{ conseil.analyse.ferme.nomFerme }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <p style="color:#444; font-size:0.9rem; line-height:1.5; margin:0.75rem 0;">
+                        {{ conseil.descriptionConseil|slice(0, 150) }}{% if conseil.descriptionConseil|length > 150 %}...{% endif %}
+                    </p>
+
+                    <div style="display:flex; gap:0.5rem; margin-top:1rem; padding-top:1rem; border-top:1px solid #f0f0f0;">
+                        <a href="{{ path('expert_conseil_show', {id: conseil.id}) }}"
+                           style="flex:1; text-align:center; background:#f39c12; color:#fff; padding:8px; border-radius:8px; text-decoration:none; font-size:0.85rem;">
+                            <i class="fa-solid fa-eye"></i> Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

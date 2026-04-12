@@ -195,10 +195,10 @@
     <div class="kanban-header">
         <div>
             <h1 class="page-title">Kanban Board</h1>
-            <p class="page-subtitle">Suivez et organisez l'avancement de vos projets et tâches agricoles.</p>
+            <p class="page-subtitle">Suivez et organisez l'avancement de vos projets et t├óches agricoles.</p>
         </div>
         <button class="btn btn-solid-blue" style="background:#38bdf8; border:none; padding:12px 24px; color:white; border-radius:8px; font-weight:600; cursor:pointer;" onclick="openTaskModal()">
-            <i class="fa-solid fa-plus" style="margin-right:8px;"></i> Nouvelle Tâche
+            <i class="fa-solid fa-plus" style="margin-right:8px;"></i> Nouvelle T├óche
         </button>
     </div>
 
@@ -245,14 +245,14 @@
 <div class="profile-modal-overlay" id="taskModal" style="display:none; align-items:center; justify-content:center;">
     <div class="profile-modal" style="width: 550px; background:white; border-radius:20px; overflow:hidden;">
         <div class="profile-modal-header" style="background:#1e293b; padding:20px 25px; display:flex; justify-content:space-between;">
-            <h3 style="margin: 0; color: white;" id="taskModalTitle">Nouvelle Tâche</h3>
+            <h3 style="margin: 0; color: white;" id="taskModalTitle">Nouvelle T├óche</h3>
             <button type="button" class="close-modal-btn" onclick="closeTaskModal()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
         </div>
         <div class="profile-modal-body" style="padding:25px; display:flex; flex-direction:column; gap:20px;">
             <input type="hidden" id="taskId">
             
             <div>
-                <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Titre de la tâche</label>
+                <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Titre de la t├óche</label>
                 <input type="text" id="taskTitle" class="profile-input" style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #e2e8f0; border-radius:8px;">
             </div>
             
@@ -263,7 +263,7 @@
             
             <div style="display:flex; gap:20px;">
                 <div style="flex:1;">
-                    <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Priorité</label>
+                    <label style="font-weight:600; color:#334155; margin-bottom:8px; display:block;">Priorit├⌐</label>
                     <select id="taskPriority" class="profile-input" style="width:100%; box-sizing:border-box; padding:12px; border:1px solid #e2e8f0; border-radius:8px;">
                         <option value="basse">Basse</option>
                         <option value="moyenne" selected>Moyenne</option>
@@ -314,9 +314,9 @@
         } else {
             // Default demo tasks
             tasks = [
-                { id: 1, title: 'Inspecter les capteurs', desc: 'Vérifier la connectivité des capteurs d\'humidité dans la parcelle Nord.', priority: 'haute', date: '2026-05-10', status: 'todo' },
-                { id: 2, title: 'Analyse des données météo', desc: 'Compiler les prévisions de pluie pour la semaine prochaine.', priority: 'moyenne', date: '', status: 'in-progress' },
-                { id: 3, title: 'Mise à jour logiciel drones', desc: 'Flasher le nouveau firmware sur les drones d\'irrigation.', priority: 'basse', date: '2026-04-15', status: 'done' }
+                { id: 1, title: 'Inspecter les capteurs', desc: 'V├⌐rifier la connectivit├⌐ des capteurs d\'humidit├⌐ dans la parcelle Nord.', priority: 'haute', date: '2026-05-10', status: 'todo' },
+                { id: 2, title: 'Analyse des donn├⌐es m├⌐t├⌐o', desc: 'Compiler les pr├⌐visions de pluie pour la semaine prochaine.', priority: 'moyenne', date: '', status: 'in-progress' },
+                { id: 3, title: 'Mise ├á jour logiciel drones', desc: 'Flasher le nouveau firmware sur les drones d\'irrigation.', priority: 'basse', date: '2026-04-15', status: 'done' }
             ];
             saveToStorage();
         }
@@ -434,7 +434,7 @@
         document.getElementById('taskPriority').value = 'moyenne';
         document.getElementById('taskDate').value = '';
         document.getElementById('taskCol').value = 'todo';
-        document.getElementById('taskModalTitle').innerText = 'Nouvelle Tâche';
+        document.getElementById('taskModalTitle').innerText = 'Nouvelle T├óche';
         
         document.getElementById('taskModal').style.display = 'flex';
     }
@@ -452,7 +452,7 @@
             document.getElementById('taskPriority').value = task.priority;
             document.getElementById('taskDate').value = task.date;
             document.getElementById('taskCol').value = task.status;
-            document.getElementById('taskModalTitle').innerText = 'Modifier Tâche';
+            document.getElementById('taskModalTitle').innerText = 'Modifier T├óche';
             
             document.getElementById('taskModal').style.display = 'flex';
         }
@@ -487,7 +487,7 @@
     }
 
     function deleteTask(id) {
-        if(confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")) {
+        if(confirm("├ètes-vous s├╗r de vouloir supprimer cette t├óche ?")) {
             tasks = tasks.filter(t => t.id !== id);
             saveToStorage();
             renderBoard();
