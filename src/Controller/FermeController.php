@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Ferme;
 use App\Form\FermeType;
 use App\Repository\FermeRepository;
+use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -183,4 +184,17 @@ class FermeController extends AbstractController
             'currentDirection' => $request->query->get('direction', 'ASC')
         ]);
     }
+    #[Route('/ferme/{id}/weather', name: 'app_ferme_weather')]
+public function weather(int $id, FermeRepository $repo, WeatherService $weatherService): Response
+{
+    $ferme = $repo->find($id);
+    
+    // On récupère la météo en utilisant le lieu (ville) de la ferme
+    $weatherData = $weatherService->getWeather($ferme->getLieu());
+
+    return $this->render('ferme/weather.html.twig', [
+        'ferme' => $ferme,
+        'weather' => $weatherData
+    ]);
+}
 }
