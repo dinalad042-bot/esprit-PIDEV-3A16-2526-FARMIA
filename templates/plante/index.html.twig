@@ -81,7 +81,6 @@
             {% set action_url = (plante_edit is defined and plante_edit) ? path('app_plante_update', {'id_plante': plante_edit.idPlante}) : path('app_plante_new') %}
             
             <form action="{{ action_url }}" method="POST" novalidate>
-                {# ESPÈCE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Nom de l'espèce</label>
                     <input type="text" name="nom_espece" value="{{ (plante_edit is defined and plante_edit) ? plante_edit.nomEspece : '' }}" placeholder="Ex: Maïs Doux" style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_espece is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
@@ -90,7 +89,6 @@
                     {% endif %}
                 </div>
 
-                {# CYCLE DE VIE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Cycle de vie</label>
                     <input type="text" name="cycle_vie" value="{{ (plante_edit is defined and plante_edit) ? plante_edit.cycleVie : '' }}" placeholder="Ex: 90 jours" style="width: 100%; padding: 12px; border: 1px solid {{ errors.cycle_vie is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
@@ -99,7 +97,6 @@
                     {% endif %}
                 </div>
 
-                {# QUANTITÉ #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Quantité (kg)</label>
                     <input type="number" name="quantite" value="{{ (plante_edit is defined and plante_edit) ? plante_edit.quantite : '' }}" placeholder="0" style="width: 100%; padding: 12px; border: 1px solid {{ errors.quantite is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
@@ -108,7 +105,6 @@
                     {% endif %}
                 </div>
 
-                {# FERME #}
                 <div style="margin-bottom: 25px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Ferme d'affectation</label>
                     <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid {{ errors.id_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; background: white;">
@@ -150,11 +146,8 @@
                     <tbody>
                         {% for plante in plantes %}
                             <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;">
-                                {# NOM DE L'ESPÈCE AVEC LIEN #}
                                 <td style="padding: 18px; font-weight: 800; color: #1e293b;">
-                                    <a href="{{ path('app_plante_details', {'nom': plante.nomEspece}) }}" style="text-decoration: none; color: inherit; border-bottom: 2px solid #bbf7d0;">
-                                        {{ plante.nomEspece }}
-                                    </a>
+                                    {{ plante.nomEspece }}
                                 </td>
                                 
                                 <td style="padding: 18px; color: #475569;">
@@ -163,20 +156,7 @@
                                 </td>
                                 <td style="padding: 18px;">
                                     {% set stock_critique = plante.quantite < 50 %}
-                                    <span style="
-                                        display: inline-flex; 
-                                        align-items: center; 
-                                        justify-content: center;
-                                        gap: 4px;
-                                        padding: 6px 14px; 
-                                        background: {{ stock_critique ? '#fff7ed' : '#eff6ff' }}; 
-                                        color: {{ stock_critique ? '#c2410c' : '#1d4ed8' }}; 
-                                        border-radius: 8px; 
-                                        font-weight: 800; 
-                                        font-size: 0.9rem;
-                                        border: 1px solid {{ stock_critique ? '#fdba74' : '#bfdbfe' }};
-                                        white-space: nowrap;
-                                    ">
+                                    <span style="display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 6px 14px; background: {{ stock_critique ? '#fff7ed' : '#eff6ff' }}; color: {{ stock_critique ? '#c2410c' : '#1d4ed8' }}; border-radius: 8px; font-weight: 800; font-size: 0.9rem; border: 1px solid {{ stock_critique ? '#fdba74' : '#bfdbfe' }}; white-space: nowrap;">
                                         {{ plante.quantite }} <span style="font-size: 0.8rem; opacity: 0.8;">kg</span>
                                     </span>
                                 </td>
@@ -186,13 +166,19 @@
                                         {{ plante.ferme ? plante.ferme.nomFerme : 'Non affectée' }}
                                     </span>
                                 </td>
-                                <td style="padding: 18px; display: flex; gap: 10px; justify-content: center;">
-                                    <a href="{{ path('app_plante_edit', {'id_plante': plante.idPlante}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                                <td style="padding: 18px; display: flex; gap: 8px; justify-content: center;">
+                                    {# BOUTON DÉTAILS IA & CALENDRIER (AJOUTÉ) #}
+                                    <a href="{{ path('app_plante_details', {'nom': plante.nomEspece}) }}" style="color: #3b82f6; background: #eff6ff; padding: 8px; border-radius: 8px; border: 1px solid #bfdbfe;" title="Calendrier & Soins IA">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                    </a>
+
+                                    <a href="{{ path('app_plante_edit', {'id_plante': plante.idPlante}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px; border-radius: 8px; border: 1px solid #bbf7d0;" title="Modifier">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
+                                    
                                     <form method="post" action="{{ path('app_plante_delete', {'id_plante': plante.idPlante}) }}" onsubmit="return confirm('Supprimer cette culture ?');">
                                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plante.idPlante) }}">
-                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; cursor: pointer;">
+                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; cursor: pointer;" title="Supprimer">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>

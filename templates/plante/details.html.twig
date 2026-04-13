@@ -4,100 +4,101 @@
 <div style="background-color: #f8fafc; min-height: 100vh; padding: 40px; font-family: 'Plus Jakarta Sans', sans-serif;">
     
     <div style="max-width: 1000px; margin: 0 auto;">
+        {# Lien Retour #}
         <a href="{{ path('app_plante_index') }}" style="text-decoration: none; color: #64748b; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px;">
             <i class="fa-solid fa-arrow-left"></i> Retour à la gestion
         </a>
 
         <div style="background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.05); display: grid; grid-template-columns: 400px 1fr; border: 1px solid #e2e8f0;">
             
-            {# Image de la plante #}
-            <div style="background: url('{{ details.image_url|default('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2') }}') center/cover; min-height: 500px;"></div>
+            {# Image dynamique #}
+            <div style="background: url('{{ details.image_url|default(maint.default_image.regular_url|default('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2')) }}') center/cover; min-height: 500px;"></div>
 
-            {# Contenu technique #}
+            {# Contenu Technique #}
             <div style="padding: 40px;">
-                <span style="background: #f0fdf4; color: #166534; padding: 6px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Fiche Botanique</span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="background: #f0fdf4; color: #166534; padding: 6px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 700;">STATION DE PILOTAGE</span>
+                    <span style="font-size: 0.75rem; color: #94a3b8;">ID: #{{ maint.id|default('N/A') }}</span>
+                </div>
+                
                 <h1 style="font-size: 2.5rem; color: #1e293b; margin: 15px 0;">{{ nom|capitalize }}</h1>
-                <p style="color: #64748b; font-style: italic; margin-bottom: 30px;">Nom scientifique : {{ details.scientific_name }}</p>
+                <p style="color: #64748b; font-style: italic; margin-bottom: 30px;">
+                    Sci: {{ details.scientific_name|default(maint.scientific_name[0]|default('Inconnu')) }}
+                </p>
 
-                {# Grille de données techniques #}
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    {# Lumière #}
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9;">
-                        <i class="fa-solid fa-sun" style="color: #f59e0b; margin-bottom: 8px;"></i>
-                        <div style="color: #94a3b8; font-size: 0.7rem; font-weight: 700;">LUMIÈRE (1-10)</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: #1e293b;">{{ details.main_species.growth.light|default('N/A') }}</div>
+                {# --- SECTION 1 : DASHBOARD CALENDRIER --- #}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+                    {# Prochain Arrosage #}
+                    <div style="background: #eff6ff; border: 1.5px solid #dbeafe; padding: 15px; border-radius: 20px;">
+                        <div style="color: #1e40af; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">
+                            <i class="fa-solid fa-droplet"></i> Prochain Arrosage
+                        </div>
+                        <div style="font-size: 1.1rem; font-weight: 800; color: #1e3a8a;">{{ nextWatering|date('d M Y') }}</div>
+                        <div style="font-size: 0.7rem; color: #60a5fa;">Besoin: {{ maint.watering|default('Normal') }}</div>
                     </div>
 
-                    {# PH Sol #}
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9;">
-                        <i class="fa-solid fa-flask" style="color: #8b5cf6; margin-bottom: 8px;"></i>
-                        <div style="color: #94a3b8; font-size: 0.7rem; font-weight: 700;">PH SOL MAX</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: #1e293b;">{{ details.main_species.growth.ph_maximum|default('6.5') }}</div>
-                    </div>
-
-                    {# Température Min #}
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9;">
-                        <i class="fa-solid fa-temperature-low" style="color: #ef4444; margin-bottom: 8px;"></i>
-                        <div style="color: #94a3b8; font-size: 0.7rem; font-weight: 700;">T° MINIMUM</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: #1e293b;">{{ details.main_species.growth.minimum_temperature.deg_c|default('0') }}°C</div>
-                    </div>
-
-                    {# Hauteur #}
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9;">
-                        <i class="fa-solid fa-arrows-up-down" style="color: #10b981; margin-bottom: 8px;"></i>
-                        <div style="color: #94a3b8; font-size: 0.7rem; font-weight: 700;">HAUTEUR MAX</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: #1e293b;">{{ details.main_species.specifications.average_height.cm|default('N/A') }} cm</div>
-                    </div>
-
-                    {# Précipitations (Nouveau) #}
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9;">
-                        <i class="fa-solid fa-cloud-showers-heavy" style="color: #3b82f6; margin-bottom: 8px;"></i>
-                        <div style="color: #94a3b8; font-size: 0.7rem; font-weight: 700;">EAU MIN (mm)</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: #1e293b;">{{ details.main_species.growth.minimum_precipitation.mm|default('N/A') }}</div>
-                    </div>
-
-                    {# Croissance (Nouveau) #}
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9;">
-                        <i class="fa-solid fa-bolt" style="color: #ec4899; margin-bottom: 8px;"></i>
-                        <div style="color: #94a3b8; font-size: 0.7rem; font-weight: 700;">CROISSANCE</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: #1e293b;">{{ details.main_species.growth.growth_rate|default('Modérée') }}</div>
+                    {# Récolte Prévue (CORRIGÉE POUR AFFICHER LA DATE) #}
+                    <div style="background: #fffbeb; border: 1.5px solid #fef3c7; padding: 15px; border-radius: 20px;">
+                        <div style="color: #92400e; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">
+                            <i class="fa-solid fa-wheat-awn"></i> Récolte Prévue
+                        </div>
+                        <div style="font-size: 1.1rem; font-weight: 800; color: #78350f;">
+                            {{ harvestDate|date('d M Y') }}
+                        </div>
+                        <div style="font-size: 0.7rem; color: #fbbf24;">Cycle: {{ maint.cycle|default('Annuel') }}</div>
                     </div>
                 </div>
 
-                {# Bloc Conseils IA Dynamique #}
-                <div style="margin-top: 25px; padding: 20px; background: #1e293b; color: white; border-radius: 20px;">
-                    <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-robot" style="color: #10b981;"></i> 
-                        Conseils d'Optimisation IA
+                {# --- SECTION 2 : GRILLE TECHNIQUE --- #}
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px;">
+                    <div style="background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #f1f5f9;">
+                        <i class="fa-solid fa-sun" style="color: #f59e0b; margin-bottom: 5px;"></i>
+                        <div style="color: #94a3b8; font-size: 0.65rem; font-weight: 700;">LUMIÈRE</div>
+                        <div style="font-weight: 800; color: #1e293b;">{{ details.main_species.growth.light|default('N/A') }}/10</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #f1f5f9;">
+                        <i class="fa-solid fa-hand-holding-heart" style="color: #ec4899; margin-bottom: 5px;"></i>
+                        <div style="color: #94a3b8; font-size: 0.65rem; font-weight: 700;">NIVEAU DE SOIN</div>
+                        <div style="font-weight: 800; color: #1e293b;">{{ maint.care_level|default('Standard')|capitalize }}</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #f1f5f9;">
+                        <i class="fa-solid fa-flask" style="color: #8b5cf6; margin-bottom: 5px;"></i>
+                        <div style="color: #94a3b8; font-size: 0.65rem; font-weight: 700;">PH SOL IDÉAL</div>
+                        <div style="font-weight: 800; color: #1e293b;">{{ details.main_species.growth.ph_maximum|default('6.5') }}</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #f1f5f9;">
+                        <i class="fa-solid fa-bolt" style="color: #10b981; margin-bottom: 5px;"></i>
+                        <div style="color: #94a3b8; font-size: 0.65rem; font-weight: 700;">VITESSE</div>
+                        <div style="font-weight: 800; color: #1e293b;">{{ details.main_species.growth.growth_rate|default(maint.growth_rate|default('Moyenne')) }}</div>
+                    </div>
+                </div>
+
+                {# --- SECTION 3 : ANALYSE & CONSEILS --- #}
+                <div style="padding: 20px; background: #1e293b; color: white; border-radius: 20px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 0.9rem; color: #10b981; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-robot"></i> Analyse FarmAI
                     </h4>
-                    <ul style="margin: 0; padding: 0 0 0 18px; font-size: 0.82rem; opacity: 0.9; line-height: 1.6;">
-                        {# Conseil PH #}
-                        {% if details.main_species.growth.ph_maximum > 7.5 %}
-                            <li>Sol calcaire toléré, mais surveillez la chlorose ferrique si le pH monte trop.</li>
-                        {% elseif details.main_species.growth.ph_maximum < 6 %}
-                            <li>Espèce acidophile : privilégiez un apport de terre de bruyère ou de compost acide.</li>
-                        {% else %}
-                            <li>Maintenez un pH neutre (autour de {{ details.main_species.growth.ph_maximum|default('6.5') }}) pour une absorption maximale des nutriments.</li>
+                    
+                    <p style="font-size: 0.8rem; opacity: 0.8; line-height: 1.5; margin-bottom: 15px;">
+                        {{ maint.description|default('Aucune description disponible pour cette espèce.')|slice(0, 180) }}...
+                    </p>
+
+                    <ul style="margin: 0; padding: 0 0 0 18px; font-size: 0.75rem; opacity: 0.9; line-height: 1.6; color: #cbd5e1;">
+                        {% if details.main_species.growth.minimum_temperature.deg_c|default(null) is not null %}
+                            {% if details.main_species.growth.minimum_temperature.deg_c < 5 %}
+                                <li>Résistance au froid confirmée (Min: {{ details.main_species.growth.minimum_temperature.deg_c }}°C).</li>
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if details.main_species.growth.minimum_precipitation.mm|default(0) > 1000 %}
+                            <li>Attention : Humidité élevée requise. Ne laissez pas le substrat sécher.</li>
                         {% endif %}
 
-                        {# Conseil Température #}
-                        {% if details.main_species.growth.minimum_temperature.deg_c < 5 %}
-                            <li><strong>Alerte Froid :</strong> Cette plante est résistante, mais un paillage est conseillé dès 0°C.</li>
-                        {% else %}
-                            <li><strong>Sensibilité :</strong> Espèce frileuse. Ne pas exposer à moins de {{ details.main_species.growth.minimum_temperature.deg_c }}°C sous risque de stress thermique.</li>
+                        {% if details.main_species.specifications.average_height.cm|default(0) > 100 %}
+                            <li>Plante haute ({{ details.main_species.specifications.average_height.cm }}cm) : Tuteurage recommandé.</li>
                         {% endif %}
-
-                        {# Conseil Eau #}
-                        {% if details.main_species.growth.minimum_precipitation.mm > 1000 %}
-                            <li>Besoin hydrique élevé : assurez un arrosage régulier, surtout en phase de floraison.</li>
-                        {% else %}
-                            <li>Tolère des périodes sèches. Un drainage efficace est plus important qu'un arrosage fréquent.</li>
-                        {% endif %}
-
-                        {# Conseil Hauteur #}
-                        {% if details.main_species.specifications.average_height.cm > 100 %}
-                            <li>Plante de grande taille : prévoyez un tuteurage solide pour éviter la verse face au vent.</li>
-                        {% endif %}
+                        
+                        <li>Date de récolte optimisée pour le cycle : <strong>{{ harvestDate|date('d/m/Y') }}</strong></li>
                     </ul>
                 </div>
             </div>

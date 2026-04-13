@@ -26,7 +26,6 @@ class Plante
     #[Assert\NotBlank(message: "Le cycle de vie est obligatoire.")]
     private ?string $cycle_vie = null;
 
-    // --- CORRECTION CRUCIALE : Transformation du int en Relation ---
     #[ORM\ManyToOne(targetEntity: Ferme::class, inversedBy: 'plantes')]
     #[ORM\JoinColumn(name: "id_ferme", referencedColumnName: "id_ferme", nullable: false)]
     private ?Ferme $ferme = null;
@@ -63,7 +62,6 @@ class Plante
         return $this; 
     }
 
-    // --- GETTER/SETTER MIS À JOUR POUR L'OBJET FERME ---
     public function getFerme(): ?Ferme 
     { 
         return $this->ferme; 

@@ -17,6 +17,7 @@ services:
         # injecte la valeur du paramètre app.weather_api_key"
         bind:
             $weatherApiKey: '%app.weather_api_key%'
+            $perenualApiKey: '%env(PERENUAL_API_KEY)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

@@ -6,6 +6,7 @@ use App\Entity\Plante;
 use App\Repository\PlanteRepository;
 use App\Repository\FermeRepository;
 use App\Service\PlantService;
+use App\Service\PerenualService; 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ class PlanteController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
         $plante = new Plante();
-        $this->mapData($plante, $request, $fRepo); // fRepo ajouté ici
+        $this->mapData($plante, $request, $fRepo);
         
         $violations = $validator->validate($plante);
 
@@ -50,7 +51,7 @@ class PlanteController extends AbstractController
 
         $em->persist($plante);
         $em->flush();
-        $this->addFlash('success', 'Plante ajoutée !');
+        $this->addFlash('success', 'Plante ajoutée avec succès !');
         return $this->redirectToRoute('app_plante_index');
     }
 
@@ -75,7 +76,7 @@ class PlanteController extends AbstractController
     #[Route('/{id_plante}/update', name: 'app_plante_update', methods: ['POST'])]
     public function update(Request $request, Plante $plante, EntityManagerInterface $em, ValidatorInterface $validator, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
-        $this->mapData($plante, $request, $fRepo); // fRepo ajouté ici
+        $this->mapData($plante, $request, $fRepo);
         $violations = $validator->validate($plante);
 
         if (count($violations) > 0) {
@@ -98,20 +99,87 @@ class PlanteController extends AbstractController
         return $this->redirectToRoute('app_plante_index');
     }
 
-    /**
-     * Mapping corrigé pour utiliser l'objet Ferme
-     */
+    #[Route('/pdf', name: 'app_plante_pdf', methods: ['GET'])]
+    public function generatePdf(PlanteRepository $pRepo): Response
+    {
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($pdfOptions);
+        
+        $html = $this->renderView('plante/pdf.html.twig', [
+            'plantes' => $pRepo->findAll()
+        ]);
+        
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        return new Response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="liste_plantes.pdf"',
+        ]);
+    }
+
+    #[Route('/details/{nom}', name: 'app_plante_details')]
+    public function details(
+        string $nom, 
+        PlantService $plantService, 
+        PerenualService $perenualService, 
+        PlanteRepository $repo
+    ): Response {
+        $details = $plantService->getPlantDetails($nom);
+        $maint = $perenualService->getMaintenanceData($nom);
+        $planteEntity = $repo->findOneBy(['nom_espece' => $nom]);
+        
+        $dateBase = new \DateTime();
+
+        // 1. Logique d'arrosage
+        $wateringType = $maint['watering'] ?? 'Average';
+        $wateringInterval = match($wateringType) {
+            'Frequent' => 2,
+            'Average'  => 4,
+            'Minimum'  => 7,
+            'None'     => 15,
+            default    => 4,
+        };
+
+        // 2. LOGIQUE DE RÉCOLTE CORRIGÉE (Pour avoir une DATE et non du texte géographique)
+        // On récupère le cycle depuis l'API pour estimer la durée
+        $cycle = $maint['cycle'] ?? 'Annual';
+        
+        $daysToHarvest = match($cycle) {
+            'Perennial' => 120, // Vivace
+            'Annual'    => 90,  // Annuelle (ex: Pomme de terre)
+            'Biannual'  => 200, // Bisannuelle
+            default     => 90,
+        };
+
+        // Si c'est spécifiquement une pomme de terre, on peut affiner
+        if (stripos($nom, 'pomme de terre') !== false || stripos($nom, 'potato') !== false) {
+            $daysToHarvest = 110; 
+        }
+
+        $harvestDate = (clone $dateBase)->modify("+$daysToHarvest days");
+
+        return $this->render('plante/details.html.twig', [
+            'nom' => $nom,
+            'details' => $details,
+            'maint' => $maint,
+            'nextWatering' => (clone $dateBase)->modify("+$wateringInterval days"),
+            'harvestDate' => $harvestDate, // On repasse harvestDate pour Twig
+        ]);
+    }
+
     private function mapData(Plante $plante, Request $request, FermeRepository $fRepo): void
     {
         $plante->setNomEspece($request->request->get('nom_espece') ?: null);
         $plante->setCycleVie($request->request->get('cycle_vie') ?: null);
         $plante->setQuantite($request->request->get('quantite') !== "" ? (int)$request->request->get('quantite') : null);
         
-        // CORRECTION : On cherche l'objet Ferme au lieu de passer l'ID directement
         $idFerme = $request->request->get('id_ferme');
         if ($idFerme) {
             $ferme = $fRepo->find($idFerme);
-            $plante->setFerme($ferme); // On appelle setFerme()
+            $plante->setFerme($ferme);
         } else {
             $plante->setFerme(null);
         }
@@ -120,7 +188,9 @@ class PlanteController extends AbstractController
     private function renderErrors($violations, $pRepo, $fRepo, $plante_edit, Request $request): Response
     {
         $errors = [];
-        foreach ($violations as $v) { $errors[$v->getPropertyPath()] = $v->getMessage(); }
+        foreach ($violations as $v) { 
+            $errors[$v->getPropertyPath()] = $v->getMessage(); 
+        }
         
         $search = $request->query->get('search');
         $sort = $request->query->get('sort', 'nom_espece');
@@ -136,36 +206,4 @@ class PlanteController extends AbstractController
             'currentDirection' => $direction
         ]);
     }
-
-    #[Route('/pdf', name: 'app_plante_pdf', methods: ['GET'])]
-    public function generatePdf(PlanteRepository $pRepo): Response
-    {
-        $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Arial');
-        $dompdf = new Dompdf($pdfOptions);
-        $html = $this->renderView('plante/pdf.html.twig', ['plantes' => $pRepo->findAll()]);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        return new Response($dompdf->output(), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="liste_plantes.pdf"',
-        ]);
-    }
-
-    #[Route('/plante/details/{nom}', name: 'app_plante_details')]
-public function details(string $nom, PlantService $plantService): Response
-{
-    $details = $plantService->getPlantDetails($nom);
-
-    if (!$details) {
-        $this->addFlash('error', 'Données botaniques introuvables pour : ' . $nom);
-        return $this->redirectToRoute('app_plante_index'); // Remplace par ta route liste
-    }
-
-    return $this->render('plante/details.html.twig', [
-        'details' => $details,
-        'nom' => $nom
-    ]);
-}
 }
