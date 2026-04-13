@@ -7,13 +7,33 @@
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $filePath = __DIR__ . '/public' . $uri;
 
+// Normalize path for Windows
+$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+
 // DEBUG: Log what we're checking
 error_log("Router: Checking URI=$uri, FilePath=$filePath, is_file=" . (is_file($filePath) ? 'YES' : 'NO'));
 
 // Serve static files directly (only actual files, not directories)
 if ($uri !== '/' && is_file($filePath)) {
-    error_log("Router: Serving static file directly");
-    return false;
+    error_log("Router: Serving static file directly: $filePath");
+    
+    // Determine content type
+    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $contentTypes = [
+        'css' => 'text/css',
+        'js' => 'application/javascript',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'svg' => 'image/svg+xml',
+    ];
+    if (isset($contentTypes[$ext])) {
+        header('Content-Type: ' . $contentTypes[$ext]);
+    }
+    
+    readfile($filePath);
+    return true;
 }
 
 error_log("Router: Routing to Symfony");

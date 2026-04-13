@@ -32,8 +32,8 @@ class FarmerRequestController extends AbstractController
         $ferme = $user->getFermes()->first();
 
         if (!$ferme) {
-            $this->addFlash('error', 'Vous devez d\'abord créer une ferme avant de faire une demande d\'analyse.');
-            return $this->redirectToRoute('dashboard_agricole');
+            $this->addFlash('warning', 'Vous devez d\'abord créer une ferme avant de faire une demande d\'analyse.');
+            return $this->redirectToRoute('app_ferme_new');
         }
 
         // Get animals and plants from the farmer's farm
