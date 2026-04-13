@@ -55,7 +55,7 @@
 
         <div style="display: flex; align-items: center; gap: 15px;">
             <form action="{{ path('app_plante_index') }}" method="GET" style="display: flex; align-items: center; background: white; padding: 5px 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                <input type="text" name="search" value="{{ searchTerm }}" placeholder="Rechercher une plante..." style="border: none; outline: none; padding: 8px; width: 180px; font-size: 0.9rem;">
+                <input type="text" name="search" value="{{ searchTerm|default('') }}" placeholder="Rechercher une plante..." style="border: none; outline: none; padding: 8px; width: 180px; font-size: 0.9rem;">
                 <button type="submit" style="background: none; border: none; color: #64748b; cursor: pointer;"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
 
@@ -74,17 +74,17 @@
         {# --- FORMULAIRE --- #}
         <div style="flex: 0 0 380px; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; position: sticky; top: 20px;">
             <h2 style="color: #1e293b; font-size: 1.3rem; font-weight: 700; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid {{ plante_edit ? 'fa-pen-to-square' : 'fa-seedling' }}" style="color: #2d7a36;"></i>
-                {{ plante_edit ? 'Modifier la culture' : 'Nouvelle Culture' }}
+                <i class="fa-solid {{ plante_edit is defined and plante_edit ? 'fa-pen-to-square' : 'fa-seedling' }}" style="color: #2d7a36;"></i>
+                {{ (plante_edit is defined and plante_edit) ? 'Modifier la culture' : 'Nouvelle Culture' }}
             </h2>
             
-            {% set action_url = plante_edit ? path('app_plante_update', {'id_plante': plante_edit.idPlante}) : path('app_plante_new') %}
+            {% set action_url = (plante_edit is defined and plante_edit) ? path('app_plante_update', {'id_plante': plante_edit.idPlante}) : path('app_plante_new') %}
             
             <form action="{{ action_url }}" method="POST" novalidate>
                 {# ESPÈCE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Nom de l'espèce</label>
-                    <input type="text" name="nom_espece" value="{{ plante_edit ? plante_edit.nomEspece : '' }}" placeholder="Ex: Maïs Doux" style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_espece is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
+                    <input type="text" name="nom_espece" value="{{ (plante_edit is defined and plante_edit) ? plante_edit.nomEspece : '' }}" placeholder="Ex: Maïs Doux" style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_espece is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
                     {% if errors.nom_espece is defined %}
                         <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.nom_espece }}</small>
                     {% endif %}
@@ -93,7 +93,7 @@
                 {# CYCLE DE VIE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Cycle de vie</label>
-                    <input type="text" name="cycle_vie" value="{{ plante_edit ? plante_edit.cycleVie : '' }}" placeholder="Ex: 90 jours" style="width: 100%; padding: 12px; border: 1px solid {{ errors.cycle_vie is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
+                    <input type="text" name="cycle_vie" value="{{ (plante_edit is defined and plante_edit) ? plante_edit.cycleVie : '' }}" placeholder="Ex: 90 jours" style="width: 100%; padding: 12px; border: 1px solid {{ errors.cycle_vie is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
                     {% if errors.cycle_vie is defined %}
                         <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.cycle_vie }}</small>
                     {% endif %}
@@ -102,7 +102,7 @@
                 {# QUANTITÉ #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.9rem;">Quantité (kg)</label>
-                    <input type="number" name="quantite" value="{{ plante_edit ? plante_edit.quantite : '' }}" placeholder="0" style="width: 100%; padding: 12px; border: 1px solid {{ errors.quantite is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
+                    <input type="number" name="quantite" value="{{ (plante_edit is defined and plante_edit) ? plante_edit.quantite : '' }}" placeholder="0" style="width: 100%; padding: 12px; border: 1px solid {{ errors.quantite is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px;">
                     {% if errors.quantite is defined %}
                         <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.quantite }}</small>
                     {% endif %}
@@ -114,7 +114,7 @@
                     <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid {{ errors.id_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; background: white;">
                         <option value="">Choisir une ferme...</option>
                         {% for ferme in fermes %}
-                            <option value="{{ ferme.idFerme }}" {{ plante_edit and plante_edit.ferme and plante_edit.ferme.idFerme == ferme.idFerme ? 'selected' : '' }}>
+                            <option value="{{ ferme.idFerme }}" {{ (plante_edit is defined and plante_edit and plante_edit.ferme and plante_edit.ferme.idFerme == ferme.idFerme) ? 'selected' : '' }}>
                                 {{ ferme.nomFerme }}
                             </option>
                         {% endfor %}
@@ -125,10 +125,10 @@
                 </div>
 
                 <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer;">
-                    {{ plante_edit ? 'Mettre à jour' : 'Enregistrer la culture' }}
+                    {{ (plante_edit is defined and plante_edit) ? 'Mettre à jour' : 'Enregistrer la culture' }}
                 </button>
 
-                {% if plante_edit %}
+                {% if plante_edit is defined and plante_edit %}
                     <a href="{{ path('app_plante_index') }}" style="display: block; text-align: center; margin-top: 15px; color: #64748b; text-decoration: none; font-size: 0.9rem;">Annuler</a>
                 {% endif %}
             </form>
@@ -150,32 +150,36 @@
                     <tbody>
                         {% for plante in plantes %}
                             <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;">
-                                <td style="padding: 18px;">
-                                    <div style="font-weight: 700; color: #1e293b;">{{ plante.nomEspece }}</div>
+                                {# NOM DE L'ESPÈCE AVEC LIEN #}
+                                <td style="padding: 18px; font-weight: 800; color: #1e293b;">
+                                    <a href="{{ path('app_plante_details', {'nom': plante.nomEspece}) }}" style="text-decoration: none; color: inherit; border-bottom: 2px solid #bbf7d0;">
+                                        {{ plante.nomEspece }}
+                                    </a>
                                 </td>
+                                
                                 <td style="padding: 18px; color: #475569;">
                                     <i class="fa-solid fa-clock-rotate-left" style="font-size: 0.8rem; margin-right: 5px; opacity: 0.6;"></i>
                                     {{ plante.cycleVie }}
                                 </td>
-<td style="padding: 18px;">
-    {% set stock_critique = plante.quantite < 50 %}
-    <span style="
-        display: inline-flex; 
-        align-items: center; 
-        justify-content: center;
-        gap: 4px;
-        padding: 6px 14px; 
-        background: {{ stock_critique ? '#fff7ed' : '#eff6ff' }}; 
-        color: {{ stock_critique ? '#c2410c' : '#1d4ed8' }}; 
-        border-radius: 8px; 
-        font-weight: 800; 
-        font-size: 0.9rem; {# Taille augmentée pour plus de lisibilité #}
-        border: 1px solid {{ stock_critique ? '#fdba74' : '#bfdbfe' }};
-        white-space: nowrap; {# Empêche le retour à la ligne du 'kg' #}
-    ">
-        {{ plante.quantite }} <span style="font-size: 0.8rem; opacity: 0.8;">kg</span>
-    </span>
-</td>
+                                <td style="padding: 18px;">
+                                    {% set stock_critique = plante.quantite < 50 %}
+                                    <span style="
+                                        display: inline-flex; 
+                                        align-items: center; 
+                                        justify-content: center;
+                                        gap: 4px;
+                                        padding: 6px 14px; 
+                                        background: {{ stock_critique ? '#fff7ed' : '#eff6ff' }}; 
+                                        color: {{ stock_critique ? '#c2410c' : '#1d4ed8' }}; 
+                                        border-radius: 8px; 
+                                        font-weight: 800; 
+                                        font-size: 0.9rem;
+                                        border: 1px solid {{ stock_critique ? '#fdba74' : '#bfdbfe' }};
+                                        white-space: nowrap;
+                                    ">
+                                        {{ plante.quantite }} <span style="font-size: 0.8rem; opacity: 0.8;">kg</span>
+                                    </span>
+                                </td>
                                 <td style="padding: 18px;">
                                     <span style="color: #2d7a36; font-weight: 700;">
                                         <i class="fa-solid fa-map-location-dot" style="margin-right: 5px;"></i>

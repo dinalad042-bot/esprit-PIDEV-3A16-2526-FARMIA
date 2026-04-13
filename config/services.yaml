@@ -27,5 +27,10 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    # Configuration du service PlantService avec son token API
+    App\Service\PlantService:
+        arguments:
+            $trefleApiToken: '%env(TREFLE_API_TOKEN)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

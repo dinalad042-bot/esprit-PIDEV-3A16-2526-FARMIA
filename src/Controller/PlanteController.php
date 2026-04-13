@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Plante;
 use App\Repository\PlanteRepository;
 use App\Repository\FermeRepository;
+use App\Service\PlantService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -151,4 +152,20 @@ class PlanteController extends AbstractController
             'Content-Disposition' => 'inline; filename="liste_plantes.pdf"',
         ]);
     }
+
+    #[Route('/plante/details/{nom}', name: 'app_plante_details')]
+public function details(string $nom, PlantService $plantService): Response
+{
+    $details = $plantService->getPlantDetails($nom);
+
+    if (!$details) {
+        $this->addFlash('error', 'Données botaniques introuvables pour : ' . $nom);
+        return $this->redirectToRoute('app_plante_index'); // Remplace par ta route liste
+    }
+
+    return $this->render('plante/details.html.twig', [
+        'details' => $details,
+        'nom' => $nom
+    ]);
+}
 }
