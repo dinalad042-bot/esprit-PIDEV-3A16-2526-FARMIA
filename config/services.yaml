@@ -1,26 +1,26 @@
 # config/services.yaml
 
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    # On récupère la clé définie dans le fichier .env
+    # Paramètres pour les APIs existantes
     app.weather_api_key: '%env(OPENWEATHER_API_KEY)%'
+    
+    # Nouveau paramètre pour l'IA via Groq
+    app.groq_api_key: '%env(GROQ_API_KEY)%'
 
 services:
-    # default configuration for services in *this* file
+    # Configuration par défaut
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true      
+        autoconfigure: true 
         
-        # Le BIND permet de dire à Symfony : 
-        # "Chaque fois que tu vois un argument nommé $weatherApiKey dans un constructeur, 
-        # injecte la valeur du paramètre app.weather_api_key"
+        # Le BIND global permet d'injecter automatiquement les clés dans vos constructeurs
+        # Il suffit de nommer l'argument exactement comme ci-dessous
         bind:
             $weatherApiKey: '%app.weather_api_key%'
             $perenualApiKey: '%env(PERENUAL_API_KEY)%'
+            $groqApiKey: '%app.groq_api_key%'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    # Chargement automatique des classes de src/
     App\:
         resource: '../src/'
         exclude:
@@ -28,10 +28,14 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # Configuration du service PlantService avec son token API
+    # Configuration du service PlantService
     App\Service\PlantService:
         arguments:
             $trefleApiToken: '%env(TREFLE_API_TOKEN)%'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Injection spécifique pour AnimalController
+    # (Le bind global suffit normalement, mais on le définit explicitement pour la clarté)
+    App\Controller\AnimalController:
+        arguments:
+            $groqApiKey: '%app.groq_api_key%'
+        tags: ['controller.service_arguments']

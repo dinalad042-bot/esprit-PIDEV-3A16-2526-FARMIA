@@ -81,7 +81,6 @@
             {% set action_url = animal_edit ? path('app_animal_update', {'id_animal': animal_edit.idAnimal}) : path('app_animal_new') %}
             
             <form action="{{ action_url }}" method="POST" novalidate>
-                {# ESPÈCE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">Espèce / Race</label>
                     <input type="text" name="espece" value="{{ animal_edit ? animal_edit.espece : '' }}" placeholder="Ex: Bovin" style="width: 100%; padding: 12px; border: 1px solid {{ errors.espece is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
@@ -90,7 +89,6 @@
                     {% endif %}
                 </div>
 
-                {# SANTÉ #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">État de Santé</label>
                     <input type="text" name="etat_sante" value="{{ animal_edit ? animal_edit.etatSante : '' }}" placeholder="Ex: Excellente" style="width: 100%; padding: 12px; border: 1px solid {{ errors.etat_sante is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
@@ -99,7 +97,6 @@
                     {% endif %}
                 </div>
 
-                {# DATE NAISSANCE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">Date de Naissance</label>
                     <input type="date" name="date_naissance" value="{{ animal_edit and animal_edit.dateNaissance ? animal_edit.dateNaissance|date('Y-m-d') : '' }}" style="width: 100%; padding: 12px; border: 1px solid {{ errors.date_naissance is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
@@ -108,7 +105,6 @@
                     {% endif %}
                 </div>
 
-                {# AFFECTATION FERME #}
                 <div style="margin-bottom: 25px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">Affectation à une Ferme</label>
                     <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid {{ errors.id_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; background-color: white; outline-color: #2d7a36;">
@@ -154,10 +150,21 @@
                                     <div style="font-weight: 700; color: #1e293b;">{{ animal.espece }}</div>
                                 </td>
                                 <td style="padding: 18px;">
-                                    {% set is_critical = animal.etatSante|lower in ['malade', 'critique'] %}
-                                    <span style="padding: 6px 12px; background: {{ is_critical ? '#fef2f2' : '#f0fdf4' }}; color: {{ is_critical ? '#dc2626' : '#166534' }}; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid {{ is_critical ? '#fecaca' : '#bbf7d0' }};">
-                                        {{ animal.etatSante }}
-                                    </span>
+                                    {% set is_critical = animal.etatSante|lower in ['malade', 'critique', 'faible', 'urgence'] %}
+                                    
+                                    {% if is_critical %}
+                                        {# SI MALADE : Lien vers Consultation IA #}
+                                        <a href="{{ path('app_animal_consultation', {'id_animal': animal.idAnimal}) }}" title="Consulter l'IA Vétérinaire" style="text-decoration: none;">
+                                            <span style="padding: 6px 12px; background: #fef2f2; color: #dc2626; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #fecaca; cursor: pointer; transition: 0.3s;">
+                                                <i class="fa-solid fa-robot" style="margin-right: 5px;"></i> {{ animal.etatSante }}
+                                            </span>
+                                        </a>
+                                    {% else %}
+                                        {# SI SAIN : Simple Badge #}
+                                        <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #bbf7d0;">
+                                            {{ animal.etatSante }}
+                                        </span>
+                                    {% endif %}
                                 </td>
                                 <td style="padding: 18px; color: #475569;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}</td>
                                 <td style="padding: 18px;">
