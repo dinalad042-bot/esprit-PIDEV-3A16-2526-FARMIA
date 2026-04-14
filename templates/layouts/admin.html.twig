@@ -59,6 +59,18 @@
                     <span>Kanban Board</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_analyses_index') }}" class="{% if current_route starts with 'admin_analyse' %}active{% endif %}">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Analyses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_conseils_statistics') }}" class="{% if current_route starts with 'admin_conseil' %}active{% endif %}">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Conseils</span>
+                </a>
+            </li>
         </ul>
 
         <!-- Logout -->

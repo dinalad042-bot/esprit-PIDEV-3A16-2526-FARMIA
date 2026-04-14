@@ -98,4 +98,20 @@ class ConseilRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function countByPriority(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.prioriteRaw AS priorite, COUNT(c.id) AS count')
+            ->groupBy('c.prioriteRaw')
+            ->getQuery()->getResult();
+    }
+
+    public function findRecent(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()->getResult();
+    }
 }
