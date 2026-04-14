@@ -7,6 +7,7 @@ use App\Entity\Conseil;
 use App\Form\AnalyseType;
 use App\Form\ConseilType;
 use App\Repository\AnalyseRepository;
+use App\Service\ReportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,7 @@ class ExpertAnalyseController extends AbstractController
     public function __construct(
         private AnalyseRepository $analyseRepo,
         private EntityManagerInterface $em,
+        private ReportService $reportService,
     ) {}
 
     #[Route('/analyses', name: 'expert_analyses_list')]
@@ -191,5 +193,22 @@ class ExpertAnalyseController extends AbstractController
             'form' => $form->createView(),
             'analyse' => $analyse,
         ]);
+    }
+
+    #[Route('/analyse/{id}/export/pdf', name: 'expert_analyse_export_pdf', methods: ['GET'])]
+    public function exportAnalysePdf(Analyse $analyse): Response
+    {
+        // Security check: ensure the expert is the technicien for this analysis
+        if ($analyse->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à exporter cette analyse.');
+        }
+
+        $pdfContent = $this->reportService->generateAnalysePdf($analyse);
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment; filename="analyse-' . $analyse->getId() . '-' . date('Y-m-d') . '.pdf"');
+
+        return $response;
     }
 }

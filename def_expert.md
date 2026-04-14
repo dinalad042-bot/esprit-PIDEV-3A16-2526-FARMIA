@@ -149,6 +149,9 @@ expert_ai_diagnose         POST   /expert/analyse/{id}/diagnose
 expert_ai_result           GET    /expert/analyse/{id}/ai-result
 api_diagnose               POST   /api/diagnose
 
+# PDF Export
+expert_analyse_export_pdf  GET    /expert/analyse/{id}/export/pdf
+
 # Pending Requests
 expert_pending_requests    ANY    /expert/demandes-en-attente
 expert_take_request        ANY    /expert/demande/{id}/prendre-en-charge
@@ -176,13 +179,22 @@ expert_conseil_delete      POST   /expert/conseil/{id}/delete
 
 ## 🚀 REMAINING PHASES
 
-### Phase 3: PDF Export (PENDING)
+### ✅ PHASE 3 COMPLETE (14 Avril 2026)
 
 **Priority:** MEDIUM - Professional reporting
 
-- [ ] Create `ReportService` for PDF generation
-- [ ] Add export buttons to analyse/conseil pages
-- [ ] Generate professional reports with charts
+- ✅ ReportService integrated with Dompdf
+- ✅ PDF export route: `/expert/analyse/{id}/export/pdf`
+- ✅ Professional PDF template with:
+  - Header with FarmAI branding
+  - Analyse details and status
+  - Demande information
+  - Analysis image
+  - Technical results
+  - AI diagnosis results
+  - Associated conseils with priorities
+  - Footer with generation date
+- ✅ Export button added to analyse show page
 
 ### Phase 4: Notification System (PENDING)
 
