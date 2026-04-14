@@ -71,4 +71,53 @@ class ExpertConseilController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/conseil/{id}/edit', name: 'expert_conseil_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Conseil $conseil): Response
+    {
+        // Security check: ensure the expert is the technicien for the related analysis
+        if ($conseil->getAnalyse()->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier ce conseil.');
+        }
+
+        $form = $this->createForm(ConseilType::class, $conseil, [
+            'analyse_id' => $conseil->getAnalyse()->getId(),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->flush();
+            $this->addFlash('success', 'Conseil modifié avec succès.');
+            return $this->redirectToRoute('expert_conseil_show', ['id' => $conseil->getId()]);
+        }
+
+        return $this->render('portal/expert/conseil_edit.html.twig', [
+            'form' => $form->createView(),
+            'conseil' => $conseil,
+        ]);
+    }
+
+    #[Route('/conseil/{id}/delete', name: 'expert_conseil_delete', methods: ['POST'])]
+    public function delete(Request $request, Conseil $conseil): Response
+    {
+        // Security check: ensure the expert is the technicien for the related analysis
+        if ($conseil->getAnalyse()->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer ce conseil.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$conseil->getId(), $request->request->get('_token'))) {
+            $analyseId = $conseil->getAnalyse()->getId();
+            $this->em->remove($conseil);
+            $this->em->flush();
+            $this->addFlash('success', 'Conseil supprimé avec succès.');
+            
+            // Redirect back to analyse show if coming from there
+            $referer = $request->headers->get('referer');
+            if ($referer && str_contains($referer, '/expert/analyse/')) {
+                return $this->redirectToRoute('expert_analyse_show', ['id' => $analyseId]);
+            }
+        }
+
+        return $this->redirectToRoute('expert_conseils_list');
+    }
 }

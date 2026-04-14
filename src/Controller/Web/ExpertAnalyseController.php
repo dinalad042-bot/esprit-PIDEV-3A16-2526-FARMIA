@@ -3,7 +3,9 @@
 namespace App\Controller\Web;
 
 use App\Entity\Analyse;
+use App\Entity\Conseil;
 use App\Form\AnalyseType;
+use App\Form\ConseilType;
 use App\Repository\AnalyseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -98,6 +100,96 @@ class ExpertAnalyseController extends AbstractController
 
         return $this->render('portal/expert/analyse_new.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/analyse/{id}/edit', name: 'expert_analyse_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Analyse $analyse): Response
+    {
+        // Security check: ensure the expert is the technicien for this analysis
+        if ($analyse->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier cette analyse.');
+        }
+
+        $form = $this->createForm(AnalyseType::class, $analyse);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->flush();
+            $this->addFlash('success', 'Analyse modifiée avec succès.');
+            return $this->redirectToRoute('expert_analyse_show', ['id' => $analyse->getId()]);
+        }
+
+        return $this->render('portal/expert/analyse_edit.html.twig', [
+            'form' => $form->createView(),
+            'analyse' => $analyse,
+        ]);
+    }
+
+    #[Route('/analyse/{id}/delete', name: 'expert_analyse_delete', methods: ['POST'])]
+    public function delete(Request $request, Analyse $analyse): Response
+    {
+        // Security check: ensure the expert is the technicien for this analysis
+        if ($analyse->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer cette analyse.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$analyse->getId(), $request->request->get('_token'))) {
+            $this->em->remove($analyse);
+            $this->em->flush();
+            $this->addFlash('success', 'Analyse supprimée avec succès.');
+        }
+
+        return $this->redirectToRoute('expert_analyses_list');
+    }
+
+    #[Route('/analyse/{id}/status/{status}', name: 'expert_analyse_status', methods: ['POST'])]
+    public function updateStatus(Analyse $analyse, string $status): Response
+    {
+        // Security check: ensure the expert is the technicien for this analysis
+        if ($analyse->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier cette analyse.');
+        }
+
+        $validStatuses = ['en_attente', 'en_cours', 'terminee', 'annulee'];
+        if (!in_array($status, $validStatuses, true)) {
+            $this->addFlash('error', 'Statut invalide.');
+            return $this->redirectToRoute('expert_analyse_show', ['id' => $analyse->getId()]);
+        }
+
+        $analyse->setStatut($status);
+        $this->em->flush();
+
+        $this->addFlash('success', 'Statut mis à jour : ' . $status);
+        return $this->redirectToRoute('expert_analyse_show', ['id' => $analyse->getId()]);
+    }
+
+    #[Route('/analyse/{id}/conseil/new', name: 'expert_analyse_conseil_new', methods: ['GET', 'POST'])]
+    public function addConseil(Request $request, Analyse $analyse): Response
+    {
+        // Security check: ensure the expert is the technicien for this analysis
+        if ($analyse->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à ajouter un conseil à cette analyse.');
+        }
+
+        $conseil = new Conseil();
+        $conseil->setAnalyse($analyse);
+        
+        $form = $this->createForm(ConseilType::class, $conseil, [
+            'analyse_id' => $analyse->getId(),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->persist($conseil);
+            $this->em->flush();
+            $this->addFlash('success', 'Conseil ajouté avec succès.');
+            return $this->redirectToRoute('expert_analyse_show', ['id' => $analyse->getId()]);
+        }
+
+        return $this->render('portal/expert/conseil_new.html.twig', [
+            'form' => $form->createView(),
+            'analyse' => $analyse,
         ]);
     }
 }
