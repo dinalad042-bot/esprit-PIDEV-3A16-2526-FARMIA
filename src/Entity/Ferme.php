@@ -31,9 +31,11 @@ class Ferme
     private ?float $surface = 0;
 
     #[ORM\Column(name: 'latitude', type: 'float', nullable: true)]
+    #[Assert\Range(min: -90, max: 90, notInRangeMessage: 'La latitude doit être entre {{ min }} et {{ max }}.')]
     private ?float $latitude = null;
 
     #[ORM\Column(name: 'longitude', type: 'float', nullable: true)]
+    #[Assert\Range(min: -180, max: 180, notInRangeMessage: 'La longitude doit être entre {{ min }} et {{ max }}.')]
     private ?float $longitude = null;
 
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true)]

@@ -5,6 +5,7 @@ namespace App\Tests;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -18,7 +19,6 @@ abstract class BaseWebTestCase extends WebTestCase
     protected static ?KernelBrowser $client = null;
     protected static ?EntityManagerInterface $em = null;
     protected static ?UserPasswordHasherInterface $passwordHasher = null;
-    
     /**
      * Set up before each test.
      * Creates client and entity manager.
@@ -27,29 +27,32 @@ abstract class BaseWebTestCase extends WebTestCase
     {
         parent::setUp();
         
-        if (null === self::$client) {
-            self::$client = static::createClient();
-            self::$em = static::getContainer()->get(EntityManagerInterface::class);
-            self::$passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
-        }
+        // Always create a fresh client to avoid database locking issues
+        self::$client = static::createClient();
+        self::$em = static::getContainer()->get(EntityManagerInterface::class);
+        self::$passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
         
-        // Begin transaction for rollback after test
-        self::$em->getConnection()->beginTransaction();
+        // Create schema for in-memory database for each test
+        $this->createSchema();
+    }
+    
+    /**
+     * Create database schema
+     */
+    private function createSchema(): void
+    {
+        $schemaTool = new SchemaTool(self::$em);
+        $metadata = self::$em->getMetadataFactory()->getAllMetadata();
+        $schemaTool->createSchema($metadata);
     }
     
     /**
      * Tear down after each test.
-     * Rolls back transaction to keep database clean.
      */
     protected function tearDown(): void
     {
-        // Rollback transaction
-        if (self::$em !== null && self::$em->getConnection()->isTransactionActive()) {
-            self::$em->getConnection()->rollBack();
-        }
-        
         // Clear entity manager to prevent memory leaks
-        if (self::$em !== null) {
+        if (self::$em !== null && self::$em->isOpen()) {
             self::$em->clear();
         }
         
@@ -73,7 +76,7 @@ abstract class BaseWebTestCase extends WebTestCase
         $user->setEmail($email ?? 'test_' . uniqid() . '@farmia.test');
         $user->setNom('Test');
         $user->setPrenom('User');
-        $user->setCin('12345678');
+        $user->setCin(uniqid());
         $user->setAdresse('123 Test Street');
         $user->setTelephone('12345678');
         $user->setRole(str_replace('ROLE_', '', $role));
@@ -145,13 +148,4 @@ abstract class BaseWebTestCase extends WebTestCase
         return self::$em;
     }
     
-    /**
-     * Get the test client.
-     * 
-     * @return KernelBrowser
-     */
-    protected function getClient(): KernelBrowser
-    {
-        return self::$client;
-    }
 }

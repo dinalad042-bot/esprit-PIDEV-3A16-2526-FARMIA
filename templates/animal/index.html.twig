@@ -1,4 +1,4 @@
-﻿{% extends 'layouts/agricole.html.twig' %}
+{% extends 'layouts/agricole.html.twig' %}
 
 {% block title %}Gestion du Bétail - FarmAI{% endblock %}
 
@@ -55,7 +55,7 @@
 
         <div style="display: flex; align-items: center; gap: 15px;">
             <form action="{{ path('app_animal_index') }}" method="GET" style="display: flex; align-items: center; background: white; padding: 5px 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                <input type="text" name="search" value="{{ searchTerm }}" placeholder="Rechercher..." style="border: none; outline: none; padding: 8px; width: 150px; font-size: 0.9rem;">
+                <input type="text" name="search" value="{{ search }}" placeholder="Rechercher..." style="border: none; outline: none; padding: 8px; width: 150px; font-size: 0.9rem;">
                 <button type="submit" style="background: none; border: none; color: #64748b; cursor: pointer;"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
 

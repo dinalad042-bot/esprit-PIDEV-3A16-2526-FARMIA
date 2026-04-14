@@ -18,7 +18,7 @@ class SecurityTest extends BaseWebTestCase
      */
     public function testLoginPageIsAccessible(): void
     {
-        $this->client->request('GET', '/login');
+        self::$client->request('GET', '/login');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('input[name="_username"]');
         $this->assertSelectorExists('input[name="_password"]');
@@ -30,9 +30,9 @@ class SecurityTest extends BaseWebTestCase
     public function testLoginWithValidCredentialsRedirects(): void
     {
         $user = $this->createTestUser('ROLE_USER');
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('POST', '/login', [
+        self::$client->request('POST', '/login', [
             '_username' => $user->getEmail(),
             '_password' => 'testpassword123',
         ]);
@@ -45,7 +45,7 @@ class SecurityTest extends BaseWebTestCase
      */
     public function testLoginWithInvalidCredentialsShowsError(): void
     {
-        $this->client->request('POST', '/login', [
+        self::$client->request('POST', '/login', [
             '_username' => 'nonexistent@example.com',
             '_password' => 'wrongpassword',
         ]);
@@ -59,7 +59,7 @@ class SecurityTest extends BaseWebTestCase
     public function testLogoutRedirects(): void
     {
         $this->loginWithRole('ROLE_USER');
-        $this->client->request('GET', '/logout');
+        self::$client->request('GET', '/logout');
         $this->assertResponseRedirects();
     }
 
@@ -77,7 +77,7 @@ class SecurityTest extends BaseWebTestCase
         ];
 
         foreach ($protectedRoutes as $route) {
-            $this->client->request('GET', $route);
+            self::$client->request('GET', $route);
             $this->assertResponseRedirects(
                 null,
                 302,
@@ -92,7 +92,7 @@ class SecurityTest extends BaseWebTestCase
     public function testAdminRoutesRequireAdminRole(): void
     {
         $this->loginWithRole('ROLE_USER');
-        $this->client->request('GET', '/admin/dashboard');
+        self::$client->request('GET', '/admin/dashboard');
         
         // Should be forbidden or redirect
         $this->assertResponseStatusCodeIsOneOf([403, 302, 404]);
@@ -104,10 +104,10 @@ class SecurityTest extends BaseWebTestCase
     public function testAdminCanAccessAdminRoutes(): void
     {
         $this->loginWithRole('ROLE_ADMIN');
-        $this->client->request('GET', '/admin/dashboard');
+        self::$client->request('GET', '/admin/dashboard');
         
         // Should not be 403
-        $this->assertNotEquals(403, $this->client->getResponse()->getStatusCode());
+        $this->assertNotEquals(403, self::$client->getResponse()->getStatusCode());
     }
 
     /**
@@ -115,7 +115,7 @@ class SecurityTest extends BaseWebTestCase
      */
     public function testCsrfTokenPresentOnLoginForm(): void
     {
-        $crawler = $this->client->request('GET', '/login');
+        $crawler = self::$client->request('GET', '/login');
         $this->assertResponseIsSuccessful();
         
         // Check for CSRF token field

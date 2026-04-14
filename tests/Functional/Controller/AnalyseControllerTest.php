@@ -21,14 +21,14 @@ class AnalyseControllerTest extends BaseWebTestCase
     public function testIndexPageLoads(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        $this->client->request('GET', '/analyse/');
+        self::$client->request('GET', '/analyse');
         $this->assertResponseIsSuccessful();
     }
 
     public function testNewFormLoads(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        $this->client->request('GET', '/analyse/new');
+        self::$client->request('GET', '/analyse/new');
         $this->assertResponseIsSuccessful();
     }
 
@@ -39,7 +39,7 @@ class AnalyseControllerTest extends BaseWebTestCase
         $ferme = $this->createTestFerme();
         $this->em->flush();
 
-        $this->client->request('POST', '/analyse/new', [
+        self::$client->request('POST', '/analyse/new', [
             'ferme' => $ferme->getIdFerme(),
             'resultatTechnique' => 'Test analysis results here',
             'dateAnalyse' => '2024-01-15'
@@ -57,7 +57,7 @@ class AnalyseControllerTest extends BaseWebTestCase
         $analyse = $this->createTestAnalyse();
         $this->em->flush();
 
-        $this->client->request('GET', '/analyse/' . $analyse->getId());
+        self::$client->request('GET', '/analyse/' . $analyse->getId());
         $this->assertResponseIsSuccessful();
     }
 
@@ -67,7 +67,7 @@ class AnalyseControllerTest extends BaseWebTestCase
         $analyse = $this->createTestAnalyse();
         $this->em->flush();
 
-        $this->client->request('GET', '/analyse/' . $analyse->getId() . '/edit');
+        self::$client->request('GET', '/analyse/' . $analyse->getId() . '/edit');
         $this->assertResponseIsSuccessful();
     }
 
@@ -77,7 +77,7 @@ class AnalyseControllerTest extends BaseWebTestCase
         $analyse = $this->createTestAnalyse();
         $this->em->flush();
 
-        $this->client->request('POST', '/analyse/' . $analyse->getId() . '/edit', [
+        self::$client->request('POST', '/analyse/' . $analyse->getId() . '/edit', [
             'resultatTechnique' => 'Updated analysis results',
             'dateAnalyse' => '2024-02-20'
         ]);
@@ -92,10 +92,10 @@ class AnalyseControllerTest extends BaseWebTestCase
         $this->em->flush();
         $id = $analyse->getId();
 
-        $token = $this->client->getContainer()->get('security.csrf.token_manager')
+        $token = self::$client->getContainer()->get('security.csrf.token_manager')
             ->getToken('delete' . $id)->getValue();
 
-        $this->client->request('POST', '/analyse/' . $id . '/delete', ['_token' => $token]);
+        self::$client->request('POST', '/analyse/' . $id . '/delete', ['_token' => $token]);
         $this->assertResponseRedirects('/analyse/');
     }
 
@@ -105,14 +105,14 @@ class AnalyseControllerTest extends BaseWebTestCase
         $this->createTestAnalyse();
         $this->em->flush();
 
-        $this->client->request('GET', '/analyse/pdf');
+        self::$client->request('GET', '/analyse/pdf');
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/pdf');
     }
 
     public function testUnauthenticatedRedirect(): void
     {
-        $this->client->request('GET', '/analyse/');
+        self::$client->request('GET', '/analyse/');
         $this->assertResponseRedirects();
     }
 

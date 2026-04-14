@@ -22,14 +22,14 @@ class ConseilControllerTest extends BaseWebTestCase
     public function testIndexPageLoads(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        $this->client->request('GET', '/conseil/');
+        self::$client->request('GET', '/conseil/');
         $this->assertResponseIsSuccessful();
     }
 
     public function testNewFormLoads(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        $this->client->request('GET', '/conseil/new');
+        self::$client->request('GET', '/conseil/new');
         $this->assertResponseIsSuccessful();
     }
 
@@ -38,9 +38,9 @@ class ConseilControllerTest extends BaseWebTestCase
         $this->loginWithRole('ROLE_EXPERT');
 
         $analyse = $this->createTestAnalyse();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('POST', '/conseil/new', [
+        self::$client->request('POST', '/conseil/new', [
             'analyse' => $analyse->getId(),
             'descriptionConseil' => 'Test recommendation for the farm',
             'priorite' => Priorite::HAUTE->value
@@ -48,7 +48,7 @@ class ConseilControllerTest extends BaseWebTestCase
 
         $this->assertResponseRedirects();
 
-        $conseil = $this->em->getRepository(Conseil::class)->findOneBy(['descriptionConseil' => 'Test recommendation for the farm']);
+        $conseil = self::$em->getRepository(Conseil::class)->findOneBy(['descriptionConseil' => 'Test recommendation for the farm']);
         $this->assertNotNull($conseil);
     }
 
@@ -56,9 +56,9 @@ class ConseilControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_EXPERT');
         $conseil = $this->createTestConseil();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('GET', '/conseil/' . $conseil->getId());
+        self::$client->request('GET', '/conseil/' . $conseil->getId());
         $this->assertResponseIsSuccessful();
     }
 
@@ -66,9 +66,9 @@ class ConseilControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_EXPERT');
         $conseil = $this->createTestConseil();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('GET', '/conseil/' . $conseil->getId() . '/edit');
+        self::$client->request('GET', '/conseil/' . $conseil->getId() . '/edit');
         $this->assertResponseIsSuccessful();
     }
 
@@ -76,9 +76,9 @@ class ConseilControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_EXPERT');
         $conseil = $this->createTestConseil();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('POST', '/conseil/' . $conseil->getId() . '/edit', [
+        self::$client->request('POST', '/conseil/' . $conseil->getId() . '/edit', [
             'descriptionConseil' => 'Updated recommendation',
             'priorite' => Priorite::MOYENNE->value
         ]);
@@ -90,19 +90,19 @@ class ConseilControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_EXPERT');
         $conseil = $this->createTestConseil();
-        $this->em->flush();
+        self::$em->flush();
         $id = $conseil->getId();
 
-        $token = $this->client->getContainer()->get('security.csrf.token_manager')
+        $token = self::$client->getContainer()->get('security.csrf.token_manager')
             ->getToken('delete' . $id)->getValue();
 
-        $this->client->request('POST', '/conseil/' . $id . '/delete', ['_token' => $token]);
+        self::$client->request('POST', '/conseil/' . $id . '/delete', ['_token' => $token]);
         $this->assertResponseRedirects('/conseil/');
     }
 
     public function testUnauthenticatedRedirect(): void
     {
-        $this->client->request('GET', '/conseil/');
+        self::$client->request('GET', '/conseil/');
         $this->assertResponseRedirects();
     }
 
@@ -112,7 +112,7 @@ class ConseilControllerTest extends BaseWebTestCase
         $ferme->setNomFerme('Test Farm');
         $ferme->setLieu('Test Location');
         $ferme->setSurface(100.0);
-        $this->em->persist($ferme);
+        self::$em->persist($ferme);
         return $ferme;
     }
 
@@ -126,7 +126,7 @@ class ConseilControllerTest extends BaseWebTestCase
         $analyse->setTechnicien($technicien);
         $analyse->setResultatTechnique('Test analysis for conseil');
         $analyse->setDateAnalyse(new \DateTime());
-        $this->em->persist($analyse);
+        self::$em->persist($analyse);
         return $analyse;
     }
 
@@ -138,7 +138,7 @@ class ConseilControllerTest extends BaseWebTestCase
         $conseil->setDescriptionConseil('Test recommendation');
         $conseil->setPriorite(Priorite::HAUTE);
         $conseil->setDate(new \DateTime());
-        $this->em->persist($conseil);
+        self::$em->persist($conseil);
         return $conseil;
     }
 }

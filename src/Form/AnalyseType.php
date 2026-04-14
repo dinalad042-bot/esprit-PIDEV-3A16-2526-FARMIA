@@ -11,7 +11,7 @@ use App\Enum\StatutAnalyse;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -44,8 +44,13 @@ class AnalyseType extends AbstractType
                     'placeholder' => 'https://example.com/image.jpg',
                 ],
             ])
-            ->add('statut', EnumType::class, [
-                'class' => StatutAnalyse::class,
+            ->add('statut', ChoiceType::class, [
+                'choices' => [
+                    'En attente' => StatutAnalyse::EN_ATTENTE->value,
+                    'En cours' => StatutAnalyse::EN_COURS->value,
+                    'Terminée' => StatutAnalyse::TERMINEE->value,
+                    'Annulée' => StatutAnalyse::ANNULEE->value,
+                ],
                 'label' => 'Statut',
                 'placeholder' => '-- Sélectionner un statut --',
                 'attr' => ['class' => 'form-control profile-input'],

@@ -7,7 +7,6 @@ use App\Repository\UserRepository;
 use App\Service\FaceEnrollmentService;
 use App\Service\UserLogService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,17 +14,19 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 #[Route('/auth/face')]
 class FaceAuthController extends AbstractController
 {
     public function __construct(
-        private readonly FaceEnrollmentService  $faceEnrollmentService,
-        private readonly UserRepository         $userRepository,
-        private readonly Security               $security,
-        private readonly RouterInterface        $router,
-        private readonly UserLogService         $userLogService,
-        private readonly HttpClientInterface    $httpClient,
+        private readonly FaceEnrollmentService       $faceEnrollmentService,
+        private readonly UserRepository              $userRepository,
+        private readonly RouterInterface             $router,
+        private readonly UserLogService              $userLogService,
+        private readonly HttpClientInterface         $httpClient,
+        private readonly TokenStorageInterface       $tokenStorage,
         #[Autowire('%env(string:PYTHON_API_URL)%')]
         private readonly string $pythonApiUrl = 'http://127.0.0.1:5000'
     ) {}
@@ -126,8 +127,13 @@ class FaceAuthController extends AbstractController
                 );
             }
 
-            // Authentifier via Symfony Security
-            $this->security->login($matchedUser, 'security.authenticator.form_login.main');
+            // Authentifier via Symfony Security - Create token and store it
+            $token = new UsernamePasswordToken(
+                $matchedUser,
+                'main',
+                $matchedUser->getRoles()
+            );
+            $this->tokenStorage->setToken($token);
 
             // Log
             $this->userLogService->log($matchedUser, 'LOGIN_FACE', 'SUCCESS');

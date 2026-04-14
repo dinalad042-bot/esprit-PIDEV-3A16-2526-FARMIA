@@ -1,36 +1,1491 @@
-[Sun Apr 12 17:49:07 2026] PHP 8.2.12 Development Server (http://localhost:8000) started
-[Sun Apr 12 17:49:40 2026] [::1]:62673 Accepted
-[Sun Apr 12 17:49:41 2026] [::1]:62673 Closing
-[Sun Apr 12 17:49:41 2026] [::1]:62060 Accepted
-[Sun Apr 12 17:49:41 2026] [::1]:62060 Closed without sending a request; it was probably just an unused speculative preconnection
-[Sun Apr 12 17:49:41 2026] [::1]:62060 Closing
-[Sun Apr 12 17:49:41 2026] [::1]:64854 Accepted
-[Sun Apr 12 17:49:41 2026] [::1]:64854 Closing
-[Sun Apr 12 17:51:37 2026] [::1]:55730 Accepted
-[Sun Apr 12 17:51:37 2026] [::1]:55730 Closing
-[Sun Apr 12 17:51:37 2026] [::1]:59449 Accepted
-[Sun Apr 12 17:51:37 2026] [::1]:59449 Closed without sending a request; it was probably just an unused speculative preconnection
-[Sun Apr 12 17:51:37 2026] [::1]:59449 Closing
-[Sun Apr 12 17:51:37 2026] [::1]:56925 Accepted
-[Sun Apr 12 17:51:38 2026] [::1]:56925 Closing
-[Sun Apr 12 17:52:07 2026] [::1]:63472 Accepted
-[Sun Apr 12 17:52:07 2026] [::1]:51579 Accepted
-[Sun Apr 12 17:52:07 2026] [::1]:63472 Closing
-[Sun Apr 12 17:52:07 2026] [::1]:57262 Accepted
-[Sun Apr 12 17:52:07 2026] [::1]:51579 [200]: GET /assets/css/landing.css
-[Sun Apr 12 17:52:07 2026] [::1]:57262 [200]: GET /assets/images/hero-agriculture-tech.png
-[Sun Apr 12 17:52:07 2026] [::1]:51579 Closing
-[Sun Apr 12 17:52:07 2026] [::1]:57262 Closing
-[Sun Apr 12 17:52:16 2026] [::1]:53181 Accepted
-[Sun Apr 12 17:52:16 2026] [::1]:53181 Closing
-[Sun Apr 12 17:52:19 2026] [::1]:50871 Accepted
-[Sun Apr 12 17:52:19 2026] [::1]:50871 Closing
-[Sun Apr 12 17:53:44 2026] [::1]:55018 Accepted
-[Sun Apr 12 17:53:44 2026] [::1]:55018 Closing
-[Sun Apr 12 17:53:44 2026] [::1]:49192 Accepted
-[Sun Apr 12 17:53:44 2026] [::1]:49192 Closed without sending a request; it was probably just an unused speculative preconnection
-[Sun Apr 12 17:53:44 2026] [::1]:49192 Closing
-[Sun Apr 12 17:53:44 2026] [::1]:49316 Accepted
-[Sun Apr 12 17:53:45 2026] [::1]:49316 Closing
-[Sun Apr 12 17:55:29 2026] [::1]:61363 Accepted
-[Sun Apr 12 17:55:29 2026] [::1]:61363 Closing
+[Mon Apr 13 20:08:51 2026] PHP 8.2.12 Development Server (http://localhost:8000) started
+[Mon Apr 13 20:09:16 2026] [::1]:64680 Accepted
+[Mon Apr 13 20:09:16 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:09:16 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:16 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:16 2026] Router: Handling request...
+[Mon Apr 13 20:09:19 2026] Router: Sending response...
+[Mon Apr 13 20:09:19 2026] Router: Done
+[Mon Apr 13 20:09:19 2026] [::1]:64680 Closing
+[Mon Apr 13 20:09:26 2026] [::1]:65426 Accepted
+[Mon Apr 13 20:09:26 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:09:26 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:26 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:26 2026] Router: Handling request...
+[Mon Apr 13 20:09:26 2026] Router: Sending response...
+[Mon Apr 13 20:09:26 2026] Router: Done
+[Mon Apr 13 20:09:26 2026] [::1]:65426 Closing
+[Mon Apr 13 20:09:26 2026] [::1]:56335 Accepted
+[Mon Apr 13 20:09:26 2026] [::1]:61633 Accepted
+[Mon Apr 13 20:09:26 2026] [::1]:56335 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Apr 13 20:09:26 2026] [::1]:56335 Closing
+[Mon Apr 13 20:09:26 2026] [::1]:58726 Accepted
+[Mon Apr 13 20:09:26 2026] Router: Checking URI=/assets/css/auth.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css, is_file=YES
+[Mon Apr 13 20:09:26 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css
+[Mon Apr 13 20:09:26 2026] [::1]:61633 Closing
+[Mon Apr 13 20:09:26 2026] Router: Checking URI=/captcha/image, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\captcha\image, is_file=NO
+[Mon Apr 13 20:09:26 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:26 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:26 2026] Router: Handling request...
+[Mon Apr 13 20:09:27 2026] Router: Sending response...
+[Mon Apr 13 20:09:27 2026] Router: Done
+[Mon Apr 13 20:09:27 2026] [::1]:58726 Closing
+[Mon Apr 13 20:09:27 2026] [::1]:55245 Accepted
+[Mon Apr 13 20:09:27 2026] Router: Checking URI=/_wdt/4996e8, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\4996e8, is_file=NO
+[Mon Apr 13 20:09:27 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:27 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:27 2026] Router: Handling request...
+[Mon Apr 13 20:09:27 2026] Router: Sending response...
+[Mon Apr 13 20:09:27 2026] Router: Done
+[Mon Apr 13 20:09:27 2026] [::1]:55245 Closing
+[Mon Apr 13 20:09:27 2026] [::1]:59877 Accepted
+[Mon Apr 13 20:09:27 2026] Router: Checking URI=/favicon.ico, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\favicon.ico, is_file=NO
+[Mon Apr 13 20:09:27 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:27 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:27 2026] Router: Handling request...
+[Mon Apr 13 20:09:27 2026] Router: Sending response...
+[Mon Apr 13 20:09:27 2026] Router: Done
+[Mon Apr 13 20:09:27 2026] [::1]:59877 Closing
+[Mon Apr 13 20:09:34 2026] [::1]:55707 Accepted
+[Mon Apr 13 20:09:34 2026] [::1]:59692 Accepted
+[Mon Apr 13 20:09:34 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:09:34 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:35 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:35 2026] Router: Handling request...
+[Mon Apr 13 20:09:39 2026] Router: Sending response...
+[Mon Apr 13 20:09:39 2026] Router: Done
+[Mon Apr 13 20:09:39 2026] [::1]:55707 Closing
+[Mon Apr 13 20:09:39 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:09:39 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:09:39 2026] [::1]:59692 Closing
+[Mon Apr 13 20:09:39 2026] [::1]:61563 Accepted
+[Mon Apr 13 20:09:39 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:09:39 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:09:39 2026] [::1]:61563 Closing
+[Mon Apr 13 20:09:39 2026] [::1]:57097 Accepted
+[Mon Apr 13 20:09:39 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:09:39 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:39 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:39 2026] Router: Handling request...
+[Mon Apr 13 20:09:40 2026] Router: Sending response...
+[Mon Apr 13 20:09:40 2026] Router: Done
+[Mon Apr 13 20:09:40 2026] [::1]:57097 Closing
+[Mon Apr 13 20:09:40 2026] [::1]:56095 Accepted
+[Mon Apr 13 20:09:40 2026] Router: Checking URI=/_wdt/e7245b, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\e7245b, is_file=NO
+[Mon Apr 13 20:09:40 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:40 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:40 2026] Router: Handling request...
+[Mon Apr 13 20:09:40 2026] Router: Sending response...
+[Mon Apr 13 20:09:40 2026] Router: Done
+[Mon Apr 13 20:09:40 2026] [::1]:56095 Closing
+[Mon Apr 13 20:09:47 2026] [::1]:58203 Accepted
+[Mon Apr 13 20:09:47 2026] Router: Checking URI=/ferme/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\, is_file=NO
+[Mon Apr 13 20:09:47 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:47 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:47 2026] Router: Handling request...
+[Mon Apr 13 20:09:51 2026] Router: Sending response...
+[Mon Apr 13 20:09:51 2026] Router: Done
+[Mon Apr 13 20:09:51 2026] [::1]:58203 Closing
+[Mon Apr 13 20:09:51 2026] [::1]:56163 Accepted
+[Mon Apr 13 20:09:51 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:09:51 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:09:51 2026] [::1]:56163 Closing
+[Mon Apr 13 20:09:51 2026] [::1]:57012 Accepted
+[Mon Apr 13 20:09:51 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:09:51 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:09:51 2026] [::1]:57012 Closing
+[Mon Apr 13 20:09:51 2026] [::1]:62599 Accepted
+[Mon Apr 13 20:09:51 2026] Router: Checking URI=/ferme/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\, is_file=NO
+[Mon Apr 13 20:09:51 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:51 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:51 2026] Router: Handling request...
+[Mon Apr 13 20:09:52 2026] Router: Sending response...
+[Mon Apr 13 20:09:52 2026] Router: Done
+[Mon Apr 13 20:09:52 2026] [::1]:62599 Closing
+[Mon Apr 13 20:09:52 2026] [::1]:61985 Accepted
+[Mon Apr 13 20:09:52 2026] Router: Checking URI=/_wdt/6594ad, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\6594ad, is_file=NO
+[Mon Apr 13 20:09:52 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:52 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:52 2026] Router: Handling request...
+[Mon Apr 13 20:09:52 2026] Router: Sending response...
+[Mon Apr 13 20:09:52 2026] Router: Done
+[Mon Apr 13 20:09:52 2026] [::1]:61985 Closing
+[Mon Apr 13 20:09:56 2026] [::1]:60676 Accepted
+[Mon Apr 13 20:09:56 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:09:56 2026] Router: Routing to Symfony
+[Mon Apr 13 20:09:56 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:09:56 2026] Router: Handling request...
+[Mon Apr 13 20:10:00 2026] Router: Sending response...
+[Mon Apr 13 20:10:00 2026] Router: Done
+[Mon Apr 13 20:10:00 2026] [::1]:60676 Closing
+[Mon Apr 13 20:10:00 2026] [::1]:54770 Accepted
+[Mon Apr 13 20:10:00 2026] [::1]:60063 Accepted
+[Mon Apr 13 20:10:00 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:10:00 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:10:00 2026] [::1]:54770 Closing
+[Mon Apr 13 20:10:00 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:10:00 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:10:00 2026] [::1]:60063 Closing
+[Mon Apr 13 20:10:00 2026] [::1]:56064 Accepted
+[Mon Apr 13 20:10:00 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:10:00 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:00 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:00 2026] Router: Handling request...
+[Mon Apr 13 20:10:01 2026] Router: Sending response...
+[Mon Apr 13 20:10:01 2026] Router: Done
+[Mon Apr 13 20:10:01 2026] [::1]:56064 Closing
+[Mon Apr 13 20:10:01 2026] [::1]:51478 Accepted
+[Mon Apr 13 20:10:01 2026] Router: Checking URI=/_wdt/d1b3f5, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\d1b3f5, is_file=NO
+[Mon Apr 13 20:10:01 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:01 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:01 2026] Router: Handling request...
+[Mon Apr 13 20:10:01 2026] Router: Sending response...
+[Mon Apr 13 20:10:01 2026] Router: Done
+[Mon Apr 13 20:10:01 2026] [::1]:51478 Closing
+[Mon Apr 13 20:10:02 2026] [::1]:65337 Accepted
+[Mon Apr 13 20:10:02 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:10:02 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:02 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:02 2026] Router: Handling request...
+[Mon Apr 13 20:10:02 2026] Router: Sending response...
+[Mon Apr 13 20:10:02 2026] Router: Done
+[Mon Apr 13 20:10:02 2026] [::1]:65337 Closing
+[Mon Apr 13 20:10:02 2026] [::1]:57627 Accepted
+[Mon Apr 13 20:10:02 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:10:02 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:02 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:02 2026] Router: Handling request...
+[Mon Apr 13 20:10:03 2026] Router: Sending response...
+[Mon Apr 13 20:10:03 2026] Router: Done
+[Mon Apr 13 20:10:03 2026] [::1]:57627 Closing
+[Mon Apr 13 20:10:03 2026] [::1]:60974 Accepted
+[Mon Apr 13 20:10:03 2026] [::1]:49204 Accepted
+[Mon Apr 13 20:10:03 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:10:03 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:10:03 2026] [::1]:60974 Closing
+[Mon Apr 13 20:10:03 2026] [::1]:51589 Accepted
+[Mon Apr 13 20:10:03 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:10:03 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:10:03 2026] [::1]:49204 Closing
+[Mon Apr 13 20:10:03 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:10:03 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:03 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:03 2026] Router: Handling request...
+[Mon Apr 13 20:10:03 2026] Router: Sending response...
+[Mon Apr 13 20:10:03 2026] Router: Done
+[Mon Apr 13 20:10:03 2026] [::1]:51589 Closing
+[Mon Apr 13 20:10:03 2026] [::1]:61167 Accepted
+[Mon Apr 13 20:10:03 2026] Router: Checking URI=/_wdt/933bea, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\933bea, is_file=NO
+[Mon Apr 13 20:10:03 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:03 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:03 2026] Router: Handling request...
+[Mon Apr 13 20:10:03 2026] Router: Sending response...
+[Mon Apr 13 20:10:03 2026] Router: Done
+[Mon Apr 13 20:10:03 2026] [::1]:61167 Closing
+[Mon Apr 13 20:10:08 2026] [::1]:61268 Accepted
+[Mon Apr 13 20:10:08 2026] Router: Checking URI=/ferme/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\new, is_file=NO
+[Mon Apr 13 20:10:08 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:08 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:08 2026] Router: Handling request...
+[Mon Apr 13 20:10:08 2026] Router: Sending response...
+[Mon Apr 13 20:10:08 2026] Router: Done
+[Mon Apr 13 20:10:08 2026] [::1]:61268 Closing
+[Mon Apr 13 20:10:08 2026] [::1]:62860 Accepted
+[Mon Apr 13 20:10:08 2026] [::1]:49235 Accepted
+[Mon Apr 13 20:10:08 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:10:08 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:10:08 2026] [::1]:62860 Closing
+[Mon Apr 13 20:10:08 2026] [::1]:56869 Accepted
+[Mon Apr 13 20:10:08 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:10:08 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:10:08 2026] [::1]:49235 Closing
+[Mon Apr 13 20:10:08 2026] Router: Checking URI=/ferme/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\new, is_file=NO
+[Mon Apr 13 20:10:08 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:09 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:09 2026] Router: Handling request...
+[Mon Apr 13 20:10:09 2026] Router: Sending response...
+[Mon Apr 13 20:10:09 2026] Router: Done
+[Mon Apr 13 20:10:09 2026] [::1]:56869 Closing
+[Mon Apr 13 20:10:09 2026] [::1]:54253 Accepted
+[Mon Apr 13 20:10:09 2026] Router: Checking URI=/_wdt/d8ba4f, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\d8ba4f, is_file=NO
+[Mon Apr 13 20:10:09 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:09 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:09 2026] Router: Handling request...
+[Mon Apr 13 20:10:09 2026] Router: Sending response...
+[Mon Apr 13 20:10:09 2026] Router: Done
+[Mon Apr 13 20:10:09 2026] [::1]:54253 Closing
+[Mon Apr 13 20:10:11 2026] [::1]:59460 Accepted
+[Mon Apr 13 20:10:11 2026] [::1]:60451 Accepted
+[Mon Apr 13 20:10:11 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:10:11 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:11 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:11 2026] Router: Handling request...
+[Mon Apr 13 20:10:11 2026] Router: Sending response...
+[Mon Apr 13 20:10:11 2026] Router: Done
+[Mon Apr 13 20:10:11 2026] [::1]:59460 Closing
+[Mon Apr 13 20:10:11 2026] [::1]:61543 Accepted
+[Mon Apr 13 20:10:11 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:10:11 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:10:11 2026] [::1]:60451 Closing
+[Mon Apr 13 20:10:11 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:10:11 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:10:11 2026] [::1]:61543 Closing
+[Mon Apr 13 20:10:11 2026] [::1]:57842 Accepted
+[Mon Apr 13 20:10:11 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:10:11 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:11 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:11 2026] Router: Handling request...
+[Mon Apr 13 20:10:12 2026] Router: Sending response...
+[Mon Apr 13 20:10:12 2026] Router: Done
+[Mon Apr 13 20:10:12 2026] [::1]:57842 Closing
+[Mon Apr 13 20:10:12 2026] [::1]:49669 Accepted
+[Mon Apr 13 20:10:12 2026] Router: Checking URI=/_wdt/942761, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\942761, is_file=NO
+[Mon Apr 13 20:10:12 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:12 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:12 2026] Router: Handling request...
+[Mon Apr 13 20:10:12 2026] Router: Sending response...
+[Mon Apr 13 20:10:12 2026] Router: Done
+[Mon Apr 13 20:10:12 2026] [::1]:49669 Closing
+[Mon Apr 13 20:10:13 2026] [::1]:56583 Accepted
+[Mon Apr 13 20:10:13 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:10:13 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:13 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:13 2026] Router: Handling request...
+[Mon Apr 13 20:10:18 2026] Router: Sending response...
+[Mon Apr 13 20:10:18 2026] Router: Done
+[Mon Apr 13 20:10:18 2026] [::1]:56583 Closing
+[Mon Apr 13 20:10:18 2026] [::1]:59259 Accepted
+[Mon Apr 13 20:10:18 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:10:18 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:18 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:18 2026] Router: Handling request...
+[Mon Apr 13 20:10:18 2026] Router: Sending response...
+[Mon Apr 13 20:10:18 2026] Router: Done
+[Mon Apr 13 20:10:18 2026] [::1]:59259 Closing
+[Mon Apr 13 20:10:18 2026] [::1]:52977 Accepted
+[Mon Apr 13 20:10:18 2026] [::1]:64345 Accepted
+[Mon Apr 13 20:10:18 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:10:18 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:10:18 2026] [::1]:52977 Closing
+[Mon Apr 13 20:10:18 2026] [::1]:56483 Accepted
+[Mon Apr 13 20:10:18 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:10:18 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:10:18 2026] [::1]:64345 Closing
+[Mon Apr 13 20:10:18 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:10:18 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:18 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:18 2026] Router: Handling request...
+[Mon Apr 13 20:10:18 2026] Router: Sending response...
+[Mon Apr 13 20:10:19 2026] Router: Done
+[Mon Apr 13 20:10:19 2026] [::1]:56483 Closing
+[Mon Apr 13 20:10:19 2026] [::1]:49335 Accepted
+[Mon Apr 13 20:10:19 2026] Router: Checking URI=/_wdt/027132, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\027132, is_file=NO
+[Mon Apr 13 20:10:19 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:19 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:19 2026] Router: Handling request...
+[Mon Apr 13 20:10:19 2026] Router: Sending response...
+[Mon Apr 13 20:10:19 2026] Router: Done
+[Mon Apr 13 20:10:19 2026] [::1]:49335 Closing
+[Mon Apr 13 20:10:35 2026] [::1]:60592 Accepted
+[Mon Apr 13 20:10:35 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:10:35 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:35 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:35 2026] Router: Handling request...
+[Mon Apr 13 20:10:35 2026] Router: Sending response...
+[Mon Apr 13 20:10:36 2026] Router: Done
+[Mon Apr 13 20:10:36 2026] [::1]:60592 Closing
+[Mon Apr 13 20:10:36 2026] [::1]:52400 Accepted
+[Mon Apr 13 20:10:36 2026] [::1]:51430 Accepted
+[Mon Apr 13 20:10:36 2026] [::1]:52400 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Apr 13 20:10:36 2026] [::1]:52400 Closing
+[Mon Apr 13 20:10:36 2026] [::1]:56729 Accepted
+[Mon Apr 13 20:10:36 2026] Router: Checking URI=/assets/css/auth.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css, is_file=YES
+[Mon Apr 13 20:10:36 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css
+[Mon Apr 13 20:10:36 2026] [::1]:51430 Closing
+[Mon Apr 13 20:10:36 2026] Router: Checking URI=/captcha/image, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\captcha\image, is_file=NO
+[Mon Apr 13 20:10:36 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:36 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:36 2026] Router: Handling request...
+[Mon Apr 13 20:10:36 2026] Router: Sending response...
+[Mon Apr 13 20:10:36 2026] Router: Done
+[Mon Apr 13 20:10:36 2026] [::1]:56729 Closing
+[Mon Apr 13 20:10:36 2026] [::1]:51213 Accepted
+[Mon Apr 13 20:10:36 2026] Router: Checking URI=/_wdt/733c40, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\733c40, is_file=NO
+[Mon Apr 13 20:10:36 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:36 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:36 2026] Router: Handling request...
+[Mon Apr 13 20:10:36 2026] Router: Sending response...
+[Mon Apr 13 20:10:36 2026] Router: Done
+[Mon Apr 13 20:10:36 2026] [::1]:51213 Closing
+[Mon Apr 13 20:10:36 2026] [::1]:59954 Accepted
+[Mon Apr 13 20:10:36 2026] Router: Checking URI=/favicon.ico, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\favicon.ico, is_file=NO
+[Mon Apr 13 20:10:36 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:36 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:36 2026] Router: Handling request...
+[Mon Apr 13 20:10:36 2026] Router: Sending response...
+[Mon Apr 13 20:10:36 2026] Router: Done
+[Mon Apr 13 20:10:36 2026] [::1]:59954 Closing
+[Mon Apr 13 20:10:40 2026] [::1]:63098 Accepted
+[Mon Apr 13 20:10:43 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:10:43 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:43 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:43 2026] Router: Handling request...
+[Mon Apr 13 20:10:48 2026] Router: Sending response...
+[Mon Apr 13 20:10:48 2026] Router: Done
+[Mon Apr 13 20:10:48 2026] [::1]:63098 Closing
+[Mon Apr 13 20:10:48 2026] [::1]:61586 Accepted
+[Mon Apr 13 20:10:48 2026] [::1]:63426 Accepted
+[Mon Apr 13 20:10:48 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:10:48 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:10:48 2026] [::1]:61586 Closing
+[Mon Apr 13 20:10:48 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:10:48 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:10:48 2026] [::1]:63426 Closing
+[Mon Apr 13 20:10:48 2026] [::1]:56365 Accepted
+[Mon Apr 13 20:10:48 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:10:48 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:48 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:48 2026] Router: Handling request...
+[Mon Apr 13 20:10:48 2026] Router: Sending response...
+[Mon Apr 13 20:10:48 2026] Router: Done
+[Mon Apr 13 20:10:48 2026] [::1]:56365 Closing
+[Mon Apr 13 20:10:48 2026] [::1]:56308 Accepted
+[Mon Apr 13 20:10:48 2026] Router: Checking URI=/_wdt/7ac29d, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\7ac29d, is_file=NO
+[Mon Apr 13 20:10:48 2026] Router: Routing to Symfony
+[Mon Apr 13 20:10:48 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:10:49 2026] Router: Handling request...
+[Mon Apr 13 20:10:49 2026] Router: Sending response...
+[Mon Apr 13 20:10:49 2026] Router: Done
+[Mon Apr 13 20:10:49 2026] [::1]:56308 Closing
+[Mon Apr 13 20:12:00 2026] [::1]:56770 Accepted
+[Mon Apr 13 20:12:00 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:12:00 2026] Router: Routing to Symfony
+[Mon Apr 13 20:12:00 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:12:00 2026] Router: Handling request...
+[Mon Apr 13 20:12:04 2026] Router: Sending response...
+[Mon Apr 13 20:12:04 2026] Router: Done
+[Mon Apr 13 20:12:04 2026] [::1]:56770 Closing
+[Mon Apr 13 20:12:04 2026] [::1]:50204 Accepted
+[Mon Apr 13 20:12:04 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:12:04 2026] Router: Routing to Symfony
+[Mon Apr 13 20:12:04 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:12:04 2026] Router: Handling request...
+[Mon Apr 13 20:12:05 2026] Router: Sending response...
+[Mon Apr 13 20:12:05 2026] Router: Done
+[Mon Apr 13 20:12:05 2026] [::1]:50204 Closing
+[Mon Apr 13 20:12:05 2026] [::1]:54353 Accepted
+[Mon Apr 13 20:12:05 2026] [::1]:53503 Accepted
+[Mon Apr 13 20:12:05 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:12:05 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:12:05 2026] [::1]:54353 Closing
+[Mon Apr 13 20:12:05 2026] [::1]:56321 Accepted
+[Mon Apr 13 20:12:05 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:12:05 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:12:05 2026] [::1]:53503 Closing
+[Mon Apr 13 20:12:05 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:12:05 2026] Router: Routing to Symfony
+[Mon Apr 13 20:12:05 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:12:05 2026] Router: Handling request...
+[Mon Apr 13 20:12:05 2026] Router: Sending response...
+[Mon Apr 13 20:12:05 2026] Router: Done
+[Mon Apr 13 20:12:05 2026] [::1]:56321 Closing
+[Mon Apr 13 20:12:05 2026] [::1]:53658 Accepted
+[Mon Apr 13 20:12:05 2026] Router: Checking URI=/_wdt/722562, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\722562, is_file=NO
+[Mon Apr 13 20:12:05 2026] Router: Routing to Symfony
+[Mon Apr 13 20:12:05 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:12:05 2026] Router: Handling request...
+[Mon Apr 13 20:12:06 2026] Router: Sending response...
+[Mon Apr 13 20:12:06 2026] Router: Done
+[Mon Apr 13 20:12:06 2026] [::1]:53658 Closing
+[Mon Apr 13 20:14:30 2026] [::1]:61335 Accepted
+[Mon Apr 13 20:14:30 2026] [::1]:63344 Accepted
+[Mon Apr 13 20:14:30 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:14:30 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:30 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:30 2026] Router: Handling request...
+[Mon Apr 13 20:14:34 2026] Router: Sending response...
+[Mon Apr 13 20:14:35 2026] Router: Done
+[Mon Apr 13 20:14:35 2026] [::1]:61335 Closing
+[Mon Apr 13 20:14:35 2026] [::1]:59078 Accepted
+[Mon Apr 13 20:14:35 2026] [::1]:63344 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Apr 13 20:14:35 2026] [::1]:63344 Closing
+[Mon Apr 13 20:14:35 2026] [::1]:50666 Accepted
+[Mon Apr 13 20:14:35 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:14:35 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:35 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:35 2026] Router: Handling request...
+[Mon Apr 13 20:14:35 2026] Router: Sending response...
+[Mon Apr 13 20:14:35 2026] Router: Done
+[Mon Apr 13 20:14:35 2026] [::1]:59078 Closing
+[Mon Apr 13 20:14:35 2026] [::1]:57746 Accepted
+[Mon Apr 13 20:14:35 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:14:35 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:14:35 2026] [::1]:50666 Closing
+[Mon Apr 13 20:14:35 2026] [::1]:59393 Accepted
+[Mon Apr 13 20:14:35 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:14:35 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:35 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:35 2026] Router: Handling request...
+[Mon Apr 13 20:14:35 2026] Router: Sending response...
+[Mon Apr 13 20:14:35 2026] Router: Done
+[Mon Apr 13 20:14:35 2026] [::1]:57746 Closing
+[Mon Apr 13 20:14:35 2026] [::1]:51357 Accepted
+[Mon Apr 13 20:14:35 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:14:35 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:14:35 2026] [::1]:59393 Closing
+[Mon Apr 13 20:14:35 2026] [::1]:64432 Accepted
+[Mon Apr 13 20:14:35 2026] Router: Checking URI=/agricole/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\dashboard, is_file=NO
+[Mon Apr 13 20:14:35 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:36 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:36 2026] Router: Handling request...
+[Mon Apr 13 20:14:36 2026] Router: Sending response...
+[Mon Apr 13 20:14:36 2026] Router: Done
+[Mon Apr 13 20:14:36 2026] [::1]:51357 Closing
+[Mon Apr 13 20:14:36 2026] [::1]:65337 Accepted
+[Mon Apr 13 20:14:36 2026] Router: Checking URI=/assets/css/auth.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css, is_file=YES
+[Mon Apr 13 20:14:36 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css
+[Mon Apr 13 20:14:36 2026] [::1]:64432 Closing
+[Mon Apr 13 20:14:36 2026] [::1]:50804 Accepted
+[Mon Apr 13 20:14:36 2026] Router: Checking URI=/captcha/image, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\captcha\image, is_file=NO
+[Mon Apr 13 20:14:36 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:36 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:36 2026] Router: Handling request...
+[Mon Apr 13 20:14:36 2026] Router: Sending response...
+[Mon Apr 13 20:14:36 2026] Router: Done
+[Mon Apr 13 20:14:36 2026] [::1]:65337 Closing
+[Mon Apr 13 20:14:36 2026] [::1]:61976 Accepted
+[Mon Apr 13 20:14:36 2026] Router: Checking URI=/_wdt/e1d6e2, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\e1d6e2, is_file=NO
+[Mon Apr 13 20:14:36 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:36 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:36 2026] Router: Handling request...
+[Mon Apr 13 20:14:37 2026] Router: Sending response...
+[Mon Apr 13 20:14:37 2026] Router: Done
+[Mon Apr 13 20:14:37 2026] [::1]:50804 Closing
+[Mon Apr 13 20:14:37 2026] [::1]:61284 Accepted
+[Mon Apr 13 20:14:37 2026] Router: Checking URI=/_wdt/705995, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\705995, is_file=NO
+[Mon Apr 13 20:14:37 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:37 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:37 2026] Router: Handling request...
+[Mon Apr 13 20:14:37 2026] Router: Sending response...
+[Mon Apr 13 20:14:37 2026] Router: Done
+[Mon Apr 13 20:14:37 2026] [::1]:61976 Closing
+[Mon Apr 13 20:14:37 2026] Router: Checking URI=/favicon.ico, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\favicon.ico, is_file=NO
+[Mon Apr 13 20:14:37 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:37 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:37 2026] Router: Handling request...
+[Mon Apr 13 20:14:38 2026] Router: Sending response...
+[Mon Apr 13 20:14:38 2026] Router: Done
+[Mon Apr 13 20:14:38 2026] [::1]:61284 Closing
+[Mon Apr 13 20:14:42 2026] [::1]:57188 Accepted
+[Mon Apr 13 20:14:42 2026] Router: Checking URI=/ferme/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\new, is_file=NO
+[Mon Apr 13 20:14:42 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:42 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:42 2026] Router: Handling request...
+[Mon Apr 13 20:14:46 2026] Router: Sending response...
+[Mon Apr 13 20:14:46 2026] [::1]:57188 Closing
+[Mon Apr 13 20:14:46 2026] [::1]:50900 Accepted
+[Mon Apr 13 20:14:46 2026] [::1]:60685 Accepted
+[Mon Apr 13 20:14:46 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:14:46 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:46 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:46 2026] Router: Handling request...
+[Mon Apr 13 20:14:47 2026] Router: Sending response...
+[Mon Apr 13 20:14:47 2026] [::1]:50900 Closing
+[Mon Apr 13 20:14:47 2026] [::1]:64276 Accepted
+[Mon Apr 13 20:14:47 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:14:47 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:47 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:47 2026] Router: Handling request...
+[Mon Apr 13 20:14:47 2026] Router: Sending response...
+[Mon Apr 13 20:14:47 2026] [::1]:60685 Closing
+[Mon Apr 13 20:14:47 2026] [::1]:56679 Accepted
+[Mon Apr 13 20:14:47 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:14:47 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:47 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:47 2026] Router: Handling request...
+[Mon Apr 13 20:14:47 2026] Router: Sending response...
+[Mon Apr 13 20:14:48 2026] Router: Done
+[Mon Apr 13 20:14:48 2026] [::1]:64276 Closing
+[Mon Apr 13 20:14:48 2026] [::1]:62171 Accepted
+[Mon Apr 13 20:14:48 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:14:48 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:14:48 2026] [::1]:56679 Closing
+[Mon Apr 13 20:14:48 2026] [::1]:53596 Accepted
+[Mon Apr 13 20:14:48 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:14:48 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:14:48 2026] [::1]:62171 Closing
+[Mon Apr 13 20:14:48 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:14:48 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:48 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:48 2026] Router: Handling request...
+[Mon Apr 13 20:14:48 2026] Router: Sending response...
+[Mon Apr 13 20:14:48 2026] Router: Done
+[Mon Apr 13 20:14:48 2026] [::1]:53596 Closing
+[Mon Apr 13 20:14:48 2026] [::1]:50721 Accepted
+[Mon Apr 13 20:14:48 2026] Router: Checking URI=/_wdt/fdec71, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\fdec71, is_file=NO
+[Mon Apr 13 20:14:48 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:48 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:48 2026] Router: Handling request...
+[Mon Apr 13 20:14:48 2026] Router: Sending response...
+[Mon Apr 13 20:14:48 2026] Router: Done
+[Mon Apr 13 20:14:48 2026] [::1]:50721 Closing
+[Mon Apr 13 20:14:59 2026] [::1]:58880 Accepted
+[Mon Apr 13 20:14:59 2026] [::1]:57052 Accepted
+[Mon Apr 13 20:14:59 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:14:59 2026] Router: Routing to Symfony
+[Mon Apr 13 20:14:59 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:14:59 2026] Router: Handling request...
+[Mon Apr 13 20:15:03 2026] Router: Sending response...
+[Mon Apr 13 20:15:03 2026] Router: Done
+[Mon Apr 13 20:15:03 2026] [::1]:58880 Closing
+[Mon Apr 13 20:15:03 2026] Router: Checking URI=/ferme/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\new, is_file=NO
+[Mon Apr 13 20:15:03 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:03 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:03 2026] Router: Handling request...
+[Mon Apr 13 20:15:04 2026] Router: Sending response...
+[Mon Apr 13 20:15:04 2026] Router: Done
+[Mon Apr 13 20:15:04 2026] [::1]:57052 Closing
+[Mon Apr 13 20:15:04 2026] [::1]:62097 Accepted
+[Mon Apr 13 20:15:04 2026] [::1]:58123 Accepted
+[Mon Apr 13 20:15:04 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:04 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:04 2026] [::1]:62097 Closing
+[Mon Apr 13 20:15:04 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:04 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:04 2026] [::1]:58123 Closing
+[Mon Apr 13 20:15:04 2026] [::1]:60596 Accepted
+[Mon Apr 13 20:15:04 2026] Router: Checking URI=/ferme/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\new, is_file=NO
+[Mon Apr 13 20:15:04 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:04 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:04 2026] Router: Handling request...
+[Mon Apr 13 20:15:04 2026] Router: Sending response...
+[Mon Apr 13 20:15:04 2026] Router: Done
+[Mon Apr 13 20:15:04 2026] [::1]:60596 Closing
+[Mon Apr 13 20:15:04 2026] [::1]:53400 Accepted
+[Mon Apr 13 20:15:04 2026] Router: Checking URI=/_wdt/496d8b, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\496d8b, is_file=NO
+[Mon Apr 13 20:15:04 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:04 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:04 2026] Router: Handling request...
+[Mon Apr 13 20:15:04 2026] Router: Sending response...
+[Mon Apr 13 20:15:04 2026] Router: Done
+[Mon Apr 13 20:15:04 2026] [::1]:53400 Closing
+[Mon Apr 13 20:15:11 2026] [::1]:55833 Accepted
+[Mon Apr 13 20:15:11 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:15:11 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:11 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:11 2026] Router: Handling request...
+[Mon Apr 13 20:15:12 2026] Router: Sending response...
+[Mon Apr 13 20:15:12 2026] Router: Done
+[Mon Apr 13 20:15:12 2026] [::1]:55833 Closing
+[Mon Apr 13 20:15:12 2026] [::1]:65070 Accepted
+[Mon Apr 13 20:15:12 2026] [::1]:63759 Accepted
+[Mon Apr 13 20:15:12 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:12 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:12 2026] [::1]:65070 Closing
+[Mon Apr 13 20:15:12 2026] [::1]:62087 Accepted
+[Mon Apr 13 20:15:12 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:12 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:12 2026] [::1]:63759 Closing
+[Mon Apr 13 20:15:12 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:15:12 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:12 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:12 2026] Router: Handling request...
+[Mon Apr 13 20:15:12 2026] Router: Sending response...
+[Mon Apr 13 20:15:12 2026] Router: Done
+[Mon Apr 13 20:15:12 2026] [::1]:62087 Closing
+[Mon Apr 13 20:15:12 2026] [::1]:52589 Accepted
+[Mon Apr 13 20:15:12 2026] Router: Checking URI=/_wdt/be87d5, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\be87d5, is_file=NO
+[Mon Apr 13 20:15:12 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:12 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:12 2026] Router: Handling request...
+[Mon Apr 13 20:15:13 2026] Router: Sending response...
+[Mon Apr 13 20:15:13 2026] Router: Done
+[Mon Apr 13 20:15:13 2026] [::1]:52589 Closing
+[Mon Apr 13 20:15:13 2026] [::1]:52092 Accepted
+[Mon Apr 13 20:15:13 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:15:13 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:13 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:13 2026] Router: Handling request...
+[Mon Apr 13 20:15:13 2026] Router: Sending response...
+[Mon Apr 13 20:15:13 2026] Router: Done
+[Mon Apr 13 20:15:13 2026] [::1]:52092 Closing
+[Mon Apr 13 20:15:13 2026] [::1]:50764 Accepted
+[Mon Apr 13 20:15:13 2026] Router: Checking URI=/ferme/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\new, is_file=NO
+[Mon Apr 13 20:15:13 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:14 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:14 2026] Router: Handling request...
+[Mon Apr 13 20:15:14 2026] Router: Sending response...
+[Mon Apr 13 20:15:14 2026] Router: Done
+[Mon Apr 13 20:15:14 2026] [::1]:50764 Closing
+[Mon Apr 13 20:15:14 2026] [::1]:52224 Accepted
+[Mon Apr 13 20:15:14 2026] [::1]:58699 Accepted
+[Mon Apr 13 20:15:14 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:14 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:14 2026] [::1]:52224 Closing
+[Mon Apr 13 20:15:14 2026] [::1]:60750 Accepted
+[Mon Apr 13 20:15:14 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:14 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:14 2026] [::1]:58699 Closing
+[Mon Apr 13 20:15:14 2026] Router: Checking URI=/ferme/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\new, is_file=NO
+[Mon Apr 13 20:15:14 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:14 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:14 2026] Router: Handling request...
+[Mon Apr 13 20:15:14 2026] Router: Sending response...
+[Mon Apr 13 20:15:14 2026] Router: Done
+[Mon Apr 13 20:15:14 2026] [::1]:60750 Closing
+[Mon Apr 13 20:15:14 2026] [::1]:62265 Accepted
+[Mon Apr 13 20:15:14 2026] Router: Checking URI=/_wdt/5aa8ab, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\5aa8ab, is_file=NO
+[Mon Apr 13 20:15:14 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:14 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:14 2026] Router: Handling request...
+[Mon Apr 13 20:15:15 2026] Router: Sending response...
+[Mon Apr 13 20:15:15 2026] Router: Done
+[Mon Apr 13 20:15:15 2026] [::1]:62265 Closing
+[Mon Apr 13 20:15:29 2026] [::1]:57075 Accepted
+[Mon Apr 13 20:15:29 2026] Router: Checking URI=/ferme/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\, is_file=NO
+[Mon Apr 13 20:15:29 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:29 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:29 2026] Router: Handling request...
+[Mon Apr 13 20:15:33 2026] Router: Sending response...
+[Mon Apr 13 20:15:33 2026] Router: Done
+[Mon Apr 13 20:15:33 2026] [::1]:57075 Closing
+[Mon Apr 13 20:15:33 2026] [::1]:63941 Accepted
+[Mon Apr 13 20:15:33 2026] Router: Checking URI=/ferme/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\, is_file=NO
+[Mon Apr 13 20:15:33 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:33 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:34 2026] Router: Handling request...
+[Mon Apr 13 20:15:34 2026] Router: Sending response...
+[Mon Apr 13 20:15:34 2026] Router: Done
+[Mon Apr 13 20:15:34 2026] [::1]:63941 Closing
+[Mon Apr 13 20:15:34 2026] [::1]:52819 Accepted
+[Mon Apr 13 20:15:34 2026] [::1]:64825 Accepted
+[Mon Apr 13 20:15:34 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:34 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:34 2026] [::1]:52819 Closing
+[Mon Apr 13 20:15:34 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:34 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:34 2026] [::1]:64825 Closing
+[Mon Apr 13 20:15:34 2026] [::1]:54613 Accepted
+[Mon Apr 13 20:15:34 2026] Router: Checking URI=/ferme/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\, is_file=NO
+[Mon Apr 13 20:15:34 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:34 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:34 2026] Router: Handling request...
+[Mon Apr 13 20:15:35 2026] Router: Sending response...
+[Mon Apr 13 20:15:35 2026] Router: Done
+[Mon Apr 13 20:15:35 2026] [::1]:54613 Closing
+[Mon Apr 13 20:15:35 2026] [::1]:59345 Accepted
+[Mon Apr 13 20:15:35 2026] Router: Checking URI=/_wdt/ad1369, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\ad1369, is_file=NO
+[Mon Apr 13 20:15:35 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:35 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:35 2026] Router: Handling request...
+[Mon Apr 13 20:15:35 2026] Router: Sending response...
+[Mon Apr 13 20:15:35 2026] Router: Done
+[Mon Apr 13 20:15:35 2026] [::1]:59345 Closing
+[Mon Apr 13 20:15:41 2026] [::1]:58086 Accepted
+[Mon Apr 13 20:15:41 2026] [::1]:64146 Accepted
+[Mon Apr 13 20:15:41 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:15:41 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:41 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:42 2026] Router: Handling request...
+[Mon Apr 13 20:15:42 2026] Router: Sending response...
+[Mon Apr 13 20:15:42 2026] Router: Done
+[Mon Apr 13 20:15:42 2026] [::1]:58086 Closing
+[Mon Apr 13 20:15:42 2026] [::1]:57522 Accepted
+[Mon Apr 13 20:15:42 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:42 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:42 2026] [::1]:64146 Closing
+[Mon Apr 13 20:15:42 2026] [::1]:51634 Accepted
+[Mon Apr 13 20:15:42 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:42 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:42 2026] [::1]:57522 Closing
+[Mon Apr 13 20:15:42 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:15:42 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:42 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:42 2026] Router: Handling request...
+[Mon Apr 13 20:15:42 2026] Router: Sending response...
+[Mon Apr 13 20:15:42 2026] Router: Done
+[Mon Apr 13 20:15:42 2026] [::1]:51634 Closing
+[Mon Apr 13 20:15:42 2026] [::1]:50361 Accepted
+[Mon Apr 13 20:15:42 2026] Router: Checking URI=/_wdt/bc21d8, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\bc21d8, is_file=NO
+[Mon Apr 13 20:15:42 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:42 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:42 2026] Router: Handling request...
+[Mon Apr 13 20:15:43 2026] Router: Sending response...
+[Mon Apr 13 20:15:43 2026] Router: Done
+[Mon Apr 13 20:15:43 2026] [::1]:50361 Closing
+[Mon Apr 13 20:15:43 2026] [::1]:59244 Accepted
+[Mon Apr 13 20:15:43 2026] [::1]:49669 Accepted
+[Mon Apr 13 20:15:43 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:15:43 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:43 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:43 2026] Router: Handling request...
+[Mon Apr 13 20:15:43 2026] Router: Sending response...
+[Mon Apr 13 20:15:43 2026] Router: Done
+[Mon Apr 13 20:15:43 2026] [::1]:59244 Closing
+[Mon Apr 13 20:15:43 2026] [::1]:58556 Accepted
+[Mon Apr 13 20:15:43 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:43 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:43 2026] [::1]:49669 Closing
+[Mon Apr 13 20:15:43 2026] [::1]:59042 Accepted
+[Mon Apr 13 20:15:43 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:43 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:43 2026] [::1]:58556 Closing
+[Mon Apr 13 20:15:43 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:15:43 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:43 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:43 2026] Router: Handling request...
+[Mon Apr 13 20:15:44 2026] Router: Sending response...
+[Mon Apr 13 20:15:44 2026] Router: Done
+[Mon Apr 13 20:15:44 2026] [::1]:59042 Closing
+[Mon Apr 13 20:15:44 2026] [::1]:52759 Accepted
+[Mon Apr 13 20:15:44 2026] Router: Checking URI=/_wdt/5b444e, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\5b444e, is_file=NO
+[Mon Apr 13 20:15:44 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:44 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:44 2026] Router: Handling request...
+[Mon Apr 13 20:15:44 2026] Router: Sending response...
+[Mon Apr 13 20:15:44 2026] Router: Done
+[Mon Apr 13 20:15:44 2026] [::1]:52759 Closing
+[Mon Apr 13 20:15:50 2026] [::1]:53385 Accepted
+[Mon Apr 13 20:15:50 2026] Router: Checking URI=/ferme/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\, is_file=NO
+[Mon Apr 13 20:15:50 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:50 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:50 2026] Router: Handling request...
+[Mon Apr 13 20:15:50 2026] Router: Sending response...
+[Mon Apr 13 20:15:50 2026] Router: Done
+[Mon Apr 13 20:15:50 2026] [::1]:53385 Closing
+[Mon Apr 13 20:15:50 2026] [::1]:56398 Accepted
+[Mon Apr 13 20:15:50 2026] [::1]:57854 Accepted
+[Mon Apr 13 20:15:50 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:50 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:50 2026] [::1]:56398 Closing
+[Mon Apr 13 20:15:50 2026] [::1]:61406 Accepted
+[Mon Apr 13 20:15:50 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:50 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:50 2026] [::1]:57854 Closing
+[Mon Apr 13 20:15:50 2026] Router: Checking URI=/ferme/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\ferme\, is_file=NO
+[Mon Apr 13 20:15:50 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:50 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:50 2026] Router: Handling request...
+[Mon Apr 13 20:15:55 2026] Router: Sending response...
+[Mon Apr 13 20:15:55 2026] Router: Done
+[Mon Apr 13 20:15:55 2026] [::1]:61406 Closing
+[Mon Apr 13 20:15:55 2026] [::1]:53087 Accepted
+[Mon Apr 13 20:15:55 2026] Router: Checking URI=/_wdt/f39142, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\f39142, is_file=NO
+[Mon Apr 13 20:15:55 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:55 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:55 2026] Router: Handling request...
+[Mon Apr 13 20:15:55 2026] Router: Sending response...
+[Mon Apr 13 20:15:55 2026] Router: Done
+[Mon Apr 13 20:15:55 2026] [::1]:53087 Closing
+[Mon Apr 13 20:15:56 2026] [::1]:53193 Accepted
+[Mon Apr 13 20:15:56 2026] Router: Checking URI=/animal/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\animal\, is_file=NO
+[Mon Apr 13 20:15:56 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:56 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:56 2026] Router: Handling request...
+[Mon Apr 13 20:15:56 2026] Router: Sending response...
+[Mon Apr 13 20:15:56 2026] Router: Done
+[Mon Apr 13 20:15:56 2026] [::1]:53193 Closing
+[Mon Apr 13 20:15:56 2026] [::1]:56403 Accepted
+[Mon Apr 13 20:15:56 2026] [::1]:51764 Accepted
+[Mon Apr 13 20:15:56 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:15:56 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:15:56 2026] [::1]:56403 Closing
+[Mon Apr 13 20:15:56 2026] [::1]:65384 Accepted
+[Mon Apr 13 20:15:56 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:15:56 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:15:56 2026] [::1]:51764 Closing
+[Mon Apr 13 20:15:56 2026] Router: Checking URI=/animal/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\animal\, is_file=NO
+[Mon Apr 13 20:15:56 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:56 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:56 2026] Router: Handling request...
+[Mon Apr 13 20:15:57 2026] Router: Sending response...
+[Mon Apr 13 20:15:57 2026] Router: Done
+[Mon Apr 13 20:15:57 2026] [::1]:65384 Closing
+[Mon Apr 13 20:15:57 2026] [::1]:54392 Accepted
+[Mon Apr 13 20:15:57 2026] Router: Checking URI=/_wdt/65fadf, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\65fadf, is_file=NO
+[Mon Apr 13 20:15:57 2026] Router: Routing to Symfony
+[Mon Apr 13 20:15:57 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:15:57 2026] Router: Handling request...
+[Mon Apr 13 20:15:57 2026] Router: Sending response...
+[Mon Apr 13 20:15:57 2026] Router: Done
+[Mon Apr 13 20:15:57 2026] [::1]:54392 Closing
+[Mon Apr 13 20:16:08 2026] [::1]:50312 Accepted
+[Mon Apr 13 20:16:08 2026] Router: Checking URI=/animal/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\animal\new, is_file=NO
+[Mon Apr 13 20:16:08 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:08 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:08 2026] Router: Handling request...
+[Mon Apr 13 20:16:09 2026] Router: Sending response...
+[Mon Apr 13 20:16:09 2026] Router: Done
+[Mon Apr 13 20:16:09 2026] [::1]:50312 Closing
+[Mon Apr 13 20:16:09 2026] [::1]:56544 Accepted
+[Mon Apr 13 20:16:09 2026] [::1]:61569 Accepted
+[Mon Apr 13 20:16:09 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:09 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:09 2026] [::1]:56544 Closing
+[Mon Apr 13 20:16:09 2026] [::1]:51887 Accepted
+[Mon Apr 13 20:16:09 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:09 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:09 2026] [::1]:61569 Closing
+[Mon Apr 13 20:16:09 2026] Router: Checking URI=/animal/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\animal\new, is_file=NO
+[Mon Apr 13 20:16:09 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:09 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:09 2026] Router: Handling request...
+[Mon Apr 13 20:16:09 2026] Router: Sending response...
+[Mon Apr 13 20:16:10 2026] Router: Done
+[Mon Apr 13 20:16:10 2026] [::1]:51887 Closing
+[Mon Apr 13 20:16:10 2026] [::1]:65286 Accepted
+[Mon Apr 13 20:16:10 2026] Router: Checking URI=/_wdt/4ec294, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\4ec294, is_file=NO
+[Mon Apr 13 20:16:10 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:10 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:10 2026] Router: Handling request...
+[Mon Apr 13 20:16:10 2026] Router: Sending response...
+[Mon Apr 13 20:16:10 2026] Router: Done
+[Mon Apr 13 20:16:10 2026] [::1]:65286 Closing
+[Mon Apr 13 20:16:18 2026] [::1]:58146 Accepted
+[Mon Apr 13 20:16:18 2026] [::1]:61452 Accepted
+[Mon Apr 13 20:16:18 2026] Router: Checking URI=/animal/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\animal\new, is_file=NO
+[Mon Apr 13 20:16:18 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:18 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:18 2026] Router: Handling request...
+[Mon Apr 13 20:16:18 2026] Router: Sending response...
+[Mon Apr 13 20:16:18 2026] Router: Done
+[Mon Apr 13 20:16:18 2026] [::1]:58146 Closing
+[Mon Apr 13 20:16:18 2026] Router: Checking URI=/animal/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\animal\, is_file=NO
+[Mon Apr 13 20:16:18 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:18 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:18 2026] Router: Handling request...
+[Mon Apr 13 20:16:19 2026] Router: Sending response...
+[Mon Apr 13 20:16:19 2026] Router: Done
+[Mon Apr 13 20:16:19 2026] [::1]:61452 Closing
+[Mon Apr 13 20:16:19 2026] [::1]:56022 Accepted
+[Mon Apr 13 20:16:19 2026] [::1]:64121 Accepted
+[Mon Apr 13 20:16:19 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:19 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:19 2026] [::1]:56022 Closing
+[Mon Apr 13 20:16:19 2026] [::1]:64146 Accepted
+[Mon Apr 13 20:16:19 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:19 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:19 2026] [::1]:64121 Closing
+[Mon Apr 13 20:16:19 2026] Router: Checking URI=/animal/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\animal\, is_file=NO
+[Mon Apr 13 20:16:19 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:19 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:19 2026] Router: Handling request...
+[Mon Apr 13 20:16:20 2026] Router: Sending response...
+[Mon Apr 13 20:16:20 2026] Router: Done
+[Mon Apr 13 20:16:20 2026] [::1]:64146 Closing
+[Mon Apr 13 20:16:20 2026] [::1]:56782 Accepted
+[Mon Apr 13 20:16:20 2026] Router: Checking URI=/_wdt/305658, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\305658, is_file=NO
+[Mon Apr 13 20:16:20 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:20 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:20 2026] Router: Handling request...
+[Mon Apr 13 20:16:20 2026] Router: Sending response...
+[Mon Apr 13 20:16:20 2026] Router: Done
+[Mon Apr 13 20:16:20 2026] [::1]:56782 Closing
+[Mon Apr 13 20:16:22 2026] [::1]:60341 Accepted
+[Mon Apr 13 20:16:22 2026] Router: Checking URI=/plante/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\plante\, is_file=NO
+[Mon Apr 13 20:16:22 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:22 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:22 2026] Router: Handling request...
+[Mon Apr 13 20:16:23 2026] Router: Sending response...
+[Mon Apr 13 20:16:23 2026] Router: Done
+[Mon Apr 13 20:16:23 2026] [::1]:60341 Closing
+[Mon Apr 13 20:16:23 2026] [::1]:51920 Accepted
+[Mon Apr 13 20:16:23 2026] [::1]:62915 Accepted
+[Mon Apr 13 20:16:23 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:23 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:23 2026] [::1]:51920 Closing
+[Mon Apr 13 20:16:23 2026] [::1]:61324 Accepted
+[Mon Apr 13 20:16:23 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:23 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:23 2026] [::1]:62915 Closing
+[Mon Apr 13 20:16:23 2026] Router: Checking URI=/plante/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\plante\, is_file=NO
+[Mon Apr 13 20:16:23 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:23 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:23 2026] Router: Handling request...
+[Mon Apr 13 20:16:23 2026] Router: Sending response...
+[Mon Apr 13 20:16:23 2026] Router: Done
+[Mon Apr 13 20:16:23 2026] [::1]:61324 Closing
+[Mon Apr 13 20:16:23 2026] [::1]:59940 Accepted
+[Mon Apr 13 20:16:23 2026] Router: Checking URI=/_wdt/d8ebc2, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\d8ebc2, is_file=NO
+[Mon Apr 13 20:16:23 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:23 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:23 2026] Router: Handling request...
+[Mon Apr 13 20:16:24 2026] Router: Sending response...
+[Mon Apr 13 20:16:24 2026] Router: Done
+[Mon Apr 13 20:16:24 2026] [::1]:59940 Closing
+[Mon Apr 13 20:16:33 2026] [::1]:53956 Accepted
+[Mon Apr 13 20:16:33 2026] Router: Checking URI=/plante/new, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\plante\new, is_file=NO
+[Mon Apr 13 20:16:33 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:33 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:33 2026] Router: Handling request...
+[Mon Apr 13 20:16:38 2026] Router: Sending response...
+[Mon Apr 13 20:16:38 2026] Router: Done
+[Mon Apr 13 20:16:38 2026] [::1]:53956 Closing
+[Mon Apr 13 20:16:38 2026] [::1]:57950 Accepted
+[Mon Apr 13 20:16:38 2026] Router: Checking URI=/plante/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\plante\, is_file=NO
+[Mon Apr 13 20:16:38 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:38 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:38 2026] Router: Handling request...
+[Mon Apr 13 20:16:38 2026] Router: Sending response...
+[Mon Apr 13 20:16:38 2026] Router: Done
+[Mon Apr 13 20:16:38 2026] [::1]:57950 Closing
+[Mon Apr 13 20:16:38 2026] [::1]:62900 Accepted
+[Mon Apr 13 20:16:38 2026] [::1]:52983 Accepted
+[Mon Apr 13 20:16:38 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:38 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:38 2026] [::1]:62900 Closing
+[Mon Apr 13 20:16:38 2026] [::1]:64806 Accepted
+[Mon Apr 13 20:16:38 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:38 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:38 2026] [::1]:52983 Closing
+[Mon Apr 13 20:16:38 2026] Router: Checking URI=/plante/, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\plante\, is_file=NO
+[Mon Apr 13 20:16:38 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:38 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:39 2026] Router: Handling request...
+[Mon Apr 13 20:16:39 2026] Router: Sending response...
+[Mon Apr 13 20:16:39 2026] Router: Done
+[Mon Apr 13 20:16:39 2026] [::1]:64806 Closing
+[Mon Apr 13 20:16:39 2026] [::1]:58001 Accepted
+[Mon Apr 13 20:16:39 2026] Router: Checking URI=/_wdt/e66982, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\e66982, is_file=NO
+[Mon Apr 13 20:16:39 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:39 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:39 2026] Router: Handling request...
+[Mon Apr 13 20:16:40 2026] Router: Sending response...
+[Mon Apr 13 20:16:40 2026] Router: Done
+[Mon Apr 13 20:16:40 2026] [::1]:58001 Closing
+[Mon Apr 13 20:16:40 2026] [::1]:62547 Accepted
+[Mon Apr 13 20:16:40 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:16:40 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:40 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:40 2026] Router: Handling request...
+[Mon Apr 13 20:16:41 2026] Router: Sending response...
+[Mon Apr 13 20:16:41 2026] Router: Done
+[Mon Apr 13 20:16:41 2026] [::1]:62547 Closing
+[Mon Apr 13 20:16:41 2026] [::1]:59262 Accepted
+[Mon Apr 13 20:16:41 2026] [::1]:61269 Accepted
+[Mon Apr 13 20:16:41 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:41 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:41 2026] [::1]:59262 Closing
+[Mon Apr 13 20:16:41 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:41 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:41 2026] [::1]:61269 Closing
+[Mon Apr 13 20:16:41 2026] [::1]:60593 Accepted
+[Mon Apr 13 20:16:41 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:16:41 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:41 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:41 2026] Router: Handling request...
+[Mon Apr 13 20:16:41 2026] Router: Sending response...
+[Mon Apr 13 20:16:41 2026] Router: Done
+[Mon Apr 13 20:16:41 2026] [::1]:60593 Closing
+[Mon Apr 13 20:16:41 2026] [::1]:54170 Accepted
+[Mon Apr 13 20:16:41 2026] Router: Checking URI=/_wdt/28c8df, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\28c8df, is_file=NO
+[Mon Apr 13 20:16:41 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:41 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:41 2026] Router: Handling request...
+[Mon Apr 13 20:16:42 2026] Router: Sending response...
+[Mon Apr 13 20:16:42 2026] Router: Done
+[Mon Apr 13 20:16:42 2026] [::1]:54170 Closing
+[Mon Apr 13 20:16:46 2026] [::1]:57262 Accepted
+[Mon Apr 13 20:16:47 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:16:47 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:47 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:47 2026] Router: Handling request...
+[Mon Apr 13 20:16:47 2026] Router: Sending response...
+[Mon Apr 13 20:16:47 2026] Router: Done
+[Mon Apr 13 20:16:47 2026] [::1]:57262 Closing
+[Mon Apr 13 20:16:47 2026] [::1]:57514 Accepted
+[Mon Apr 13 20:16:47 2026] [::1]:61878 Accepted
+[Mon Apr 13 20:16:47 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:47 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:47 2026] [::1]:57514 Closing
+[Mon Apr 13 20:16:47 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:47 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:47 2026] [::1]:61878 Closing
+[Mon Apr 13 20:16:47 2026] [::1]:65356 Accepted
+[Mon Apr 13 20:16:47 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:16:47 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:47 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:47 2026] Router: Handling request...
+[Mon Apr 13 20:16:47 2026] Router: Sending response...
+[Mon Apr 13 20:16:47 2026] Router: Done
+[Mon Apr 13 20:16:47 2026] [::1]:65356 Closing
+[Mon Apr 13 20:16:47 2026] [::1]:64073 Accepted
+[Mon Apr 13 20:16:47 2026] Router: Checking URI=/_wdt/4a1ab6, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\4a1ab6, is_file=NO
+[Mon Apr 13 20:16:47 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:48 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:48 2026] Router: Handling request...
+[Mon Apr 13 20:16:48 2026] Router: Sending response...
+[Mon Apr 13 20:16:48 2026] Router: Done
+[Mon Apr 13 20:16:48 2026] [::1]:64073 Closing
+[Mon Apr 13 20:16:51 2026] [::1]:62724 Accepted
+[Mon Apr 13 20:16:51 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:16:51 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:51 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:51 2026] Router: Handling request...
+[Mon Apr 13 20:16:51 2026] Router: Sending response...
+[Mon Apr 13 20:16:51 2026] Router: Done
+[Mon Apr 13 20:16:51 2026] [::1]:62724 Closing
+[Mon Apr 13 20:16:51 2026] [::1]:53205 Accepted
+[Mon Apr 13 20:16:51 2026] [::1]:50529 Accepted
+[Mon Apr 13 20:16:51 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:51 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:51 2026] [::1]:53205 Closing
+[Mon Apr 13 20:16:51 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:51 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:51 2026] [::1]:50529 Closing
+[Mon Apr 13 20:16:51 2026] [::1]:63420 Accepted
+[Mon Apr 13 20:16:51 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:16:51 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:52 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:52 2026] Router: Handling request...
+[Mon Apr 13 20:16:52 2026] Router: Sending response...
+[Mon Apr 13 20:16:52 2026] Router: Done
+[Mon Apr 13 20:16:52 2026] [::1]:63420 Closing
+[Mon Apr 13 20:16:52 2026] [::1]:54383 Accepted
+[Mon Apr 13 20:16:52 2026] Router: Checking URI=/_wdt/083f19, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\083f19, is_file=NO
+[Mon Apr 13 20:16:52 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:52 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:52 2026] Router: Handling request...
+[Mon Apr 13 20:16:52 2026] Router: Sending response...
+[Mon Apr 13 20:16:52 2026] Router: Done
+[Mon Apr 13 20:16:52 2026] [::1]:54383 Closing
+[Mon Apr 13 20:16:55 2026] [::1]:64292 Accepted
+[Mon Apr 13 20:16:55 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:16:55 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:55 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:55 2026] Router: Handling request...
+[Mon Apr 13 20:16:56 2026] Router: Sending response...
+[Mon Apr 13 20:16:56 2026] Router: Done
+[Mon Apr 13 20:16:56 2026] [::1]:64292 Closing
+[Mon Apr 13 20:16:56 2026] [::1]:56816 Accepted
+[Mon Apr 13 20:16:56 2026] [::1]:65334 Accepted
+[Mon Apr 13 20:16:56 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:16:56 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:16:56 2026] [::1]:56816 Closing
+[Mon Apr 13 20:16:56 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:16:56 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:16:56 2026] [::1]:65334 Closing
+[Mon Apr 13 20:16:56 2026] [::1]:61280 Accepted
+[Mon Apr 13 20:16:56 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:16:56 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:56 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:56 2026] Router: Handling request...
+[Mon Apr 13 20:16:56 2026] Router: Sending response...
+[Mon Apr 13 20:16:56 2026] Router: Done
+[Mon Apr 13 20:16:56 2026] [::1]:61280 Closing
+[Mon Apr 13 20:16:56 2026] [::1]:63114 Accepted
+[Mon Apr 13 20:16:56 2026] Router: Checking URI=/_wdt/23b2d2, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\23b2d2, is_file=NO
+[Mon Apr 13 20:16:56 2026] Router: Routing to Symfony
+[Mon Apr 13 20:16:56 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:16:56 2026] Router: Handling request...
+[Mon Apr 13 20:16:57 2026] Router: Sending response...
+[Mon Apr 13 20:16:57 2026] Router: Done
+[Mon Apr 13 20:16:57 2026] [::1]:63114 Closing
+[Mon Apr 13 20:17:12 2026] [::1]:53640 Accepted
+[Mon Apr 13 20:17:12 2026] [::1]:58909 Accepted
+[Mon Apr 13 20:17:12 2026] Router: Checking URI=/agricole/nouvelle-demande, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\nouvelle-demande, is_file=NO
+[Mon Apr 13 20:17:12 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:12 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:12 2026] Router: Handling request...
+[Mon Apr 13 20:17:17 2026] Router: Sending response...
+[Mon Apr 13 20:17:17 2026] Router: Done
+[Mon Apr 13 20:17:17 2026] [::1]:53640 Closing
+[Mon Apr 13 20:17:17 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:17:17 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:17 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:17 2026] Router: Handling request...
+[Mon Apr 13 20:17:18 2026] Router: Sending response...
+[Mon Apr 13 20:17:18 2026] Router: Done
+[Mon Apr 13 20:17:18 2026] [::1]:58909 Closing
+[Mon Apr 13 20:17:18 2026] [::1]:55375 Accepted
+[Mon Apr 13 20:17:18 2026] [::1]:57945 Accepted
+[Mon Apr 13 20:17:18 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:17:18 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:17:18 2026] [::1]:55375 Closing
+[Mon Apr 13 20:17:18 2026] [::1]:57519 Accepted
+[Mon Apr 13 20:17:18 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:17:18 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:17:18 2026] [::1]:57945 Closing
+[Mon Apr 13 20:17:18 2026] [::1]:49220 Accepted
+[Mon Apr 13 20:17:18 2026] Router: Checking URI=/uploads/analyses/telechargement-3-69dd413d8ade6.jpg, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\uploads\analyses\telechargement-3-69dd413d8ade6.jpg, is_file=YES
+[Mon Apr 13 20:17:18 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\uploads\analyses\telechargement-3-69dd413d8ade6.jpg
+[Mon Apr 13 20:17:18 2026] [::1]:57519 Closing
+[Mon Apr 13 20:17:18 2026] Router: Checking URI=/agricole/mes-demandes, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\agricole\mes-demandes, is_file=NO
+[Mon Apr 13 20:17:18 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:18 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:18 2026] Router: Handling request...
+[Mon Apr 13 20:17:18 2026] Router: Sending response...
+[Mon Apr 13 20:17:18 2026] Router: Done
+[Mon Apr 13 20:17:18 2026] [::1]:49220 Closing
+[Mon Apr 13 20:17:18 2026] [::1]:63206 Accepted
+[Mon Apr 13 20:17:18 2026] Router: Checking URI=/_wdt/9b99fa, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\9b99fa, is_file=NO
+[Mon Apr 13 20:17:18 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:18 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:18 2026] Router: Handling request...
+[Mon Apr 13 20:17:19 2026] Router: Sending response...
+[Mon Apr 13 20:17:19 2026] Router: Done
+[Mon Apr 13 20:17:19 2026] [::1]:63206 Closing
+[Mon Apr 13 20:17:22 2026] [::1]:55309 Accepted
+[Mon Apr 13 20:17:22 2026] [::1]:63095 Accepted
+[Mon Apr 13 20:17:22 2026] Router: Checking URI=/logout, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\logout, is_file=NO
+[Mon Apr 13 20:17:22 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:23 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:23 2026] Router: Handling request...
+[Mon Apr 13 20:17:23 2026] Router: Sending response...
+[Mon Apr 13 20:17:23 2026] Router: Done
+[Mon Apr 13 20:17:23 2026] [::1]:55309 Closing
+[Mon Apr 13 20:17:23 2026] Router: Checking URI=/splash/logout, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\splash\logout, is_file=NO
+[Mon Apr 13 20:17:23 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:23 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:23 2026] Router: Handling request...
+[Mon Apr 13 20:17:23 2026] Router: Sending response...
+[Mon Apr 13 20:17:23 2026] Router: Done
+[Mon Apr 13 20:17:23 2026] [::1]:63095 Closing
+[Mon Apr 13 20:17:23 2026] [::1]:57414 Accepted
+[Mon Apr 13 20:17:23 2026] Router: Checking URI=/_wdt/e4dc1c, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\e4dc1c, is_file=NO
+[Mon Apr 13 20:17:23 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:23 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:23 2026] Router: Handling request...
+[Mon Apr 13 20:17:24 2026] Router: Sending response...
+[Mon Apr 13 20:17:24 2026] Router: Done
+[Mon Apr 13 20:17:24 2026] [::1]:57414 Closing
+[Mon Apr 13 20:17:27 2026] [::1]:58928 Accepted
+[Mon Apr 13 20:17:27 2026] [::1]:58086 Accepted
+[Mon Apr 13 20:17:27 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:17:27 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:27 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:27 2026] Router: Handling request...
+[Mon Apr 13 20:17:27 2026] Router: Sending response...
+[Mon Apr 13 20:17:27 2026] Router: Done
+[Mon Apr 13 20:17:27 2026] [::1]:58928 Closing
+[Mon Apr 13 20:17:27 2026] Router: Checking URI=/assets/css/auth.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css, is_file=YES
+[Mon Apr 13 20:17:27 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css
+[Mon Apr 13 20:17:27 2026] [::1]:58086 Closing
+[Mon Apr 13 20:17:27 2026] [::1]:55846 Accepted
+[Mon Apr 13 20:17:27 2026] Router: Checking URI=/captcha/image, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\captcha\image, is_file=NO
+[Mon Apr 13 20:17:27 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:27 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:28 2026] Router: Handling request...
+[Mon Apr 13 20:17:28 2026] Router: Sending response...
+[Mon Apr 13 20:17:28 2026] Router: Done
+[Mon Apr 13 20:17:28 2026] [::1]:55846 Closing
+[Mon Apr 13 20:17:28 2026] [::1]:49669 Accepted
+[Mon Apr 13 20:17:28 2026] Router: Checking URI=/_wdt/6c18f7, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\6c18f7, is_file=NO
+[Mon Apr 13 20:17:28 2026] Router: Routing to Symfony
+[Mon Apr 13 20:17:28 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:17:28 2026] Router: Handling request...
+[Mon Apr 13 20:17:28 2026] Router: Sending response...
+[Mon Apr 13 20:17:28 2026] Router: Done
+[Mon Apr 13 20:17:28 2026] [::1]:49669 Closing
+[Mon Apr 13 20:18:16 2026] [::1]:51669 Accepted
+[Mon Apr 13 20:18:16 2026] [::1]:60379 Accepted
+[Mon Apr 13 20:18:16 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:18:16 2026] Router: Routing to Symfony
+[Mon Apr 13 20:18:16 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:18:16 2026] Router: Handling request...
+[Mon Apr 13 20:18:20 2026] Router: Sending response...
+[Mon Apr 13 20:18:20 2026] Router: Done
+[Mon Apr 13 20:18:20 2026] [::1]:51669 Closing
+[Mon Apr 13 20:18:20 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:18:20 2026] Router: Routing to Symfony
+[Mon Apr 13 20:18:20 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:18:20 2026] Router: Handling request...
+[Mon Apr 13 20:18:21 2026] Router: Sending response...
+[Mon Apr 13 20:18:21 2026] Router: Done
+[Mon Apr 13 20:18:21 2026] [::1]:60379 Closing
+[Mon Apr 13 20:18:21 2026] [::1]:55122 Accepted
+[Mon Apr 13 20:18:21 2026] [::1]:52497 Accepted
+[Mon Apr 13 20:18:21 2026] Router: Checking URI=/assets/css/auth.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css, is_file=YES
+[Mon Apr 13 20:18:21 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css
+[Mon Apr 13 20:18:21 2026] [::1]:55122 Closing
+[Mon Apr 13 20:18:21 2026] Router: Checking URI=/captcha/image, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\captcha\image, is_file=NO
+[Mon Apr 13 20:18:21 2026] Router: Routing to Symfony
+[Mon Apr 13 20:18:21 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:18:21 2026] Router: Handling request...
+[Mon Apr 13 20:18:21 2026] Router: Sending response...
+[Mon Apr 13 20:18:21 2026] Router: Done
+[Mon Apr 13 20:18:21 2026] [::1]:52497 Closing
+[Mon Apr 13 20:18:21 2026] [::1]:55432 Accepted
+[Mon Apr 13 20:18:21 2026] Router: Checking URI=/_wdt/2152d1, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\2152d1, is_file=NO
+[Mon Apr 13 20:18:21 2026] Router: Routing to Symfony
+[Mon Apr 13 20:18:21 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:18:21 2026] Router: Handling request...
+[Mon Apr 13 20:18:22 2026] Router: Sending response...
+[Mon Apr 13 20:18:22 2026] Router: Done
+[Mon Apr 13 20:18:22 2026] [::1]:55432 Closing
+[Mon Apr 13 20:18:38 2026] [::1]:57708 Accepted
+[Mon Apr 13 20:18:38 2026] [::1]:61147 Accepted
+[Mon Apr 13 20:18:38 2026] Router: Checking URI=/signup, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\signup, is_file=NO
+[Mon Apr 13 20:18:38 2026] Router: Routing to Symfony
+[Mon Apr 13 20:18:38 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:18:38 2026] Router: Handling request...
+[Mon Apr 13 20:18:41 2026] Router: Sending response...
+[Mon Apr 13 20:18:41 2026] Router: Done
+[Mon Apr 13 20:18:41 2026] [::1]:57708 Closing
+[Mon Apr 13 20:18:41 2026] Router: Checking URI=/assets/css/auth.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css, is_file=YES
+[Mon Apr 13 20:18:41 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css
+[Mon Apr 13 20:18:41 2026] [::1]:61147 Closing
+[Mon Apr 13 20:18:42 2026] [::1]:62676 Accepted
+[Mon Apr 13 20:18:42 2026] Router: Checking URI=/_wdt/c735d4, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\c735d4, is_file=NO
+[Mon Apr 13 20:18:42 2026] Router: Routing to Symfony
+[Mon Apr 13 20:18:42 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:18:42 2026] Router: Handling request...
+[Mon Apr 13 20:18:42 2026] Router: Sending response...
+[Mon Apr 13 20:18:42 2026] Router: Done
+[Mon Apr 13 20:18:42 2026] [::1]:62676 Closing
+[Mon Apr 13 20:19:24 2026] [::1]:65513 Accepted
+[Mon Apr 13 20:19:24 2026] [::1]:62826 Accepted
+[Mon Apr 13 20:19:24 2026] Router: Checking URI=/signup, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\signup, is_file=NO
+[Mon Apr 13 20:19:24 2026] Router: Routing to Symfony
+[Mon Apr 13 20:19:24 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:19:24 2026] Router: Handling request...
+[Mon Apr 13 20:19:24 2026] Router: Sending response...
+[Mon Apr 13 20:19:24 2026] Router: Done
+[Mon Apr 13 20:19:24 2026] [::1]:65513 Closing
+[Mon Apr 13 20:19:25 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:19:25 2026] Router: Routing to Symfony
+[Mon Apr 13 20:19:25 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:19:25 2026] Router: Handling request...
+[Mon Apr 13 20:19:25 2026] Router: Sending response...
+[Mon Apr 13 20:19:25 2026] Router: Done
+[Mon Apr 13 20:19:25 2026] [::1]:62826 Closing
+[Mon Apr 13 20:19:25 2026] [::1]:58750 Accepted
+[Mon Apr 13 20:19:25 2026] Router: Checking URI=/assets/css/auth.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css, is_file=YES
+[Mon Apr 13 20:19:25 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\auth.css
+[Mon Apr 13 20:19:25 2026] [::1]:58750 Closing
+[Mon Apr 13 20:19:25 2026] [::1]:64278 Accepted
+[Mon Apr 13 20:19:25 2026] Router: Checking URI=/captcha/image, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\captcha\image, is_file=NO
+[Mon Apr 13 20:19:25 2026] Router: Routing to Symfony
+[Mon Apr 13 20:19:25 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:19:25 2026] Router: Handling request...
+[Mon Apr 13 20:19:25 2026] Router: Sending response...
+[Mon Apr 13 20:19:25 2026] Router: Done
+[Mon Apr 13 20:19:25 2026] [::1]:64278 Closing
+[Mon Apr 13 20:19:25 2026] [::1]:61028 Accepted
+[Mon Apr 13 20:19:25 2026] Router: Checking URI=/_wdt/a8d0dc, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\a8d0dc, is_file=NO
+[Mon Apr 13 20:19:25 2026] Router: Routing to Symfony
+[Mon Apr 13 20:19:25 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:19:25 2026] Router: Handling request...
+[Mon Apr 13 20:19:26 2026] Router: Sending response...
+[Mon Apr 13 20:19:26 2026] Router: Done
+[Mon Apr 13 20:19:26 2026] [::1]:61028 Closing
+[Mon Apr 13 20:20:59 2026] [::1]:50579 Accepted
+[Mon Apr 13 20:21:08 2026] [::1]:50579 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Apr 13 20:21:08 2026] [::1]:50579 Closing
+[Mon Apr 13 20:23:00 2026] [::1]:64408 Accepted
+[Mon Apr 13 20:23:00 2026] Router: Checking URI=/login, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\login, is_file=NO
+[Mon Apr 13 20:23:00 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:00 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:00 2026] Router: Handling request...
+[Mon Apr 13 20:23:05 2026] Router: Sending response...
+[Mon Apr 13 20:23:05 2026] Router: Done
+[Mon Apr 13 20:23:05 2026] [::1]:64408 Closing
+[Mon Apr 13 20:23:05 2026] [::1]:52579 Accepted
+[Mon Apr 13 20:23:05 2026] Router: Checking URI=/splash/transition, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\splash\transition, is_file=NO
+[Mon Apr 13 20:23:05 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:05 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:05 2026] Router: Handling request...
+[Mon Apr 13 20:23:05 2026] Router: Sending response...
+[Mon Apr 13 20:23:05 2026] Router: Done
+[Mon Apr 13 20:23:05 2026] [::1]:52579 Closing
+[Mon Apr 13 20:23:05 2026] [::1]:59890 Accepted
+[Mon Apr 13 20:23:05 2026] Router: Checking URI=/_wdt/255d45, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\255d45, is_file=NO
+[Mon Apr 13 20:23:05 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:05 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:05 2026] Router: Handling request...
+[Mon Apr 13 20:23:06 2026] Router: Sending response...
+[Mon Apr 13 20:23:06 2026] Router: Done
+[Mon Apr 13 20:23:06 2026] [::1]:59890 Closing
+[Mon Apr 13 20:23:09 2026] [::1]:54124 Accepted
+[Mon Apr 13 20:23:09 2026] Router: Checking URI=/expert/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\dashboard, is_file=NO
+[Mon Apr 13 20:23:09 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:09 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:09 2026] Router: Handling request...
+[Mon Apr 13 20:23:10 2026] Router: Sending response...
+[Mon Apr 13 20:23:10 2026] Router: Done
+[Mon Apr 13 20:23:10 2026] [::1]:54124 Closing
+[Mon Apr 13 20:23:10 2026] [::1]:58611 Accepted
+[Mon Apr 13 20:23:10 2026] [::1]:56133 Accepted
+[Mon Apr 13 20:23:10 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:23:10 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:23:10 2026] [::1]:58611 Closing
+[Mon Apr 13 20:23:10 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:23:10 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:23:10 2026] [::1]:56133 Closing
+[Mon Apr 13 20:23:10 2026] [::1]:53059 Accepted
+[Mon Apr 13 20:23:10 2026] Router: Checking URI=/expert/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\dashboard, is_file=NO
+[Mon Apr 13 20:23:10 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:10 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:10 2026] Router: Handling request...
+[Mon Apr 13 20:23:10 2026] Router: Sending response...
+[Mon Apr 13 20:23:10 2026] Router: Done
+[Mon Apr 13 20:23:10 2026] [::1]:53059 Closing
+[Mon Apr 13 20:23:10 2026] [::1]:49740 Accepted
+[Mon Apr 13 20:23:10 2026] Router: Checking URI=/_wdt/9e03b5, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\9e03b5, is_file=NO
+[Mon Apr 13 20:23:10 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:10 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:10 2026] Router: Handling request...
+[Mon Apr 13 20:23:10 2026] Router: Sending response...
+[Mon Apr 13 20:23:10 2026] Router: Done
+[Mon Apr 13 20:23:10 2026] [::1]:49740 Closing
+[Mon Apr 13 20:23:12 2026] [::1]:57606 Accepted
+[Mon Apr 13 20:23:12 2026] Router: Checking URI=/expert/demandes-en-attente, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\demandes-en-attente, is_file=NO
+[Mon Apr 13 20:23:12 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:12 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:12 2026] Router: Handling request...
+[Mon Apr 13 20:23:13 2026] Router: Sending response...
+[Mon Apr 13 20:23:13 2026] Router: Done
+[Mon Apr 13 20:23:13 2026] [::1]:57606 Closing
+[Mon Apr 13 20:23:13 2026] [::1]:55600 Accepted
+[Mon Apr 13 20:23:13 2026] Router: Checking URI=/_wdt/e7c45f, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\e7c45f, is_file=NO
+[Mon Apr 13 20:23:13 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:13 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:13 2026] Router: Handling request...
+[Mon Apr 13 20:23:13 2026] Router: Sending response...
+[Mon Apr 13 20:23:13 2026] Router: Done
+[Mon Apr 13 20:23:13 2026] [::1]:55600 Closing
+[Mon Apr 13 20:23:25 2026] [::1]:59234 Accepted
+[Mon Apr 13 20:23:25 2026] [::1]:62619 Accepted
+[Mon Apr 13 20:23:25 2026] Router: Checking URI=/expert/conseils, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\conseils, is_file=NO
+[Mon Apr 13 20:23:25 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:25 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:25 2026] Router: Handling request...
+[Mon Apr 13 20:23:25 2026] Router: Sending response...
+[Mon Apr 13 20:23:25 2026] Router: Done
+[Mon Apr 13 20:23:25 2026] [::1]:59234 Closing
+[Mon Apr 13 20:23:25 2026] [::1]:65477 Accepted
+[Mon Apr 13 20:23:25 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:23:25 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:23:25 2026] [::1]:62619 Closing
+[Mon Apr 13 20:23:25 2026] [::1]:64790 Accepted
+[Mon Apr 13 20:23:25 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:23:25 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:23:25 2026] [::1]:65477 Closing
+[Mon Apr 13 20:23:25 2026] Router: Checking URI=/expert/conseils, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\conseils, is_file=NO
+[Mon Apr 13 20:23:25 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:25 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:25 2026] Router: Handling request...
+[Mon Apr 13 20:23:26 2026] Router: Sending response...
+[Mon Apr 13 20:23:26 2026] Router: Done
+[Mon Apr 13 20:23:26 2026] [::1]:64790 Closing
+[Mon Apr 13 20:23:26 2026] [::1]:51020 Accepted
+[Mon Apr 13 20:23:26 2026] Router: Checking URI=/_wdt/23d78f, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\23d78f, is_file=NO
+[Mon Apr 13 20:23:26 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:26 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:26 2026] Router: Handling request...
+[Mon Apr 13 20:23:26 2026] Router: Sending response...
+[Mon Apr 13 20:23:26 2026] Router: Done
+[Mon Apr 13 20:23:26 2026] [::1]:51020 Closing
+[Mon Apr 13 20:23:28 2026] [::1]:63156 Accepted
+[Mon Apr 13 20:23:29 2026] Router: Checking URI=/expert/analyses, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\analyses, is_file=NO
+[Mon Apr 13 20:23:29 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:29 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:29 2026] Router: Handling request...
+[Mon Apr 13 20:23:29 2026] Router: Sending response...
+[Mon Apr 13 20:23:29 2026] Router: Done
+[Mon Apr 13 20:23:29 2026] [::1]:63156 Closing
+[Mon Apr 13 20:23:29 2026] [::1]:61037 Accepted
+[Mon Apr 13 20:23:29 2026] [::1]:50517 Accepted
+[Mon Apr 13 20:23:29 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:23:29 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:23:29 2026] [::1]:61037 Closing
+[Mon Apr 13 20:23:29 2026] [::1]:52763 Accepted
+[Mon Apr 13 20:23:29 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:23:29 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:23:29 2026] [::1]:50517 Closing
+[Mon Apr 13 20:23:29 2026] Router: Checking URI=/expert/analyses, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\analyses, is_file=NO
+[Mon Apr 13 20:23:29 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:29 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:29 2026] Router: Handling request...
+[Mon Apr 13 20:23:29 2026] Router: Sending response...
+[Mon Apr 13 20:23:29 2026] Router: Done
+[Mon Apr 13 20:23:29 2026] [::1]:52763 Closing
+[Mon Apr 13 20:23:29 2026] [::1]:49669 Accepted
+[Mon Apr 13 20:23:29 2026] Router: Checking URI=/_wdt/be50b1, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\be50b1, is_file=NO
+[Mon Apr 13 20:23:29 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:29 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:29 2026] Router: Handling request...
+[Mon Apr 13 20:23:30 2026] Router: Sending response...
+[Mon Apr 13 20:23:30 2026] Router: Done
+[Mon Apr 13 20:23:30 2026] [::1]:49669 Closing
+[Mon Apr 13 20:23:31 2026] [::1]:63100 Accepted
+[Mon Apr 13 20:23:31 2026] Router: Checking URI=/expert/conseils, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\conseils, is_file=NO
+[Mon Apr 13 20:23:31 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:31 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:31 2026] Router: Handling request...
+[Mon Apr 13 20:23:32 2026] Router: Sending response...
+[Mon Apr 13 20:23:32 2026] Router: Done
+[Mon Apr 13 20:23:32 2026] [::1]:63100 Closing
+[Mon Apr 13 20:23:32 2026] [::1]:58891 Accepted
+[Mon Apr 13 20:23:32 2026] [::1]:54106 Accepted
+[Mon Apr 13 20:23:32 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:23:32 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:23:32 2026] [::1]:58891 Closing
+[Mon Apr 13 20:23:32 2026] [::1]:50805 Accepted
+[Mon Apr 13 20:23:32 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:23:32 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:23:32 2026] [::1]:54106 Closing
+[Mon Apr 13 20:23:32 2026] Router: Checking URI=/expert/conseils, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\conseils, is_file=NO
+[Mon Apr 13 20:23:32 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:32 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:32 2026] Router: Handling request...
+[Mon Apr 13 20:23:32 2026] Router: Sending response...
+[Mon Apr 13 20:23:32 2026] Router: Done
+[Mon Apr 13 20:23:32 2026] [::1]:50805 Closing
+[Mon Apr 13 20:23:32 2026] [::1]:63542 Accepted
+[Mon Apr 13 20:23:32 2026] Router: Checking URI=/_wdt/c96fa9, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\c96fa9, is_file=NO
+[Mon Apr 13 20:23:32 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:32 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:32 2026] Router: Handling request...
+[Mon Apr 13 20:23:33 2026] Router: Sending response...
+[Mon Apr 13 20:23:33 2026] Router: Done
+[Mon Apr 13 20:23:33 2026] [::1]:63542 Closing
+[Mon Apr 13 20:23:33 2026] [::1]:64753 Accepted
+[Mon Apr 13 20:23:33 2026] Router: Checking URI=/expert/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\dashboard, is_file=NO
+[Mon Apr 13 20:23:33 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:33 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:33 2026] Router: Handling request...
+[Mon Apr 13 20:23:34 2026] Router: Sending response...
+[Mon Apr 13 20:23:34 2026] Router: Done
+[Mon Apr 13 20:23:34 2026] [::1]:64753 Closing
+[Mon Apr 13 20:23:34 2026] [::1]:60536 Accepted
+[Mon Apr 13 20:23:34 2026] [::1]:59580 Accepted
+[Mon Apr 13 20:23:34 2026] Router: Checking URI=/assets/css/dashboard.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css, is_file=YES
+[Mon Apr 13 20:23:34 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\dashboard.css
+[Mon Apr 13 20:23:34 2026] [::1]:60536 Closing
+[Mon Apr 13 20:23:34 2026] [::1]:50145 Accepted
+[Mon Apr 13 20:23:34 2026] Router: Checking URI=/assets/css/profile_modal.css, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css, is_file=YES
+[Mon Apr 13 20:23:34 2026] Router: Serving static file directly: C:\Users\sliti\Videos\web-2026\farmia\public\assets\css\profile_modal.css
+[Mon Apr 13 20:23:34 2026] [::1]:59580 Closing
+[Mon Apr 13 20:23:34 2026] Router: Checking URI=/expert/dashboard, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\dashboard, is_file=NO
+[Mon Apr 13 20:23:34 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:34 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:34 2026] Router: Handling request...
+[Mon Apr 13 20:23:34 2026] Router: Sending response...
+[Mon Apr 13 20:23:34 2026] Router: Done
+[Mon Apr 13 20:23:34 2026] [::1]:50145 Closing
+[Mon Apr 13 20:23:34 2026] [::1]:49669 Accepted
+[Mon Apr 13 20:23:34 2026] Router: Checking URI=/_wdt/4fc2f3, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\4fc2f3, is_file=NO
+[Mon Apr 13 20:23:34 2026] Router: Routing to Symfony
+[Mon Apr 13 20:23:34 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:23:34 2026] Router: Handling request...
+[Mon Apr 13 20:23:35 2026] Router: Sending response...
+[Mon Apr 13 20:23:35 2026] Router: Done
+[Mon Apr 13 20:23:35 2026] [::1]:49669 Closing
+[Mon Apr 13 20:24:26 2026] [::1]:65369 Accepted
+[Mon Apr 13 20:24:26 2026] [::1]:53242 Accepted
+[Mon Apr 13 20:24:26 2026] Router: Checking URI=/expert/demandes-en-attente, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\expert\demandes-en-attente, is_file=NO
+[Mon Apr 13 20:24:26 2026] Router: Routing to Symfony
+[Mon Apr 13 20:24:26 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:24:26 2026] Router: Handling request...
+[Mon Apr 13 20:24:31 2026] Router: Sending response...
+[Mon Apr 13 20:24:31 2026] Router: Done
+[Mon Apr 13 20:24:31 2026] [::1]:65369 Closing
+[Mon Apr 13 20:24:31 2026] Router: Checking URI=/_wdt/a2f4d9, FilePath=C:\Users\sliti\Videos\web-2026\farmia\public\_wdt\a2f4d9, is_file=NO
+[Mon Apr 13 20:24:31 2026] Router: Routing to Symfony
+[Mon Apr 13 20:24:31 2026] Router: Creating kernel with APP_ENV=dev
+[Mon Apr 13 20:24:31 2026] Router: Handling request...
+[Mon Apr 13 20:24:31 2026] Router: Sending response...
+[Mon Apr 13 20:24:31 2026] Router: Done
+[Mon Apr 13 20:24:31 2026] [::1]:53242 Closing
+^C

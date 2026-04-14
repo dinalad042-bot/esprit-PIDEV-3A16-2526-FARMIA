@@ -53,6 +53,7 @@
 
                 <div style="padding:1.25rem;">
                     {# Requester info #}
+                    {% if request.demandeur %}
                     <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid #f0f0f0;">
                         <div style="width:40px; height:40px; background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600;">
                             {{ request.demandeur.prenom|first }}{{ request.demandeur.nom|first }}
@@ -62,6 +63,15 @@
                             <div style="font-size:0.8rem; color:#888;">{{ request.demandeur.email }}</div>
                         </div>
                     </div>
+                    {% else %}
+                    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid #f0f0f0;">
+                        <div style="width:40px; height:40px; background:#ccc; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600;">?</div>
+                        <div>
+                            <div style="font-weight:600; color:#333;">Agriculteur inconnu</div>
+                            <div style="font-size:0.8rem; color:#888;">Non identifié</div>
+                        </div>
+                    </div>
+                    {% endif %}
 
                     {# Farm info #}
                     {% if request.ferme %}
@@ -80,7 +90,7 @@
                         <div style="color:#888; font-size:0.8rem; margin-bottom:0.25rem;">Animal concerné</div>
                         <div style="color:#333; font-weight:500;">
                             <i class="fa-solid fa-paw" style="color:#2ecc71; margin-right:4px;"></i>
-                            {{ request.animalCible.nom }}
+                            {{ request.animalCible.espece }}
                         </div>
                     </div>
                     {% endif %}
@@ -90,7 +100,7 @@
                         <div style="color:#888; font-size:0.8rem; margin-bottom:0.25rem;">Plante concernée</div>
                         <div style="color:#333; font-weight:500;">
                             <i class="fa-solid fa-seedling" style="color:#2ecc71; margin-right:4px;"></i>
-                            {{ request.planteCible.nom }}
+                            {{ request.planteCible.nomEspece }}
                         </div>
                     </div>
                     {% endif %}

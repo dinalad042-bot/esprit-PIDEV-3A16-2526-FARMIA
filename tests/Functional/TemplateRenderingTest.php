@@ -20,7 +20,7 @@ class TemplateRenderingTest extends BaseWebTestCase
      */
     public function testHomepageLoads(): void
     {
-        $this->client->request('GET', '/');
+        self::$client->request('GET', '/');
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
     }
@@ -30,7 +30,7 @@ class TemplateRenderingTest extends BaseWebTestCase
      */
     public function testLoginPageLoads(): void
     {
-        $this->client->request('GET', '/login');
+        self::$client->request('GET', '/login');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form');
     }
@@ -41,7 +41,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testFermeIndexPageRenders(): void
     {
         $this->loginWithRole('ROLE_ADMIN');
-        $this->client->request('GET', '/ferme/');
+        self::$client->request('GET', '/ferme/');
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
     }
@@ -52,7 +52,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testAnimalIndexPageRenders(): void
     {
         $this->loginWithRole('ROLE_ADMIN');
-        $this->client->request('GET', '/animal/');
+        self::$client->request('GET', '/animal/');
         $this->assertResponseIsSuccessful();
     }
 
@@ -62,7 +62,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testPlanteIndexPageRenders(): void
     {
         $this->loginWithRole('ROLE_ADMIN');
-        $this->client->request('GET', '/plante/');
+        self::$client->request('GET', '/plante/');
         $this->assertResponseIsSuccessful();
     }
 
@@ -72,7 +72,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testAnalyseIndexPageRenders(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        $this->client->request('GET', '/analyse/');
+        self::$client->request('GET', '/analyse/');
         $this->assertResponseIsSuccessful();
     }
 
@@ -82,7 +82,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testConseilIndexPageRenders(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        $this->client->request('GET', '/conseil/');
+        self::$client->request('GET', '/conseil/');
         $this->assertResponseIsSuccessful();
     }
 
@@ -92,7 +92,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testAdminDashboardRenders(): void
     {
         $this->loginWithRole('ROLE_ADMIN');
-        $this->client->request('GET', '/admin/dashboard');
+        self::$client->request('GET', '/admin/dashboard');
         // May redirect if not configured, just check it doesn't 500
         $this->assertResponseStatusCodeIsOneOf([200, 301, 302, 403]);
     }
@@ -103,7 +103,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testBaseLayoutRenders(): void
     {
         $this->loginWithRole('ROLE_USER');
-        $crawler = $this->client->request('GET', '/');
+        $crawler = self::$client->request('GET', '/');
         $this->assertResponseIsSuccessful();
         // Check that basic HTML structure exists
         $this->assertSelectorExists('html');

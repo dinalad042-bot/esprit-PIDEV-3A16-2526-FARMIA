@@ -86,7 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * FERMES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH
      * Fermes gérées par cet utilisateur
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class, cascade: ['persist'])]
     private Collection $fermes;
 
     public function __construct()

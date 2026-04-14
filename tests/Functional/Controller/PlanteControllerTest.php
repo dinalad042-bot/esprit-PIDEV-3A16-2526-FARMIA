@@ -20,7 +20,7 @@ class PlanteControllerTest extends BaseWebTestCase
     public function testIndexPageLoads(): void
     {
         $this->loginWithRole('ROLE_ADMIN');
-        $this->client->request('GET', '/plante/');
+        self::$client->request('GET', '/plante/');
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
     }
@@ -30,9 +30,9 @@ class PlanteControllerTest extends BaseWebTestCase
         $this->loginWithRole('ROLE_ADMIN');
 
         $ferme = $this->createTestFerme();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('POST', '/plante/new', [
+        self::$client->request('POST', '/plante/new', [
             'nom_espece' => 'Tomate Test',
             'cycle_vie' => 'Annuel',
             'quantite' => '50',
@@ -41,7 +41,7 @@ class PlanteControllerTest extends BaseWebTestCase
 
         $this->assertResponseRedirects('/plante/');
 
-        $plante = $this->em->getRepository(Plante::class)->findOneBy(['nomEspece' => 'Tomate Test']);
+        $plante = self::$em->getRepository(Plante::class)->findOneBy(['nomEspece' => 'Tomate Test']);
         $this->assertNotNull($plante);
         $this->assertEquals(50, $plante->getQuantite());
     }
@@ -49,7 +49,7 @@ class PlanteControllerTest extends BaseWebTestCase
     public function testCreateWithInvalidData(): void
     {
         $this->loginWithRole('ROLE_ADMIN');
-        $this->client->request('POST', '/plante/new', [
+        self::$client->request('POST', '/plante/new', [
             'nom_espece' => '',
             'cycle_vie' => '',
             'quantite' => '0'
@@ -61,9 +61,9 @@ class PlanteControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_ADMIN');
         $plante = $this->createTestPlante();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('GET', '/plante/' . $plante->getIdPlante() . '/edit');
+        self::$client->request('GET', '/plante/' . $plante->getIdPlante() . '/edit');
         $this->assertResponseIsSuccessful();
     }
 
@@ -71,9 +71,9 @@ class PlanteControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_ADMIN');
         $plante = $this->createTestPlante();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('POST', '/plante/' . $plante->getIdPlante() . '/update', [
+        self::$client->request('POST', '/plante/' . $plante->getIdPlante() . '/update', [
             'nom_espece' => 'Updated Plant',
             'cycle_vie' => 'Perenne',
             'quantite' => '100'
@@ -86,13 +86,13 @@ class PlanteControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_ADMIN');
         $plante = $this->createTestPlante();
-        $this->em->flush();
+        self::$em->flush();
         $id = $plante->getIdPlante();
 
-        $token = $this->client->getContainer()->get('security.csrf.token_manager')
+        $token = self::$client->getContainer()->get('security.csrf.token_manager')
             ->getToken('delete' . $id)->getValue();
 
-        $this->client->request('POST', '/plante/delete/' . $id, ['_token' => $token]);
+        self::$client->request('POST', '/plante/delete/' . $id, ['_token' => $token]);
         $this->assertResponseRedirects('/plante/');
     }
 
@@ -100,16 +100,16 @@ class PlanteControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_ADMIN');
         $this->createTestPlante();
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('GET', '/plante/pdf');
+        self::$client->request('GET', '/plante/pdf');
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/pdf');
     }
 
     public function testUnauthenticatedRedirect(): void
     {
-        $this->client->request('GET', '/plante/');
+        self::$client->request('GET', '/plante/');
         $this->assertResponseRedirects();
     }
 
@@ -119,7 +119,7 @@ class PlanteControllerTest extends BaseWebTestCase
         $ferme->setNomFerme('Test Farm');
         $ferme->setLieu('Test Location');
         $ferme->setSurface(100.0);
-        $this->em->persist($ferme);
+        self::$em->persist($ferme);
         return $ferme;
     }
 
@@ -131,7 +131,7 @@ class PlanteControllerTest extends BaseWebTestCase
         $plante->setCycleVie('Annuel');
         $plante->setQuantite(100);
         $plante->setFerme($ferme);
-        $this->em->persist($plante);
+        self::$em->persist($plante);
         return $plante;
     }
 }

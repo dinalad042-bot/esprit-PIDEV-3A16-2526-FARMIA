@@ -25,7 +25,7 @@ class FermeControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_ADMIN');
 
-        $this->client->request('GET', '/ferme/');
+        self::$client->request('GET', '/ferme/');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -41,7 +41,7 @@ class FermeControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_ADMIN');
 
-        $this->client->request('POST', '/ferme/', [
+        self::$client->request('POST', '/ferme/', [
             'nom_ferme' => 'Nouvelle Ferme Test',
             'lieu' => 'Tunis Test',
             'surface' => '150.5',
@@ -52,7 +52,7 @@ class FermeControllerTest extends BaseWebTestCase
         $this->assertResponseRedirects('/ferme/');
 
         // Verify ferme was created
-        $ferme = $this->em->getRepository(Ferme::class)->findOneBy(['nomFerme' => 'Nouvelle Ferme Test']);
+        $ferme = self::$em->getRepository(Ferme::class)->findOneBy(['nomFerme' => 'Nouvelle Ferme Test']);
         $this->assertNotNull($ferme);
         $this->assertEquals('Tunis Test', $ferme->getLieu());
         $this->assertEquals(150.5, $ferme->getSurface());
@@ -67,7 +67,7 @@ class FermeControllerTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_ADMIN');
 
-        $crawler = $this->client->request('POST', '/ferme/', [
+        $crawler = self::$client->request('POST', '/ferme/', [
             'nom_ferme' => '', // Empty - should fail validation
             'lieu' => '',      // Empty - should fail validation
             'surface' => '-10' // Negative - should fail
@@ -88,9 +88,9 @@ class FermeControllerTest extends BaseWebTestCase
 
         // Create a ferme first
         $ferme = $this->createTestFerme('Ferme à Modifier', 'Lieu Test');
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('GET', '/ferme/' . $ferme->getIdFerme() . '/edit');
+        self::$client->request('GET', '/ferme/' . $ferme->getIdFerme() . '/edit');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -106,9 +106,9 @@ class FermeControllerTest extends BaseWebTestCase
         $this->loginWithRole('ROLE_ADMIN');
 
         $ferme = $this->createTestFerme('Original Name', 'Original Lieu');
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('POST', '/ferme/' . $ferme->getIdFerme() . '/update', [
+        self::$client->request('POST', '/ferme/' . $ferme->getIdFerme() . '/update', [
             'nom_ferme' => 'Updated Name',
             'lieu' => 'Updated Lieu',
             'surface' => '200.0',
@@ -119,8 +119,8 @@ class FermeControllerTest extends BaseWebTestCase
         $this->assertResponseRedirects('/ferme/');
 
         // Verify changes
-        $this->em->clear();
-        $updated = $this->em->getRepository(Ferme::class)->find($ferme->getId());
+        self::$em->clear();
+        $updated = self::$em->getRepository(Ferme::class)->find($ferme->getId());
         $this->assertEquals('Updated Name', $updated->getNomFerme());
         $this->assertEquals('Updated Lieu', $updated->getLieu());
     }
@@ -135,18 +135,18 @@ class FermeControllerTest extends BaseWebTestCase
         $this->loginWithRole('ROLE_ADMIN');
 
         $ferme = $this->createTestFerme('Ferme à Supprimer', 'Lieu');
-        $this->em->flush();
+        self::$em->flush();
         $id = $ferme->getIdFerme();
 
-        $this->client->request('POST', '/ferme/delete/' . $id, [
-            '_token' => $this->client->getContainer()->get('security.csrf.token_manager')->getToken('delete' . $id)->getValue()
+        self::$client->request('POST', '/ferme/delete/' . $id, [
+            '_token' => self::$client->getContainer()->get('security.csrf.token_manager')->getToken('delete' . $id)->getValue()
         ]);
 
         $this->assertResponseRedirects('/ferme/');
 
         // Verify deletion
-        $this->em->clear();
-        $deleted = $this->em->getRepository(Ferme::class)->find($id);
+        self::$em->clear();
+        $deleted = self::$em->getRepository(Ferme::class)->find($id);
         $this->assertNull($deleted);
     }
 
@@ -161,9 +161,9 @@ class FermeControllerTest extends BaseWebTestCase
 
         // Create a ferme to have data in PDF
         $this->createTestFerme('PDF Test Farm', 'PDF Location');
-        $this->em->flush();
+        self::$em->flush();
 
-        $this->client->request('GET', '/ferme/pdf');
+        self::$client->request('GET', '/ferme/pdf');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/pdf');
@@ -180,9 +180,9 @@ class FermeControllerTest extends BaseWebTestCase
 
         $this->createTestFerme('Ferme Tunis', 'Tunis');
         $this->createTestFerme('Ferme Sfax', 'Sfax');
-        $this->em->flush();
+        self::$em->flush();
 
-        $crawler = $this->client->request('GET', '/ferme/', ['search' => 'Tunis']);
+        $crawler = self::$client->request('GET', '/ferme/', ['search' => 'Tunis']);
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('table');
@@ -195,7 +195,7 @@ class FermeControllerTest extends BaseWebTestCase
      */
     public function testUnauthenticatedUserIsRedirected(): void
     {
-        $this->client->request('GET', '/ferme/');
+        self::$client->request('GET', '/ferme/');
 
         $this->assertResponseRedirects();
     }
@@ -209,7 +209,7 @@ class FermeControllerTest extends BaseWebTestCase
         $ferme->setNomFerme($nom);
         $ferme->setLieu($lieu);
         $ferme->setSurface(100.0);
-        $this->em->persist($ferme);
+        self::$em->persist($ferme);
         return $ferme;
     }
 }

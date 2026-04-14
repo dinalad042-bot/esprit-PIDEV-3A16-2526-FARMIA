@@ -54,10 +54,11 @@ class UserRepositoryTest extends BaseKernelTestCase
      */
     public function testCanFindByCin(): void
     {
-        $user = $this->createTestUser(null, '12345678');
+        $uniqueCin = 'CIN_' . uniqid();
+        $user = $this->createTestUser(null, $uniqueCin);
         $this->em->flush();
 
-        $found = $this->repository->findOneBy(['cin' => '12345678']);
+        $found = $this->repository->findOneBy(['cin' => $uniqueCin]);
         $this->assertNotNull($found);
     }
 
@@ -126,8 +127,8 @@ class UserRepositoryTest extends BaseKernelTestCase
      */
     public function testFindAllReturnsArray(): void
     {
-        $this->createTestUser('user1@test.com');
-        $this->createTestUser('user2@test.com');
+        $this->createTestUser('user1_' . uniqid() . '@test.com');
+        $this->createTestUser('user2_' . uniqid() . '@test.com');
         $this->em->flush();
 
         $all = $this->repository->findAll();
@@ -142,7 +143,7 @@ class UserRepositoryTest extends BaseKernelTestCase
         $user->setPassword('password');
         $user->setNom('Test');
         $user->setPrenom('User');
-        $user->setCin($cin ?? '12345678');
+        $user->setCin($cin ?? uniqid());
         $user->setAdresse('Test Address');
         $user->setTelephone('12345678');
         $user->setRole('USER');

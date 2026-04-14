@@ -174,7 +174,7 @@ class FermeRepositoryTest extends BaseKernelTestCase
 
         $found = $this->repository->find($ferme->getId());
         $this->assertNotNull($found->getUser());
-        $this->assertEquals('test_' . explode('@', $user->getEmail())[0], explode('@', $found->getUser()->getEmail())[0]);
+        $this->assertEquals($user->getEmail(), $found->getUser()->getEmail());
     }
 
     /**

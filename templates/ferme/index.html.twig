@@ -1,4 +1,4 @@
-﻿{% extends 'layouts/agricole.html.twig' %}
+{% extends 'layouts/agricole.html.twig' %}
 
 {% block title %}Gestion des Fermes - FarmAI{% endblock %}
 
@@ -93,44 +93,33 @@
                 {{ ferme_edit|default(null) ? 'Modifier la ferme' : 'Nouvelle ferme' }}
             </h2>
             
-            {% set action_url = ferme_edit|default(null) ? path('app_ferme_update', {'id_ferme': ferme_edit.idFerme}) : path('app_ferme_index') %}
-            
-            <form action="{{ action_url }}" method="POST" novalidate>
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'style': 'width: 100%;'}}) }}
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Nom de la ferme</label>
-                    <input type="text" name="nom_ferme" required placeholder="Ex: Domaine de l'Olivier" value="{{ ferme_edit|default(null) ? ferme_edit.nomFerme : '' }}" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
-                    {% if errors.nom_ferme is defined %}
-                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.nom_ferme }}</small>
-                    {% endif %}
+                    {{ form_label(form.nom_ferme, null, {'label_attr': {'style': 'display: block; font-weight: 600; margin-bottom: 8px; color: #475569;'}}) }}
+                    {{ form_widget(form.nom_ferme, {'attr': {'style': 'width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline-color: #2d7a36;'}}) }}
+                    {{ form_errors(form.nom_ferme, {'attr': {'style': 'color: #dc2626; font-weight: 600; display: block; margin-top: 5px;'}}) }}
                 </div>
 
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Lieu (Ville)</label>
-                    <input type="text" name="lieu" required placeholder="Ex: Bizerte" value="{{ ferme_edit|default(null) ? ferme_edit.lieu : '' }}" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.lieu is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
-                    {% if errors.lieu is defined %}
-                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.lieu }}</small>
-                    {% endif %}
+                    {{ form_label(form.lieu, null, {'label_attr': {'style': 'display: block; font-weight: 600; margin-bottom: 8px; color: #475569;'}}) }}
+                    {{ form_widget(form.lieu, {'attr': {'style': 'width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline-color: #2d7a36;'}}) }}
+                    {{ form_errors(form.lieu, {'attr': {'style': 'color: #dc2626; font-weight: 600; display: block; margin-top: 5px;'}}) }}
                 </div>
 
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Surface (m²)</label>
-                    <input type="number" step="0.1" name="surface" required placeholder="Ex: 5000" value="{{ ferme_edit|default(null) ? ferme_edit.surface : '' }}" 
-                           style="width: 100%; padding: 12px; border: 1px solid {{ errors.surface is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
-                    {% if errors.surface is defined %}
-                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.surface }}</small>
-                    {% endif %}
+                    {{ form_label(form.surface, null, {'label_attr': {'style': 'display: block; font-weight: 600; margin-bottom: 8px; color: #475569;'}}) }}
+                    {{ form_widget(form.surface, {'attr': {'style': 'width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline-color: #2d7a36;'}}) }}
+                    {{ form_errors(form.surface, {'attr': {'style': 'color: #dc2626; font-weight: 600; display: block; margin-top: 5px;'}}) }}
                 </div>
 
                 <div style="display: flex; gap: 15px; margin-bottom: 25px;">
                     <div style="flex: 1;">
-                        <label style="font-weight: 600; color: #475569; font-size: 0.85rem;">Latitude</label>
-                        <input type="number" step="any" name="latitude" value="{{ ferme_edit|default(null) ? ferme_edit.latitude : '' }}" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                        {{ form_label(form.latitude, null, {'label_attr': {'style': 'font-weight: 600; color: #475569; font-size: 0.85rem;'}}) }}
+                        {{ form_widget(form.latitude, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px;'}}) }}
                     </div>
                     <div style="flex: 1;">
-                        <label style="font-weight: 600; color: #475569; font-size: 0.85rem;">Longitude</label>
-                        <input type="number" step="any" name="longitude" value="{{ ferme_edit|default(null) ? ferme_edit.longitude : '' }}" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                        {{ form_label(form.longitude, null, {'label_attr': {'style': 'font-weight: 600; color: #475569; font-size: 0.85rem;'}}) }}
+                        {{ form_widget(form.longitude, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px;'}}) }}
                     </div>
                 </div>
 
@@ -141,7 +130,7 @@
                 {% if ferme_edit|default(null) %}
                     <a href="{{ path('app_ferme_index') }}" style="display: block; text-align: center; margin-top: 15px; color: #64748b; text-decoration: none; font-size: 0.9rem;">Annuler</a>
                 {% endif %}
-            </form>
+            {{ form_end(form) }}
         </div>
 
         {# COLONNE DROITE : LISTE #}

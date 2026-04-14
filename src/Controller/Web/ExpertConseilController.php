@@ -4,7 +4,9 @@ namespace App\Controller\Web;
 
 use App\Entity\Conseil;
 use App\Enum\Priorite;
+use App\Form\ConseilType;
 use App\Repository\ConseilRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +18,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ExpertConseilController extends AbstractController
 {
     public function __construct(
-        private ConseilRepository $conseilRepo
+        private ConseilRepository $conseilRepo,
+        private EntityManagerInterface $em,
     ) {}
 
     #[Route('/conseils', name: 'expert_conseils_list')]
@@ -47,6 +50,25 @@ class ExpertConseilController extends AbstractController
 
         return $this->render('portal/expert/conseil_show.html.twig', [
             'conseil' => $conseil,
+        ]);
+    }
+
+    #[Route('/conseil/new', name: 'expert_conseil_new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $conseil = new Conseil();
+        $form = $this->createForm(ConseilType::class, $conseil);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->persist($conseil);
+            $this->em->flush();
+            $this->addFlash('success', 'Conseil créé avec succès.');
+            return $this->redirectToRoute('expert_conseils_list');
+        }
+
+        return $this->render('portal/expert/conseil_new.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

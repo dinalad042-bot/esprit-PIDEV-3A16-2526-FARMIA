@@ -3,7 +3,9 @@
 namespace App\Controller\Web;
 
 use App\Entity\Analyse;
+use App\Form\AnalyseType;
 use App\Repository\AnalyseRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +17,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ExpertAnalyseController extends AbstractController
 {
     public function __construct(
-        private AnalyseRepository $analyseRepo
+        private AnalyseRepository $analyseRepo,
+        private EntityManagerInterface $em,
     ) {}
 
     #[Route('/analyses', name: 'expert_analyses_list')]
@@ -77,5 +80,24 @@ class ExpertAnalyseController extends AbstractController
 
         $this->addFlash('success', 'Demande prise en charge avec succès.');
         return $this->redirectToRoute('expert_analyse_show', ['id' => $analyse->getId()]);
+    }
+
+    #[Route('/analyse/new', name: 'expert_analyse_new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $analyse = new Analyse();
+        $form = $this->createForm(AnalyseType::class, $analyse);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->persist($analyse);
+            $this->em->flush();
+            $this->addFlash('success', 'Analyse créée avec succès.');
+            return $this->redirectToRoute('expert_analyses_list');
+        }
+
+        return $this->render('portal/expert/analyse_new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

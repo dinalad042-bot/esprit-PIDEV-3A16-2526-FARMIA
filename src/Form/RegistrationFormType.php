@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -22,22 +23,43 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'Le nom est obligatoire.']),
+                ],
             ])
             ->add('prenom', TextType::class, [
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'Le prénom est obligatoire.']),
+                ],
             ])
             ->add('email', EmailType::class, [
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'L\'email est obligatoire.']),
+                    new Email(['message' => 'Veuillez saisir une adresse email valide.']),
+                ],
             ])
             ->add('cin', TextType::class, [
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'Le CIN est obligatoire.']),
+                    new Length(['exactly' => 8, 'exactMessage' => 'Le CIN doit contenir exactement 8 caractères.']),
+                ],
             ])
             ->add('telephone', TextType::class, [
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'Le téléphone est obligatoire.']),
+                    new Length(['exactly' => 8, 'exactMessage' => 'Le téléphone doit contenir exactement 8 caractères.']),
+                ],
             ])
             ->add('adresse', TextType::class, [
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(['message' => 'L\'adresse est obligatoire.']),
+                ],
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,

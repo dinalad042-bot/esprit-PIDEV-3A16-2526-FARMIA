@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -30,21 +29,21 @@ class FermeController extends AbstractController
      * PAGE PRINCIPALE : Affiche la liste ET gère l'ajout (POST)
      */
     #[Route('/', name: 'app_ferme_index', methods: ['GET', 'POST'])]
-    public function index(FermeRepository $fermeRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
+    public function index(FermeRepository $fermeRepository, Request $request, EntityManagerInterface $em): Response
     {
         $search = $request->query->get('search', '');
         $sort = $request->query->get('sort', 'idFerme');
         $direction = $request->query->get('direction', 'ASC');
 
+        $ferme = new Ferme();
+        $form = $this->createForm(FermeType::class, $ferme);
+        $form->handleRequest($request);
+
         // --- PARTIE AJOUT (POST) ---
-        if ($request->isMethod('POST')) {
-            $ferme = new Ferme();
-            $this->mapData($ferme, $request); // Utilise la fonction de mapping existante
-            
-            // Validation
-            $violations = $validator->validate($ferme);
-            if (count($violations) > 0) {
-                return $this->renderWithErrors($violations, $fermeRepository, null, $request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Lie l'utilisateur connecté
+            if ($this->getUser()) {
+                $ferme->setUser($this->getUser());
             }
 
             $em->persist($ferme);
@@ -65,7 +64,7 @@ class FermeController extends AbstractController
             'searchTerm' => $search,
             'currentSort' => $sort,
             'currentDirection' => $direction,
-            'errors' => [],
+            'form' => $form->createView(),
             'ferme_edit' => null // Mode ajout par défaut
         ]);
     }
@@ -106,10 +105,12 @@ class FermeController extends AbstractController
         $sort = $request->query->get('sort', 'idFerme');
         $direction = $request->query->get('direction', 'ASC');
 
+        $form = $this->createForm(FermeType::class, $ferme);
+
         return $this->render('ferme/index.html.twig', [
             'fermes' => $repo->findAll(), // Ou findBySearchAndSort
             'ferme_edit' => $ferme,
-            'errors' => [],
+            'form' => $form->createView(),
             'searchTerm' => $search,
             'currentSort' => $sort,
             'currentDirection' => $direction
@@ -120,19 +121,30 @@ class FermeController extends AbstractController
      * Mise à jour effective en base
      */
     #[Route('/{id_ferme}/update', name: 'app_ferme_update', methods: ['POST'])]
-    public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
+    public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, FermeRepository $repo): Response
     {
-        $this->mapData($ferme, $request);
-        
-        $violations = $validator->validate($ferme);
-        if (count($violations) > 0) {
-            return $this->renderWithErrors($violations, $repo, $ferme, $request);
+        $form = $this->createForm(FermeType::class, $ferme);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'La ferme a été mise à jour.');
+            return $this->redirectToRoute('app_ferme_index');
         }
 
-        $em->flush();
-        $this->addFlash('success', 'La ferme a été mise à jour.');
-        
-        return $this->redirectToRoute('app_ferme_index');
+        // En cas d'erreurs, afficher le formulaire avec les erreurs
+        $search = $request->query->get('search', '');
+        $sort = $request->query->get('sort', 'idFerme');
+        $direction = $request->query->get('direction', 'ASC');
+
+        return $this->render('ferme/index.html.twig', [
+            'fermes' => $repo->findAll(),
+            'ferme_edit' => $ferme,
+            'form' => $form->createView(),
+            'searchTerm' => $search,
+            'currentSort' => $sort,
+            'currentDirection' => $direction
+        ]);
     }
 
     /**
@@ -148,48 +160,5 @@ class FermeController extends AbstractController
         }
         
         return $this->redirectToRoute('app_ferme_index');
-    }
-
-    /**
-     * Mapping manuel des données (Évite d'utiliser FermeType pour rester sur l'index)
-     */
-    private function mapData(Ferme $ferme, Request $request): void
-    {
-        $ferme->setNomFerme($request->request->get('nom_ferme'));
-        $ferme->setLieu($request->request->get('lieu'));
-        
-        $surface = $request->request->get('surface');
-        $ferme->setSurface($surface !== null ? (float)$surface : 0.0);
-
-        $lat = $request->request->get('latitude');
-        $lng = $request->request->get('longitude');
-
-        $ferme->setLatitude($lat !== null && $lat !== '' ? (float)$lat : null);
-        $ferme->setLongitude($lng !== null && $lng !== '' ? (float)$lng : null);
-        
-        // On lie l'utilisateur connecté
-        if ($this->getUser()) {
-            $ferme->setUser($this->getUser());
-        }
-    }
-
-    /**
-     * Centralisation de l'affichage en cas d'erreurs
-     */
-    private function renderWithErrors($violations, FermeRepository $repo, ?Ferme $ferme_edit, Request $request): Response
-    {
-        $errors = [];
-        foreach ($violations as $v) { 
-            $errors[$v->getPropertyPath()] = $v->getMessage(); 
-        }
-
-        return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findAll(),
-            'ferme_edit' => $ferme_edit,
-            'errors' => $errors,
-            'searchTerm' => $request->query->get('search'),
-            'currentSort' => $request->query->get('sort', 'idFerme'),
-            'currentDirection' => $request->query->get('direction', 'ASC')
-        ]);
     }
 }
