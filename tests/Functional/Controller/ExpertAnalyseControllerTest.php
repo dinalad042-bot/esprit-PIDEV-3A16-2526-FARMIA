@@ -26,7 +26,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
      */
     public function testExpertDashboardLoads(): void
     {
-        $this->client->request('GET', '/expert/');
+        self::$client->request('GET', '/expert/dashboard');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('h1');
@@ -37,7 +37,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
      */
     public function testExpertAnalyseListLoads(): void
     {
-        $this->client->request('GET', '/expert/analyse');
+        self::$client->request('GET', '/expert/analyses');
 
         $this->assertResponseIsSuccessful();
     }
@@ -47,7 +47,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
      */
     public function testPendingAnalysesPageLoads(): void
     {
-        $this->client->request('GET', '/expert/analyse/pending');
+        self::$client->request('GET', '/expert/demandes-en-attente');
 
         $this->assertResponseIsSuccessful();
     }
@@ -60,7 +60,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
         // Create an analyse
         $analyse = $this->createAnalyse();
 
-        $this->client->request('GET', '/expert/analyse/' . $analyse->getId());
+        self::$client->request('GET', '/expert/analyse/' . $analyse->getId());
 
         $this->assertResponseIsSuccessful();
     }
@@ -72,7 +72,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
     {
         $analyse = $this->createAnalyse();
 
-        $this->client->request('GET', '/expert/analyse/' . $analyse->getId() . '/edit');
+        self::$client->request('GET', '/expert/analyse/' . $analyse->getId() . '/edit');
 
         $this->assertResponseIsSuccessful();
     }
@@ -85,14 +85,12 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
         $analyse = $this->createAnalyse();
         $id = $analyse->getId();
 
-        $this->client->request('POST', '/expert/analyse/' . $id . '/delete', [
-            '_token' => 'test_token'
-        ]);
+        self::$client->request('POST', '/expert/analyse/' . $id . '/delete');
 
         $this->assertResponseRedirects();
 
         // Verify deletion
-        $deletedAnalyse = $this->entityManager->getRepository(Analyse::class)->find($id);
+        $deletedAnalyse = self::$em->getRepository(Analyse::class)->find($id);
         $this->assertNull($deletedAnalyse);
     }
 
@@ -103,14 +101,12 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
     {
         $analyse = $this->createAnalyse();
 
-        $this->client->request('POST', '/expert/analyse/' . $analyse->getId() . '/status', [
-            'status' => 'en_cours'
-        ]);
+        self::$client->request('GET', '/expert/analyse/' . $analyse->getId() . '/status/en_cours');
 
         $this->assertResponseRedirects();
 
         // Verify status update
-        $this->entityManager->refresh($analyse);
+        self::$em->refresh($analyse);
         $this->assertEquals(StatutAnalyse::EN_COURS, $analyse->getStatut());
     }
 
@@ -121,12 +117,12 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
     {
         $analyse = $this->createAnalyse(StatutAnalyse::EN_ATTENTE);
 
-        $this->client->request('POST', '/expert/analyse/' . $analyse->getId() . '/take');
+        self::$client->request('GET', '/expert/demande/' . $analyse->getId() . '/prendre-en-charge');
 
         $this->assertResponseRedirects();
 
         // Verify assignment
-        $this->entityManager->refresh($analyse);
+        self::$em->refresh($analyse);
         $this->assertNotNull($analyse->getTechnicien());
         $this->assertEquals(StatutAnalyse::EN_COURS, $analyse->getStatut());
     }
@@ -139,7 +135,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
         $this->logout();
         $this->loginAsUser();
 
-        $this->client->request('GET', '/expert/');
+        self::$client->request('GET', '/expert/dashboard');
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -151,7 +147,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
     {
         $this->logout();
 
-        $this->client->request('GET', '/expert/');
+        self::$client->request('GET', '/expert/dashboard');
 
         $this->assertResponseRedirects('/login');
     }
@@ -161,7 +157,7 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
      */
     private function createAnalyse(StatutAnalyse $status = StatutAnalyse::EN_ATTENTE): Analyse
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy([]);
+        $user = self::$em->getRepository(User::class)->findOneBy([]);
 
         $ferme = new Ferme();
         $ferme->setNomFerme('Test Farm');
@@ -175,9 +171,9 @@ class ExpertAnalyseControllerTest extends BaseWebTestCase
         $analyse->setStatut($status);
         $analyse->setFerme($ferme);
 
-        $this->entityManager->persist($ferme);
-        $this->entityManager->persist($analyse);
-        $this->entityManager->flush();
+        self::$em->persist($ferme);
+        self::$em->persist($analyse);
+        self::$em->flush();
 
         return $analyse;
     }

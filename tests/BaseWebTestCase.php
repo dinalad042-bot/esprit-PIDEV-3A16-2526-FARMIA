@@ -178,11 +178,11 @@ abstract class BaseWebTestCase extends WebTestCase
     }
 
     /**
-     * Get the client.
+     * Get the client browser.
      * 
      * @return KernelBrowser
      */
-    protected function getClient(): KernelBrowser
+    protected function getBrowser(): KernelBrowser
     {
         return self::$client;
     }
