@@ -205,13 +205,16 @@ expert_conseil_delete      POST   /expert/conseil/{id}/delete
 - [ ] Add notification dropdown to expert layout
 - [ ] Real-time updates for new requests
 
-### Phase 5: BackOffice Admin (PENDING)
+### ✅ PHASE 5 COMPLETE (14 Avril 2026)
 
 **Priority:** LOW - Admin oversight
 
-- [ ] `Admin/AnalyseController` - Full CRUD
-- [ ] `Admin/ConseilController` - Full CRUD
-- [ ] Statistics dashboard
+- ✅ `Admin/AnalyseController` - Full CRUD
+  - Routes: index, new, show, edit, delete, status, statistics
+- ✅ `Admin/ConseilController` - Full CRUD
+  - Routes: index, new, show, edit, delete, statistics
+- ✅ Statistics dashboards for both entities
+- ✅ Admin menu updated with Analyses and Conseils links
 
 ---
 
@@ -235,8 +238,10 @@ expert_conseil_delete      POST   /expert/conseil/{id}/delete
 - `76edb5c7` - "Phase 1: Complete Expert Module CRUD - Added edit/delete/status workflow"
 - `8fc664a6` - "Phase 2: AI Integration - GroqService for Visual Diagnosis"
 - `8230dc6c` - "Phase 6: Expert Module Testing - Unit and Functional Tests"
+- `d9f687f3` - "Phase 3: PDF Export - ReportService integration with expert analyse export"
+- `1040b6ce` - "Phase 5: BackOffice Admin - Admin CRUD for Analyses and Conseils with statistics dashboard"
 
-**Last Updated:** 2026-04-14 15:00:00  
-**Completed Phases:** 1, 2, 6 ✅  
-**Pending Phases:** 3, 4, 5  
+**Last Updated:** 2026-04-14 16:30:00  
+**Completed Phases:** 1, 2, 3, 5, 6 ✅  
+**Pending Phases:** 4 (Optional)  
 **Project:** Farmai Web Sprint - PIDEV 3A 2025-2026
