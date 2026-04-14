@@ -12,6 +12,7 @@
 ### ✅ PHASE 1 COMPLETE (14 Avril 2026)
 
 #### 1. **Analyse Entity & CRUD** ✓
+
 - **Entity:** `src/Entity/Analyse.php` ✓
   - Fields: id_analyse, date_analyse, resultat_technique, image_url, statut, description_demande
   - Relations: technicien (User), ferme (Ferme), demandeur (User), animalCible (Animal), planteCible (Plante), conseils (OneToMany)
@@ -38,6 +39,7 @@
   - `templates/portal/expert/pending_requests.html.twig` ✓
 
 #### 2. **Conseil Entity & CRUD** ✓
+
 - **Entity:** `src/Entity/Conseil.php` ✓
   - Fields: id_conseil, description_conseil, prioriteRaw
   - Relations: analyse (ManyToOne, required)
@@ -63,6 +65,7 @@
   - **NEW:** `templates/portal/expert/conseil_edit.html.twig` ✓
 
 #### 3. **Expert Dashboard** ✓
+
 - **Controller:** `src/Controller/Web/DashboardController.php` ✓
   - Route: dashboard_expert
   - Stats: analysesThisMonth, analysesTotal, conseilsTotal, conseilsUrgent, pendingRequests
@@ -116,33 +119,43 @@ expert_conseil_delete      POST   /expert/conseil/{id}/delete       ← NEW
 ## 🚀 REMAINING PHASES
 
 ### Phase 2: AI Integration (GroqService)
+
 **Priority:** HIGH - AI diagnosis is the key differentiator
+
 - [ ] Create `ExpertAIController` for AI endpoints
 - [ ] Integrate GroqService for image analysis
 - [ ] Display AI results in analyse detail page
 - [ ] Store AI diagnosis history
 
 ### Phase 3: PDF Export
+
 **Priority:** MEDIUM - Professional reporting
+
 - [ ] Create `ReportService` for PDF generation
 - [ ] Add export buttons to analyse/conseil pages
 - [ ] Generate professional reports with charts
 
 ### Phase 4: Notification System
+
 **Priority:** MEDIUM - User engagement
+
 - [ ] Create `Notification` entity
 - [ ] Create `NotificationService`
 - [ ] Add notification dropdown to expert layout
 - [ ] Real-time updates for new requests
 
 ### Phase 5: BackOffice Admin
+
 **Priority:** LOW - Admin oversight
+
 - [ ] `Admin/AnalyseController` - Full CRUD
 - [ ] `Admin/ConseilController` - Full CRUD
 - [ ] Statistics dashboard
 
 ### Phase 6: Testing
+
 **Priority:** HIGH - Quality assurance
+
 - [ ] Unit tests for entities
 - [ ] Functional tests for controllers
 - [ ] Repository tests
@@ -163,6 +176,8 @@ expert_conseil_delete      POST   /expert/conseil/{id}/delete       ← NEW
 | Doctrine ORM | ✅ All entities use ORM |
 
 ---
+xyz_OMzMLWjLHvSX6ktmSLZJWGdyb3FYichoEBBz0c4vgaxMu0NCoyUC
+and for using change 1st xyz into gsk cause of git prevention also manage to i can use it and i can push to git and precisely walk through : <https://console.groq.com/docs/models>  for smooth debuging and app good productions quality .
 
 **Last Updated:** 2026-04-14 13:11:00  
 **Phase 1 Status:** ✅ COMPLETE  

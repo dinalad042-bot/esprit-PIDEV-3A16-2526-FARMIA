@@ -31,3 +31,8 @@ services:
     App\Service\PythonFaceRecognitionService:
         arguments:
             $pythonApiUrl: '%env(string:PYTHON_API_URL)%'
+
+    App\Service\GroqService:
+        arguments:
+            $apiKey: '%env(string:GROQ_API_KEY)%'
+            $model: '%env(string:GROQ_MODEL)%'

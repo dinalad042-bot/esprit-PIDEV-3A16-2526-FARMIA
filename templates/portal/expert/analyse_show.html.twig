@@ -63,6 +63,21 @@
             </button>
         </form>
         {% endif %}
+        
+        {# AI Diagnosis Button #}
+        {% if analyse.imageUrl %}
+            {% if analyse.hasAiDiagnosis %}
+            <a href="{{ path('expert_analyse_ai_result', {id: analyse.id}) }}" style="background:#9b59b6; color:#fff; text-decoration:none; border:none; padding:8px 16px; border-radius:8px; display:inline-flex; align-items:center; gap:4px;">
+                <i class="fa-solid fa-robot"></i> Voir IA
+            </a>
+            {% else %}
+            <form method="POST" action="{{ path('expert_analyse_diagnose', {id: analyse.id}) }}" style="display:inline;">
+                <button type="submit" style="background:#9b59b6; color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer;" onclick="return confirm('Lancer le diagnostic IA sur cette image ?');">
+                    <i class="fa-solid fa-robot"></i> Diagnostiquer IA
+                </button>
+            </form>
+            {% endif %}
+        {% endif %}
     </div>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
@@ -135,6 +150,53 @@
             {% endif %}
         </div>
     </div>
+
+    {# AI Diagnosis Section #}
+    {% if analyse.hasAiDiagnosis %}
+    {% set aiResult = analyse.aiDiagnosisResult|json_decode %}
+    <div style="margin-top:1.5rem; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border-radius:12px; padding:1.5rem; color:#fff;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="margin:0; font-size:1.1rem;">
+                <i class="fa-solid fa-robot" style="margin-right:8px;"></i> Diagnostic IA
+            </h3>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+                <span style="background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:12px; font-size:0.85rem;">
+                    Confiance: {{ analyse.aiConfidenceScore }}
+                </span>
+                <span style="background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:12px; font-size:0.85rem;">
+                    {{ analyse.aiDiagnosisDate|date('d/m/Y H:i') }}
+                </span>
+            </div>
+        </div>
+        
+        <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; margin-bottom:1rem;">
+            <div style="font-size:0.85rem; opacity:0.8; margin-bottom:0.25rem;">Condition détectée</div>
+            <div style="font-size:1.1rem; font-weight:600;">{{ aiResult.condition|default('Non déterminé') }}</div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem;">
+                <div style="font-size:0.8rem; opacity:0.8; margin-bottom:0.25rem;"><i class="fa-solid fa-heart-pulse"></i> Symptômes</div>
+                <div style="font-size:0.9rem;">{{ aiResult.symptoms|default('-')|slice(0,100) }}{% if aiResult.symptoms|length > 100 %}...{% endif %}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem;">
+                <div style="font-size:0.8rem; opacity:0.8; margin-bottom:0.25rem;"><i class="fa-solid fa-pills"></i> Traitement</div>
+                <div style="font-size:0.9rem;">{{ aiResult.treatment|default('-')|slice(0,100) }}{% if aiResult.treatment|length > 100 %}...{% endif %}</div>
+            </div>
+        </div>
+        
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+            <a href="{{ path('expert_analyse_ai_result', {id: analyse.id}) }}" style="background:#fff; color:#764ba2; text-decoration:none; padding:8px 16px; border-radius:8px; font-weight:500;">
+                Voir détails complet <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <form method="POST" action="{{ path('expert_analyse_diagnose', {id: analyse.id}) }}" style="display:inline;">
+                <button type="submit" style="background:rgba(255,255,255,0.2); color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer;">
+                    <i class="fa-solid fa-rotate"></i> Relancer
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
 
     {# Conseils Section #}
     <div style="margin-top:1.5rem; background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06);">

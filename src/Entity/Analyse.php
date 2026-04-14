@@ -68,6 +68,16 @@ class Analyse
     )]
     private Collection $conseils;
 
+    // AI Diagnosis Fields
+    #[ORM\Column(name: 'ai_diagnosis_result', type: 'text', nullable: true)]
+    private ?string $aiDiagnosisResult = null;
+
+    #[ORM\Column(name: 'ai_diagnosis_date', type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $aiDiagnosisDate = null;
+
+    #[ORM\Column(name: 'ai_confidence_score', type: 'string', length: 20, nullable: true)]
+    private ?string $aiConfidenceScore = null;
+
     public function __construct()
     {
         $this->conseils    = new ArrayCollection();
@@ -142,4 +152,16 @@ class Analyse
     }
 
     public function getNbConseils(): int { return $this->conseils->count(); }
+
+    // AI Diagnosis Methods
+    public function getAiDiagnosisResult(): ?string { return $this->aiDiagnosisResult; }
+    public function setAiDiagnosisResult(?string $result): static { $this->aiDiagnosisResult = $result; return $this; }
+
+    public function getAiDiagnosisDate(): ?\DateTimeInterface { return $this->aiDiagnosisDate; }
+    public function setAiDiagnosisDate(?\DateTimeInterface $date): static { $this->aiDiagnosisDate = $date; return $this; }
+
+    public function getAiConfidenceScore(): ?string { return $this->aiConfidenceScore; }
+    public function setAiConfidenceScore(?string $score): static { $this->aiConfidenceScore = $score; return $this; }
+
+    public function hasAiDiagnosis(): bool { return $this->aiDiagnosisResult !== null; }
 }
