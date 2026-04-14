@@ -19,6 +19,7 @@ abstract class BaseWebTestCase extends WebTestCase
     protected static ?KernelBrowser $client = null;
     protected static ?EntityManagerInterface $em = null;
     protected static ?UserPasswordHasherInterface $passwordHasher = null;
+
     /**
      * Set up before each test.
      * Creates client and entity manager.
@@ -119,6 +120,34 @@ abstract class BaseWebTestCase extends WebTestCase
         $this->loginAs($user);
         return $user;
     }
+
+    /**
+     * Log in as an expert user.
+     * 
+     * @return User The created and logged-in expert user
+     */
+    protected function loginAsExpert(): User
+    {
+        return $this->loginWithRole('ROLE_EXPERT');
+    }
+
+    /**
+     * Log in as a regular user.
+     * 
+     * @return User The created and logged-in user
+     */
+    protected function loginAsUser(): User
+    {
+        return $this->loginWithRole('ROLE_USER');
+    }
+
+    /**
+     * Log out the current user.
+     */
+    protected function logout(): void
+    {
+        self::$client->request('GET', '/logout');
+    }
     
     /**
      * Assert that a flash message exists.
@@ -147,5 +176,14 @@ abstract class BaseWebTestCase extends WebTestCase
     {
         return self::$em;
     }
-    
+
+    /**
+     * Get the client.
+     * 
+     * @return KernelBrowser
+     */
+    protected function getClient(): KernelBrowser
+    {
+        return self::$client;
+    }
 }
