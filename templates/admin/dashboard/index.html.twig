@@ -1,0 +1,88 @@
+﻿{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Dashboard Admin - FarmAI{% endblock %}
+
+{% block body %}
+<style>
+    .stat-card-link { text-decoration: none; color: inherit; display: block; transition: all 0.2s ease-in-out; }
+    .stat-card-link:hover { transform: translateY(-5px); }
+    .stat-card-link:hover .stat-card { box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+</style>
+
+<div class="welcome-section">
+    <h1 class="welcome-title">Bienvenue, {{ app.user.prenom|default('aymen') }} {{ app.user.nom|default('aymen') }}!</h1>
+    <p class="welcome-subtitle">Ne remettez jamais ├á demain ce qui peut ├¬tre fait aujourd'hui ! <i class="fa-solid fa-seedling" style="color: var(--primary-green);"></i></p>
+</div>
+
+<div class="stats-grid">
+    <a href="{{ path('admin_users_index') }}" class="stat-card-link">
+        <div class="stat-card green">
+            <div class="stat-value">{{ stats.total|default(0) }}</div>
+            <div class="stat-label">Total</div>
+            <div class="stat-sublabel">Utilisateurs</div>
+            <div class="stat-footer stat-footer-line">Objectif: 100%</div>
+        </div>
+    </a>
+    
+    <a href="{{ path('admin_users_index', {'role': 'ROLE_ADMIN'}) }}" class="stat-card-link">
+        <div class="stat-card">
+            <div class="stat-value" style="color: var(--dark-bg);">{{ stats.admins|default(0) }}</div>
+            <div class="stat-label" style="color: var(--dark-bg);">Admins</div>
+            <div class="stat-sublabel">Gestionnaires</div>
+            <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">Actifs</div>
+        </div>
+    </a>
+
+    <a href="{{ path('admin_users_index', {'role': 'ROLE_EXPERT'}) }}" class="stat-card-link">
+        <div class="stat-card light-gray">
+            <div class="stat-value" style="color: var(--dark-bg);">{{ stats.experts|default(0) }}</div>
+            <div class="stat-label" style="color: var(--dark-bg);">Experts</div>
+            <div class="stat-sublabel">Consultants</div>
+            <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">Disponibles</div>
+        </div>
+    </a>
+
+    <a href="{{ path('admin_users_index', {'role': 'ROLE_AGRICOLE'}) }}" class="stat-card-link">
+        <div class="stat-card dark">
+            <div class="stat-value">{{ stats.agricoles|default(0) }}</div>
+            <div class="stat-label">Agricoles</div>
+            <div class="stat-sublabel">Exploitants</div>
+            <div class="stat-footer stat-footer-line">
+                <i class="fa-solid fa-check" style="color: #4ade80;"></i> V├⌐rifi├⌐s
+            </div>
+        </div>
+    </a>
+
+    <a href="{{ path('admin_users_index', {'role': 'ROLE_FOURNISSEUR'}) }}" class="stat-card-link">
+        <div class="stat-card">
+            <div class="stat-value" style="color: var(--dark-bg);">{{ stats.fournisseurs|default(0) }}</div>
+            <div class="stat-label" style="color: var(--text-muted);">Fournisseurs</div>
+            <div class="stat-sublabel">Partenaires</div>
+            <div class="stat-footer">
+                <div class="footer-icon"><i class="fa-solid fa-gift" style="color: var(--dark-bg);"></i></div>
+            </div>
+        </div>
+    </a>
+</div>
+
+<div class="bottom-grid">
+    <div class="action-card">
+        <div class="action-header">
+            <h3 class="action-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h3>
+            <i class="fa-solid fa-ellipsis" style="color: #cbd5e1; cursor: pointer;"></i>
+        </div>
+        <div class="btn-group">
+            <a href="{{ path('admin_users_index') }}?open=create" class="btn btn-dark">+ Nouvel Utilisateur</a>
+            <button onclick="openStatsModal()" class="btn btn-outline-green" style="cursor: pointer;">Voir Statistiques</button>
+        </div>
+    </div>
+
+    <div class="enterprise-card">
+        <h3 class="enterprise-title"><i class="fa-solid fa-building"></i> FarmAI Enterprise</h3>
+        <p class="enterprise-text">G├⌐rez votre exploitation agricole intelligente avec les derni├¿res technologies d'IA.</p>
+        <i class="fa-solid fa-seedling enterprise-icon"></i>
+    </div>
+</div>
+
+{% include 'admin/statistics/_statistics_modal.html.twig' %}
+{% endblock %}

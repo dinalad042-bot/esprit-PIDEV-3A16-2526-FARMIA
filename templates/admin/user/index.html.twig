@@ -1,0 +1,53 @@
+﻿{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Gestion des Utilisateurs - FarmAI{% endblock %}
+
+{% block body %}
+<div class="welcome-section" style="display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h1 class="welcome-title">Utilisateurs Enregistr├⌐s</h1>
+        <p class="welcome-subtitle">Consultez et g├⌐rez l'ensemble des comptes de la plateforme.</p>
+    </div>
+    <div>
+        <a href="#" class="btn btn-dark"><i class="fa-solid fa-user-plus"></i> Ajouter un Utilisateur</a>
+    </div>
+</div>
+
+<div class="chart-page-container" style="max-width: 100%; padding: 20px;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="border-bottom: 2px solid #f1f5f9; color: var(--text-muted);">
+                <th style="padding: 15px;">#</th>
+                <th style="padding: 15px;">Nom complet</th>
+                <th style="padding: 15px;">Email</th>
+                <th style="padding: 15px;">R├┤le</th>
+                <th style="padding: 15px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+                <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc';" onmouseout="this.style.backgroundColor='transparent';">
+                    <td style="padding: 15px; color: var(--text-muted);">{{ u.id }}</td>
+                    <td style="padding: 15px; font-weight: 600;">{{ u.prenom }} {{ u.nom }}</td>
+                    <td style="padding: 15px; color: var(--text-muted);">{{ u.email }}</td>
+                    <td style="padding: 15px;">
+                        <span style="background-color: var(--primary-green-light); color: var(--primary-green); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                            {{ u.role|default('User')|capitalize }}
+                        </span>
+                    </td>
+                    <td style="padding: 15px; display: flex; gap: 10px;">
+                        <a href="#" style="color: var(--text-muted); text-decoration: none;"><i class="fa-solid fa-pen"></i></a>
+                        <a href="#" style="color: #ef4444; text-decoration: none;"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" style="padding: 30px; text-align: center; color: var(--text-muted);">
+                        Aucun utilisateur trouv├⌐.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

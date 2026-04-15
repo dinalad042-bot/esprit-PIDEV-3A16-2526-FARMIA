@@ -1,0 +1,107 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Statistiques Analyses - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Statistiques des Analyses</h1>
+    <p class="welcome-subtitle">Vue d'ensemble des demandes d'analyse agricoles</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid mb-4">
+    <div class="stat-card green">
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Total Analyses</div>
+        <div class="stat-sublabel">Toutes demandes</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--dark-bg);">{{ stats.pending }}</div>
+        <div class="stat-label" style="color: var(--dark-bg);">En Attente</div>
+        <div class="stat-sublabel">À traiter</div>
+    </div>
+    
+    <div class="stat-card light-gray">
+        <div class="stat-value" style="color: var(--dark-bg);">{{ stats.total - stats.pending }}</div>
+        <div class="stat-label" style="color: var(--dark-bg);">Traitées</div>
+        <div class="stat-sublabel">En cours/Terminées</div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Analyses par ferme -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fa-solid fa-tractor"></i> Analyses par Ferme</h5>
+            </div>
+            <div class="card-body">
+                {% if stats.perFarm|length > 0 %}
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Ferme</th>
+                                <th class="text-end">Nombre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for farm in stats.perFarm %}
+                            <tr>
+                                <td>{{ farm.ferme }}</td>
+                                <td class="text-end">
+                                    <span class="badge badge-primary">{{ farm.total }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted text-center">Aucune donnée disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analyses récentes -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fa-solid fa-clock"></i> Analyses Récentes</h5>
+            </div>
+            <div class="card-body">
+                {% if stats.recent|length > 0 %}
+                    <div class="list-group">
+                    {% for analyse in stats.recent %}
+                        <a href="{{ path('admin_analyses_show', {'id': analyse.id}) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Analyse #{{ analyse.id }}</h6>
+                                <small>{{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y') : '-' }}</small>
+                            </div>
+                            <p class="mb-1">
+                                {% if analyse.ferme %}{{ analyse.ferme.nomFerme }}{% else %}Ferme non définie{% endif %}
+                            </p>
+                            <span class="badge 
+                                {% if analyse.statut == 'en_attente' %}badge-warning
+                                {% elseif analyse.statut == 'en_cours' %}badge-info
+                                {% elseif analyse.statut == 'terminee' %}badge-success
+                                {% else %}badge-danger{% endif %}">
+                                {{ analyse.statut|replace({'_': ' '})|title }}
+                            </span>
+                        </a>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">Aucune analyse récente</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ path('admin_analyses_index') }}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Retour aux analyses
+    </a>
+</div>
+{% endblock %}

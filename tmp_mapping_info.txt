@@ -1,0 +1,10 @@
+ Found 8 mapped entities:
+
+ [OK]   App\Entity\User
+ [OK]   App\Entity\Analyse
+ [OK]   App\Entity\Animal
+ [OK]   App\Entity\Conseil
+ [OK]   App\Entity\Ferme
+ [OK]   App\Entity\Plante
+ [OK]   App\Entity\UserFace
+ [OK]   App\Entity\UserLog

@@ -1,0 +1,99 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Statistiques Conseils - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Statistiques des Conseils</h1>
+    <p class="welcome-subtitle">Vue d'ensemble des conseils agricoles</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid mb-4">
+    <div class="stat-card green">
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Total Conseils</div>
+        <div class="stat-sublabel">Tous conseils</div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Conseils par priorité -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fa-solid fa-layer-group"></i> Conseils par Priorité</h5>
+            </div>
+            <div class="card-body">
+                {% if stats.byPriority|length > 0 %}
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Priorité</th>
+                                <th class="text-end">Nombre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in stats.byPriority %}
+                            <tr>
+                                <td>
+                                    <span class="badge 
+                                        {% if item.priorite == 'HAUTE' %}badge-danger
+                                        {% elseif item.priorite == 'MOYENNE' %}badge-warning
+                                        {% else %}badge-success{% endif %}">
+                                        {{ item.priorite }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="badge badge-primary">{{ item.count }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted text-center">Aucune donnée disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Conseils récents -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fa-solid fa-clock"></i> Conseils Récents</h5>
+            </div>
+            <div class="card-body">
+                {% if stats.recent|length > 0 %}
+                    <div class="list-group">
+                    {% for conseil in stats.recent %}
+                        <a href="{{ path('admin_analyses_show', {'id': conseil.analyse.id}) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Conseil #{{ conseil.id }}</h6>
+                                <span class="badge 
+                                    {% if conseil.priorite.value == 'HAUTE' %}badge-danger
+                                    {% elseif conseil.priorite.value == 'MOYENNE' %}badge-warning
+                                    {% else %}badge-success{% endif %}">
+                                    {{ conseil.priorite.value }}
+                                </span>
+                            </div>
+                            <p class="mb-1 text-truncate">{{ conseil.descriptionConseil|slice(0, 50) }}...</p>
+                            <small>Analyse #{{ conseil.analyse.id }}</small>
+                        </a>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">Aucun conseil récent</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ path('admin_analyses_index') }}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Retour aux analyses
+    </a>
+</div>
+{% endblock %}

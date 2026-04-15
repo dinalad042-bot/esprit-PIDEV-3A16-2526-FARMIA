@@ -1,0 +1,81 @@
+﻿{% extends 'layouts/fournisseur.html.twig' %}
+
+{% block title %}Espace Fournisseur - FarmAI{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Bienvenue, {{ app.user.prenom|default('Fournisseur') }} {{ app.user.nom|default('') }} !</h1>
+    <p class="welcome-subtitle">G├⌐rez vos produits et commandes facilement <i class="fa-solid fa-box-open" style="color: var(--primary-green);"></i></p>
+</div>
+
+{# ΓöÇΓöÇΓöÇ Stats Cards ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ #}
+<div class="stats-grid">
+    <div class="stat-card green">
+        <div class="stat-value">24</div>
+        <div class="stat-label">Produits</div>
+        <div class="stat-sublabel">Au catalogue</div>
+        <div class="stat-footer stat-footer-line">
+            <i class="fa-solid fa-arrow-trend-up" style="color: #4ade80;"></i> +5 ce mois
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-value" style="color: var(--dark-bg);">8</div>
+        <div class="stat-label" style="color: var(--dark-bg);">Commandes</div>
+        <div class="stat-sublabel">En cours</div>
+        <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">├Ç traiter</div>
+    </div>
+
+    <div class="stat-card light-gray">
+        <div class="stat-value" style="color: var(--dark-bg);">52</div>
+        <div class="stat-label" style="color: var(--dark-bg);">Ventes</div>
+        <div class="stat-sublabel">Ce mois</div>
+        <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">
+            <i class="fa-solid fa-chart-line" style="color: #22c55e;"></i> +12%
+        </div>
+    </div>
+
+    <div class="stat-card dark">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Ruptures</div>
+        <div class="stat-sublabel">Stock faible</div>
+        <div class="stat-footer stat-footer-line">
+            <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> R├⌐approvisionner
+        </div>
+    </div>
+</div>
+
+{# ΓöÇΓöÇΓöÇ Bottom Section ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ #}
+<div class="bottom-grid">
+    <div class="action-card">
+        <div class="action-header">
+            <h3 class="action-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h3>
+            <i class="fa-solid fa-ellipsis" style="color: #cbd5e1; cursor: pointer;"></i>
+        </div>
+
+        <div class="btn-group">
+            <a href="#" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouveau Produit</a>
+            <a href="#" class="btn btn-outline-green"><i class="fa-solid fa-clipboard-list"></i> Voir Commandes</a>
+        </div>
+
+        <div class="action-list">
+            <div class="list-item">
+                <div class="list-icon new">NEW</div>
+                <div class="list-text">Nouvelle commande re├ºue</div>
+            </div>
+            <div class="list-item">
+                <div class="list-icon refresh"><i class="fa-solid fa-arrows-rotate"></i></div>
+                <div class="list-text">Stock mis ├á jour automatiquement</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="enterprise-card">
+        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> Mon Catalogue</h3>
+        <p class="enterprise-text">
+            Publiez vos produits agricoles, g├⌐rez les commandes et suivez vos ventes en temps r├⌐el.
+        </p>
+        <i class="fa-solid fa-truck-field enterprise-icon"></i>
+    </div>
+</div>
+{% endblock %}

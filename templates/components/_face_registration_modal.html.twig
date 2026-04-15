@@ -1,0 +1,125 @@
+<!-- Face Registration Modal Component -->
+<div class="profile-modal-overlay" id="faceRegistrationModal" style="display: none; z-index: 2000;">
+    <div class="profile-modal" style="max-width: 450px; text-align: center;">
+        <div class="profile-modal-header" style="background: var(--primary-green); padding: 15px; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: white; display: flex; align-items: center; gap: 10px;"><i class="fas fa-camera"></i> Enregistrement Facial</h3>
+            <button type="button" class="close-modal-btn" onclick="closeFaceRegistrationModal()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        </div>
+        
+        <div class="profile-modal-body" style="padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <p style="color: #666; font-size: 0.95rem; margin-bottom: 10px;">Enregistrez votre visage pour vous connecter rapidement sans mot de passe.</p>
+            
+            <div id="faceRegContainer" style="position: relative; width: 100%; max-width: 320px; border-radius: 10px; overflow: hidden; border: 3px solid var(--accent-green); box-shadow: 0 0 15px rgba(46, 213, 115, 0.4);">
+                <video id="faceRegVideo" autoplay playsinline style="width: 100%; height: auto; display: block;"></video>
+                <div id="faceRegOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 10;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--accent-green);"></i>
+                </div>
+            </div>
+            
+            <div id="faceRegError" class="alert alert-error" style="display: none; width: 100%; font-size: 0.85rem; text-align: left;"></div>
+            <div id="faceRegSuccess" class="alert alert-success" style="display: none; width: 100%; font-size: 0.85rem; text-align: left;">Visage enregistré avec succès !</div>
+
+            <canvas id="faceRegCanvas" style="display: none;"></canvas>
+            
+            <p style="font-size: 0.85rem; color: #888;">Assurez-vous d'être dans un endroit bien éclairé et de regarder directement la caméra.</p>
+        </div>
+        
+        <div class="profile-modal-footer" style="padding: 15px; display: flex; justify-content: center; gap: 10px; border-top: 1px solid #eee;">
+            <button type="button" id="btnCaptureRegFace" class="btn btn-login" style="width: 100%;">Capturer et Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var faceRegModal = document.getElementById('faceRegistrationModal');
+    var faceRegVideo = document.getElementById('faceRegVideo');
+    var faceRegCanvas = document.getElementById('faceRegCanvas');
+    var btnCaptureRegFace = document.getElementById('btnCaptureRegFace');
+    var faceRegOverlay = document.getElementById('faceRegOverlay');
+    var faceRegError = document.getElementById('faceRegError');
+    var faceRegSuccess = document.getElementById('faceRegSuccess');
+    
+    var regStream = null;
+
+    function openFaceRegistrationModal() {
+        faceRegModal.style.display = 'flex';
+        faceRegError.style.display = 'none';
+        faceRegSuccess.style.display = 'none';
+        faceRegOverlay.style.display = 'none';
+        btnCaptureRegFace.disabled = false;
+        
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(function(s) {
+                regStream = s;
+                faceRegVideo.srcObject = regStream;
+            })
+            .catch(function(err) {
+                faceRegError.textContent = "Impossible d'accéder à la webcam : " + err.message;
+                faceRegError.style.display = 'block';
+                btnCaptureRegFace.disabled = true;
+            });
+    }
+
+    function closeFaceRegistrationModal() {
+        faceRegModal.style.display = 'none';
+        if (regStream) {
+            regStream.getTracks().forEach(track => track.stop());
+            regStream = null;
+        }
+    }
+
+    // Fermer si clic au dehors
+    window.addEventListener('click', function(event) {
+        if (event.target == faceRegModal) {
+            closeFaceRegistrationModal();
+        }
+    });
+
+    if (btnCaptureRegFace) {
+        btnCaptureRegFace.addEventListener('click', function() {
+            if (!regStream) return;
+            
+            faceRegError.style.display = 'none';
+            faceRegSuccess.style.display = 'none';
+            faceRegOverlay.style.display = 'flex';
+            btnCaptureRegFace.disabled = true;
+
+            // Capture image
+            faceRegCanvas.width = faceRegVideo.videoWidth;
+            faceRegCanvas.height = faceRegVideo.videoHeight;
+            const ctx = faceRegCanvas.getContext('2d');
+            ctx.drawImage(faceRegVideo, 0, 0, faceRegCanvas.width, faceRegCanvas.height);
+            
+            const base64Image = faceRegCanvas.toDataURL('image/jpeg', 0.8);
+
+            fetch('{{ path("app_face_register") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ image: base64Image })
+            })
+            .then(response => response.json().then(data => ({status: response.status, body: data})))
+            .then(res => {
+                faceRegOverlay.style.display = 'none';
+                if (res.status === 200 && res.body.success) {
+                    faceRegSuccess.style.display = 'block';
+                    setTimeout(() => {
+                        closeFaceRegistrationModal();
+                    }, 2000); // Close after 2s
+                } else {
+                    faceRegError.textContent = res.body.error || "Erreur lors de l'enregistrement de votre visage.";
+                    faceRegError.style.display = 'block';
+                    btnCaptureRegFace.disabled = false;
+                }
+            })
+            .catch(err => {
+                faceRegOverlay.style.display = 'none';
+                faceRegError.textContent = "Erreur réseau: " + err.message;
+                faceRegError.style.display = 'block';
+                btnCaptureRegFace.disabled = false;
+            });
+        });
+    }
+</script>

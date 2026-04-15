@@ -1,0 +1,31 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Modifier Conseil #{{ conseil.id }} - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Modifier le Conseil #{{ conseil.id }}</h1>
+    <p class="welcome-subtitle">Mettez à jour le conseil pour l'analyse #{{ conseil.analyse.id }}</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Formulaire d'édition</h5>
+    </div>
+    <div class="card-body">
+        {{ form_start(form) }}
+            {{ form_row(form.descriptionConseil) }}
+            {{ form_row(form.prioriteRaw) }}
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('admin_analyses_show', {'id': conseil.analyse.id}) }}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à l'analyse
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i> Enregistrer les modifications
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

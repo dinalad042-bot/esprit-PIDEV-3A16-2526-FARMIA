@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Analyse;
+use App\Entity\Conseil;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class ConseilAdminType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('descriptionConseil', TextareaType::class, [
+                'label' => 'Description du conseil',
+                'attr'  => [
+                    'class'       => 'form-control profile-input',
+                    'rows'        => 4,
+                    'placeholder' => 'Décrivez le conseil (min. 10 caractères)...',
+                ],
+            ])
+            ->add('prioriteRaw', ChoiceType::class, [
+                'label'   => 'Priorité',
+                'choices' => [
+                    '🔴 Haute'   => 'HAUTE',
+                    '🟡 Moyenne' => 'MOYENNE',
+                    '🟢 Basse'   => 'BASSE',
+                ],
+                'attr' => ['class' => 'form-control profile-input'],
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Conseil::class,
+        ]);
+    }
+}

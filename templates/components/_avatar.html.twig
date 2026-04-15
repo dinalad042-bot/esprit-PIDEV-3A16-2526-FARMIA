@@ -1,0 +1,26 @@
+﻿{# templates/components/_avatar.html.twig #}
+{% set p = user.prenom|default('U') %}
+{% set n = user.nom|default('U') %}
+{% set initials  = (p|slice(0,1) ~ n|slice(0,1))|upper %}
+{% set bgColors  = ['#8b5cf6', '#4ade80', '#3b82f6', '#f59e0b', '#ec4899'] %}
+{% set colorIdx  = ((p|length) + (n|length)) % 5 %}
+{% set initialBg = bgColors[colorIdx] %}
+
+{% set styleString = "" %}
+{% if size is defined %}
+    {% set styleString = styleString ~ "width:"~size~";height:"~size~";" %}
+{% endif %}
+{% if fontSize is defined %}
+    {% set styleString = styleString ~ "font-size:"~fontSize~";" %}
+{% endif %}
+{% if customStyle is defined %}
+    {% set styleString = styleString ~ customStyle %}
+{% endif %}
+
+{% if user.imageUrl %}
+    <img src="{{ asset(user.imageUrl) }}" class="{{ customClass|default('') }}" alt="{{ initials }}" style="{{ styleString }} object-fit: cover; border-radius: 50%; flex-shrink: 0;">
+{% else %}
+    <div class="{{ customClass|default('') }}" style="background-color: {{ initialBg }}; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; text-transform: uppercase; flex-shrink: 0; line-height: 1; mso-line-height-rule: exactly; {{ styleString }}">
+        {{ initials }}
+    </div>
+{% endif %}

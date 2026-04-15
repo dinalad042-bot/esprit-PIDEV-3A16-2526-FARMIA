@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue sur FARMIA - Agriculture Intelligente</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="landing-header">
+        <a href="{{ path('app_home') }}" class="logo">
+            <i class="fas fa-seedling"></i> FARMIA
+        </a>
+        <div class="header-actions">
+            <a href="{{ path('app_login') }}" class="btn btn-outline">Se connecter</a>
+            <a href="{{ path('app_signup') }}" class="btn btn-primary">S'inscrire</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Bienvenue sur <span class="highlight">FARMIA</span> ΓÇô L'agriculture intelligente commence ici
+            </h1>
+            <p class="hero-text">
+                Optimisez la gestion de vos cultures, suivez vos activit├⌐s et boostez votre productivit├⌐ avec FARMIA, la plateforme d'agriculture intelligente de nouvelle g├⌐n├⌐ration.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ path('app_signup') }}" class="btn btn-primary">S'inscrire gratuitement</a>
+                <a href="#features" class="btn btn-outline">D├⌐couvrir la plateforme</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="{{ asset('assets/images/hero-agriculture-tech.png') }}" alt="Agriculture intelligente avec FARMIA - Drones et Tracteurs connect├⌐s">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <!-- Carte 1 -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h3 class="feature-title">Gestion d'exploitation</h3>
+            <p class="feature-text">
+                Planifiez et g├⌐rez toutes vos parcelles et vos ressources depuis une vue centrale.
+            </p>
+        </div>
+
+        <!-- Carte 2 -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h3 class="feature-title">Suivi des cultures</h3>
+            <p class="feature-text">
+                Surveillez la croissance, l'irrigation et la sant├⌐ de vos plantes gr├óce ├á des capteurs connect├⌐s.
+            </p>
+        </div>
+
+        <!-- Carte 3 -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3 class="feature-title">Organisation des t├óches</h3>
+            <p class="feature-text">
+                Assignez des t├óches, suivez les progr├¿s de l'├⌐quipe et g├⌐rez les ├⌐quipements.
+            </p>
+        </div>
+
+        <!-- Carte 4 -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <h3 class="feature-title">Analyses intelligentes</h3>
+            <p class="feature-text">
+                Obtenez des rapports d├⌐taill├⌐s, des pr├⌐visions de rendement et des recommandations bas├⌐es sur l'IA.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="footer-logo">
+            <i class="fas fa-seedling" style="color: var(--accent-green); margin-right: 0.5rem;"></i> FARMIA
+        </div>
+        
+        <div class="footer-links">
+            <a href="#features">Fonctionnalit├⌐s</a>
+            <a href="#">Prix</a>
+            <a href="#">Support</a>
+            <a href="#">Contact</a>
+        </div>
+        
+        <div class="footer-social">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        
+        <div class="footer-copy">
+            &copy; 2024 FARMIA Technologies. Tous droits r├⌐serv├⌐s.
+        </div>
+    </footer>
+
+    <!-- Smooth Scrolling pour les ancres -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

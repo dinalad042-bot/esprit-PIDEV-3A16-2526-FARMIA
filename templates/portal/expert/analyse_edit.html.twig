@@ -1,0 +1,68 @@
+{% extends 'layouts/expert.html.twig' %}
+{% block title %}Modifier Analyse #{{ analyse.id }} — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:750px;">
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+        <a href="{{ path('expert_analyse_show', {id: analyse.id}) }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
+            <i class="fa-solid fa-flask" style="color:#2ecc71;"></i>
+            Modifier Analyse #{{ analyse.id }}
+        </h2>
+    </div>
+
+    <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:2rem;">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'modern-form'}}) }}
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+            <div class="form-group" style="grid-column:1/-1;">
+                {{ form_label(form.dateAnalyse) }}
+                {{ form_errors(form.dateAnalyse) }}
+                {{ form_widget(form.dateAnalyse) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.technicien) }}
+                {{ form_errors(form.technicien) }}
+                {{ form_widget(form.technicien) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.ferme) }}
+                {{ form_errors(form.ferme) }}
+                {{ form_widget(form.ferme) }}
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+                {{ form_label(form.resultatTechnique) }}
+                {{ form_errors(form.resultatTechnique) }}
+                {{ form_widget(form.resultatTechnique) }}
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+                {{ form_label(form.imageUrl) }}
+                {{ form_errors(form.imageUrl) }}
+                {{ form_widget(form.imageUrl) }}
+                <small style="color:#888;">URL vers une image (https://...)</small>
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+                {{ form_label(form.statut) }}
+                {{ form_errors(form.statut) }}
+                {{ form_widget(form.statut) }}
+            </div>
+        </div>
+
+        <div style="margin-top:2rem; display:flex; gap:1rem;">
+            <button type="submit" class="btn btn-dark">
+                <i class="fa-solid fa-floppy-disk"></i> Enregistrer
+            </button>
+            <a href="{{ path('expert_analyse_show', {id: analyse.id}) }}" class="btn btn-secondary">Annuler</a>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Gestion des Analyses - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Gestion des Analyses</h1>
+    <p class="welcome-subtitle">Supervisez et gérez toutes les demandes d'analyse agricoles</p>
+</div>
+
+<div class="action-card mb-4">
+    <div class="action-header">
+        <h3 class="action-title"><i class="fa-solid fa-flask"></i> Liste des Analyses</h3>
+        <div class="btn-group">
+            <a href="{{ path('admin_analyses_statistics') }}" class="btn btn-outline-green">
+                <i class="fa-solid fa-chart-pie"></i> Statistiques
+            </a>
+            <a href="{{ path('admin_analyses_new') }}" class="btn btn-dark">
+                <i class="fa-solid fa-plus"></i> Nouvelle Analyse
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Demandeur</th>
+                <th>Ferme</th>
+                <th>Expert</th>
+                <th>Statut</th>
+                <th>Conseils</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for analyse in analyses %}
+            <tr>
+                <td>#{{ analyse.id }}</td>
+                <td>{{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y H:i') : '-' }}</td>
+                <td>
+                    {% if analyse.demandeur %}
+                        {{ analyse.demandeur.prenom }} {{ analyse.demandeur.nom }}
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if analyse.ferme %}
+                        {{ analyse.ferme.nomFerme }}
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if analyse.technicien %}
+                        {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
+                    {% else %}
+                        <span class="badge badge-warning">Non assigné</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% set statusClass = {
+                        'en_attente': 'badge-warning',
+                        'en_cours': 'badge-info',
+                        'terminee': 'badge-success',
+                        'annulee': 'badge-danger'
+                    } %}
+                    {% set statusLabel = {
+                        'en_attente': 'En attente',
+                        'en_cours': 'En cours',
+                        'terminee': 'Terminée',
+                        'annulee': 'Annulée'
+                    } %}
+                    <span class="badge {{ statusClass[analyse.statut] ?? 'badge-secondary' }}">
+                        {{ statusLabel[analyse.statut] ?? analyse.statut }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge badge-info">{{ analyse.nbConseils }}</span>
+                </td>
+                <td>
+                    <a href="{{ path('admin_analyses_show', {'id': analyse.id}) }}" class="btn btn-sm btn-info" title="Voir">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a href="{{ path('admin_analyses_edit', {'id': analyse.id}) }}" class="btn btn-sm btn-primary" title="Modifier">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8" class="text-center text-muted">Aucune analyse trouvée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

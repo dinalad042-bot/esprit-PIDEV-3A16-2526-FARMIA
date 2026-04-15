@@ -1,0 +1,183 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Détails Analyse #{{ analyse.id }} - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Analyse #{{ analyse.id }}</h1>
+    <p class="welcome-subtitle">Détails complets de la demande d'analyse</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fa-solid fa-flask"></i> Informations Générales</h5>
+                <div>
+                    {% set statusClass = {
+                        'en_attente': 'badge-warning',
+                        'en_cours': 'badge-info',
+                        'terminee': 'badge-success',
+                        'annulee': 'badge-danger'
+                    } %}
+                    <span class="badge {{ statusClass[analyse.statut] ?? 'badge-secondary' }} fs-6">
+                        {{ analyse.statut|replace({'_': ' '})|title }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Date:</strong> {{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y H:i') : '-' }}</p>
+                        <p><strong>Demandeur:</strong> 
+                            {% if analyse.demandeur %}
+                                {{ analyse.demandeur.prenom }} {{ analyse.demandeur.nom }} ({{ analyse.demandeur.email }})
+                            {% else %}
+                                <span class="text-muted">Non défini</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Ferme:</strong> 
+                            {% if analyse.ferme %}
+                                {{ analyse.ferme.nomFerme }} - {{ analyse.ferme.lieu }}
+                            {% else %}
+                                <span class="text-muted">Non définie</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Expert:</strong> 
+                            {% if analyse.technicien %}
+                                {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
+                            {% else %}
+                                <span class="text-warning">Non assigné</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Animal:</strong> 
+                            {% if analyse.animalCible %}
+                                {{ analyse.animalCible.espece }}
+                            {% else %}
+                                <span class="text-muted">Aucun</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Plante:</strong> 
+                            {% if analyse.planteCible %}
+                                {{ analyse.planteCible.nomEspece }}
+                            {% else %}
+                                <span class="text-muted">Aucune</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6><strong>Description de la demande:</strong></h6>
+                <p class="bg-light p-3 rounded">
+                    {{ analyse.descriptionDemande ?: '<span class="text-muted">Aucune description</span>'|raw }}
+                </p>
+                
+                <h6><strong>Résultat technique:</strong></h6>
+                <p class="bg-light p-3 rounded">
+                    {{ analyse.resultatTechnique ?: '<span class="text-muted">En attente de résultat</span>'|raw }}
+                </p>
+                
+                {% if analyse.imageUrl %}
+                <h6><strong>Image:</strong></h6>
+                <img src="{{ analyse.imageUrl }}" alt="Analyse" class="img-fluid rounded" style="max-height: 300px;">
+                {% endif %}
+                
+                {% if analyse.hasAiDiagnosis %}
+                <hr>
+                <div class="alert alert-info">
+                    <h6><i class="fa-solid fa-robot"></i> <strong>Diagnostic IA</strong></h6>
+                    <p><strong>Date:</strong> {{ analyse.aiDiagnosisDate ? analyse.aiDiagnosisDate|date('d/m/Y H:i') : '-' }}</p>
+                    <p><strong>Confiance:</strong> {{ analyse.aiConfidenceScore ?: 'N/A' }}</p>
+                    <p class="mb-0"><strong>Résultat:</strong></p>
+                    <p class="mt-2">{{ analyse.aiDiagnosisResult }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Conseils -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fa-solid fa-lightbulb"></i> Conseils ({{ analyse.nbConseils }})</h5>
+                <a href="{{ path('admin_conseils_new', {'analyseId': analyse.id}) }}" class="btn btn-sm btn-success">
+                    <i class="fa-solid fa-plus"></i> Ajouter un conseil
+                </a>
+            </div>
+            <div class="card-body">
+                {% if analyse.conseils|length > 0 %}
+                    <div class="list-group">
+                    {% for conseil in analyse.conseils %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Conseil #{{ conseil.id }}</h6>
+                                <span class="badge 
+                                    {% if conseil.priorite.value == 'HAUTE' %}badge-danger
+                                    {% elseif conseil.priorite.value == 'MOYENNE' %}badge-warning
+                                    {% else %}badge-success{% endif %}">
+                                    {{ conseil.priorite.value }}
+                                </span>
+                            </div>
+                            <p class="mb-1">{{ conseil.descriptionConseil }}</p>
+                            <div class="mt-2">
+                                <a href="{{ path('admin_conseils_edit', {'id': conseil.id}) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                <form method="post" action="{{ path('admin_conseils_delete', {'id': conseil.id}) }}" style="display: inline-block;" onsubmit="return confirm('Confirmer la suppression ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ conseil.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">Aucun conseil associé</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fa-solid fa-cog"></i> Actions</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ path('admin_analyses_status', {'id': analyse.id}) }}" class="mb-3">
+                    <div class="form-group">
+                        <label>Changer le statut:</label>
+                        <select name="status" class="form-control" onchange="this.form.submit()">
+                            <option value="en_attente" {% if analyse.statut == 'en_attente' %}selected{% endif %}>En attente</option>
+                            <option value="en_cours" {% if analyse.statut == 'en_cours' %}selected{% endif %}>En cours</option>
+                            <option value="terminee" {% if analyse.statut == 'terminee' %}selected{% endif %}>Terminée</option>
+                            <option value="annulee" {% if analyse.statut == 'annulee' %}selected{% endif %}>Annulée</option>
+                        </select>
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <a href="{{ path('admin_analyses_edit', {'id': analyse.id}) }}" class="btn btn-primary w-100 mb-2">
+                    <i class="fa-solid fa-pen"></i> Modifier l'analyse
+                </a>
+                
+                <form method="post" action="{{ path('admin_analyses_delete', {'id': analyse.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette analyse ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ analyse.id) }}">
+                    <button class="btn btn-danger w-100">
+                        <i class="fa-solid fa-trash"></i> Supprimer l'analyse
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ path('admin_analyses_index') }}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Retour à la liste
+    </a>
+</div>
+{% endblock %}

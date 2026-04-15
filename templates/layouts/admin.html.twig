@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FarmAI Admin Platform{% endblock %}</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/profile_modal.css') }}">
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <!-- Profile Card -->
+        <div class="profile-card" onclick="openProfileModal()" style="cursor: pointer;">
+            <div class="profile-img-wrapper" style="overflow: hidden; border-radius: 50%;">
+                {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '1.2rem'} %}
+            </div>
+            <i class="fa-solid fa-ellipsis profile-ellipsis"></i>
+            <div class="profile-info">
+                <div class="profile-name">{{ app.user.prenom|default('aymen') }} {{ app.user.nom|default('aymen') }}</div>
+                <div class="profile-role">Administrateur</div>
+            </div>
+        </div>
+
+        {% set current_route = app.request.attributes.get('_route') %}
+
+        <!-- Navigation Menu -->
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="{{ path('admin_dashboard') }}" class="{% if current_route == 'admin_dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_users_index') }}" class="{% if current_route starts with 'admin_user' %}active{% endif %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_statistics') }}" class="{% if current_route == 'admin_statistics' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Statistiques</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_audit_logs') }}" class="{% if current_route == 'admin_audit_logs' %}active{% endif %}">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Audit / logs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_kanban_index') }}" class="{% if current_route == 'admin_kanban_index' %}active{% endif %}">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Kanban Board</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_analyses_index') }}" class="{% if current_route starts with 'admin_analyse' %}active{% endif %}">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Analyses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('admin_conseils_statistics') }}" class="{% if current_route starts with 'admin_conseil' %}active{% endif %}">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Conseils</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Logout -->
+        <div class="logout-container">
+            <a href="{{ path('app_logout') }}">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="brand-title">FarmAI Platform</div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+                <div class="topbar-avatar" style="display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border-radius: 50%;" onclick="openProfileModal()">
+                    {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '1rem'} %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content block -->
+        {% block body %}{% endblock %}
+    </main>
+
+    {% include 'components/_profile_modal.html.twig' %}
+    {% include 'components/_chatbot.html.twig' %}
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

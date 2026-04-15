@@ -1,0 +1,134 @@
+{% extends 'layouts/admin.html.twig' %}
+{% block title %}Conseils Agricoles — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem;">
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <div>
+            <h2 style="font-size:1.5rem; font-weight:700; color:#1a1a2e; margin:0;">
+                <i class="fa-solid fa-lightbulb" style="color:#2ecc71;"></i>
+                Conseils Agricoles
+            </h2>
+            <p style="color:#888; margin:0.25rem 0 0; font-size:0.9rem;">
+                Recommandations et conseils par priorité
+            </p>
+        </div>
+        <a href="{{ path('app_conseil_new') }}" class="btn btn-dark">
+            <i class="fa-solid fa-plus"></i> Nouveau Conseil
+        </a>
+    </div>
+
+    {# Filter bar #}
+    <form method="GET" style="margin-bottom:1.5rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <input type="text" name="search" value="{{ search }}"
+               placeholder="Rechercher un conseil..."
+               class="form-control" style="max-width:280px;">
+        <select name="priorite" class="form-control" style="max-width:160px;">
+            <option value="">Toutes priorités</option>
+            <option value="HAUTE"   {% if priorite == 'HAUTE' %}selected{% endif %}>🔴 Haute</option>
+            <option value="MOYENNE" {% if priorite == 'MOYENNE' %}selected{% endif %}>🟡 Moyenne</option>
+            <option value="BASSE"   {% if priorite == 'BASSE' %}selected{% endif %}>🟢 Basse</option>
+        </select>
+        <button type="submit" class="btn btn-dark">
+            <i class="fa-solid fa-filter"></i> Filtrer
+        </button>
+        {% if search or priorite %}
+            <a href="{{ path('app_conseil_index') }}" class="btn btn-secondary">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        {% endif %}
+    </form>
+
+    {# Priority Stats #}
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+        <div style="background:#fff; border-radius:12px; padding:1.25rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #e74c3c;">
+            <div style="font-size:1.8rem; font-weight:700; color:#e74c3c;">
+                {{ conseils|filter(c => c.prioriteRaw == 'HAUTE')|length }}
+            </div>
+            <div style="color:#666; font-size:0.85rem;">🔴 Haute priorité</div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.25rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #f39c12;">
+            <div style="font-size:1.8rem; font-weight:700; color:#f39c12;">
+                {{ conseils|filter(c => c.prioriteRaw == 'MOYENNE')|length }}
+            </div>
+            <div style="color:#666; font-size:0.85rem;">🟡 Moyenne priorité</div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.25rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #2ecc71;">
+            <div style="font-size:1.8rem; font-weight:700; color:#2ecc71;">
+                {{ conseils|filter(c => c.prioriteRaw == 'BASSE')|length }}
+            </div>
+            <div style="color:#666; font-size:0.85rem;">🟢 Basse priorité</div>
+        </div>
+    </div>
+
+    {# Cards #}
+    {% if conseils|length == 0 %}
+        <div style="text-align:center; padding:4rem; background:#fff; border-radius:12px; color:#aaa;">
+            <i class="fa-solid fa-lightbulb" style="font-size:3rem; margin-bottom:1rem; display:block;"></i>
+            <p>Aucun conseil trouvé.</p>
+            <a href="{{ path('app_conseil_new') }}" class="btn btn-dark" style="margin-top:1rem;">
+                Créer le premier conseil
+            </a>
+        </div>
+    {% else %}
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1.25rem;">
+            {% for conseil in conseils %}
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem; border-left:4px solid
+                {% if conseil.prioriteRaw == 'HAUTE' %}#e74c3c
+                {% elseif conseil.prioriteRaw == 'MOYENNE' %}#f39c12
+                {% else %}#2ecc71{% endif %};">
+
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+                    {% if conseil.priorite %}
+                        <span style="{{ conseil.priorite.badgeStyle() }}">
+                            {{ conseil.priorite.icon() }} {{ conseil.priorite.label() }}
+                        </span>
+                    {% endif %}
+                    <span style="color:#aaa; font-size:0.8rem;">#{{ conseil.id }}</span>
+                </div>
+
+                <p style="color:#444; font-size:0.9rem; line-height:1.6; margin:0 0 1rem;">
+                    {{ conseil.descriptionConseil|slice(0,120) }}
+                    {% if conseil.descriptionConseil|length > 120 %}...{% endif %}
+                </p>
+
+                {% if conseil.analyse %}
+                <div style="color:#888; font-size:0.8rem; margin-bottom:1rem;">
+                    <i class="fa-solid fa-flask" style="color:#2ecc71;"></i>
+                    Analyse #{{ conseil.analyse.id }}
+                    {% if conseil.analyse.ferme %} — {{ conseil.analyse.ferme.nomFerme }}{% endif %}
+                </div>
+                {% endif %}
+
+                <div style="display:flex; gap:0.5rem; padding-top:0.75rem; border-top:1px solid #f5f5f5;">
+                    <a href="{{ path('app_conseil_show', {id: conseil.id}) }}"
+                       style="flex:1; text-align:center; background:#f0fdf4; color:#27ae60; padding:7px; border-radius:8px; text-decoration:none; font-size:0.82rem;">
+                        <i class="fa-solid fa-eye"></i> Voir
+                    </a>
+                    <a href="{{ path('app_conseil_edit', {id: conseil.id}) }}"
+                       style="flex:1; text-align:center; background:#f0f0f0; color:#333; padding:7px; border-radius:8px; text-decoration:none; font-size:0.82rem;">
+                        <i class="fa-solid fa-pen"></i> Modifier
+                    </a>
+                    <form method="POST" action="{{ path('app_conseil_delete', {id: conseil.id}) }}"
+                          onsubmit="return confirm('Supprimer ?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete'~conseil.id) }}">
+                        <button type="submit"
+                                style="background:#fff0f0; color:#e74c3c; border:none; padding:7px 12px; border-radius:8px; cursor:pointer; font-size:0.82rem;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
