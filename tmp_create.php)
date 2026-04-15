@@ -1,0 +1,3 @@
+$fp = fopen('tests/Functional/Controller/ConseilControllerTest.php', 'w'
+fwrite($fp, 'Test'
+fclose($fp

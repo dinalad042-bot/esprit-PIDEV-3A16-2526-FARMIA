@@ -1,0 +1,100 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"farmai"},
+{"type":"table","name":"analyse","database":"farmai","data":
+[
+{"id_analyse":"1","date_analyse":"2026-04-12 18:24:38","resultat_technique":"{\"ph\": 6.5, \"nutriments\": {\"azote\": \"adequat\", \"phosphore\": \"faible\", \"potassium\": \"adequat\"}, \"humidite\": \"45%\", \"recommandation\": \"Ajouter engrais phosphat├®\"}","image_url":"uploads\/analyses\/analyse_1.jpg","id_technicien":"3","id_ferme":"1","statut":"en_attente","description_demande":null,"id_demandeur":null,"id_animal_cible":null,"id_plante_cible":null},
+{"id_analyse":"2","date_analyse":"2026-04-10 18:24:38","resultat_technique":"{\"ph\": 7.2, \"nutriments\": {\"azote\": \"faible\", \"phosphore\": \"adequat\", \"potassium\": \"eleve\"}, \"humidite\": \"38%\", \"recommandation\": \"Irrigation recommand├®e\"}","image_url":"uploads\/analyses\/analyse_2.jpg","id_technicien":"3","id_ferme":"2","statut":"en_attente","description_demande":null,"id_demandeur":null,"id_animal_cible":null,"id_plante_cible":null},
+{"id_analyse":"3","date_analyse":"2026-04-07 18:24:38","resultat_technique":"{\"ph\": 6.8, \"nutriments\": {\"azote\": \"eleve\", \"phosphore\": \"adequat\", \"potassium\": \"adequat\"}, \"humidite\": \"52%\", \"recommandation\": \"Conditions optimales\"}","image_url":"uploads\/analyses\/analyse_3.jpg","id_technicien":"3","id_ferme":"3","statut":"en_attente","description_demande":null,"id_demandeur":null,"id_animal_cible":null,"id_plante_cible":null},
+{"id_analyse":"4","date_analyse":"2026-04-13 21:17:17","resultat_technique":null,"image_url":"\/uploads\/analyses\/telechargement-3-69dd413d8ade6.jpg","id_technicien":null,"id_ferme":"6","statut":"en_attente","description_demande":"vdsdsdvsdvsd vsdv","id_demandeur":"6","id_animal_cible":"11","id_plante_cible":"14"}
+]
+}
+,{"type":"table","name":"animal","database":"farmai","data":
+[
+{"id_animal":"1","espece":"Vache Holstein","etat_sante":"BONNE","date_naissance":"2022-03-15","id_ferme":"1"},
+{"id_animal":"2","espece":"Mouton Barbarin","etat_sante":"EXCELLENTE","date_naissance":"2023-01-20","id_ferme":"1"},
+{"id_animal":"3","espece":"Ch├¿vre Alpine","etat_sante":"MOYENNE","date_naissance":"2022-07-10","id_ferme":"2"},
+{"id_animal":"4","espece":"Poulet de Chair","etat_sante":"BONNE","date_naissance":"2024-01-05","id_ferme":"2"},
+{"id_animal":"5","espece":"Dinde locale","etat_sante":"EXCELLENTE","date_naissance":"2023-06-18","id_ferme":"3"},
+{"id_animal":"6","espece":"Vache Jersey","etat_sante":"BONNE","date_naissance":"2021-11-30","id_ferme":"3"},
+{"id_animal":"7","espece":"Mouton Queue Fine","etat_sante":"MOYENNE","date_naissance":"2022-09-22","id_ferme":"4"},
+{"id_animal":"8","espece":"Cheval Arabe","etat_sante":"EXCELLENTE","date_naissance":"2019-04-12","id_ferme":"4"},
+{"id_animal":"9","espece":"├éne","etat_sante":"BONNE","date_naissance":"2020-08-05","id_ferme":"5"},
+{"id_animal":"10","espece":"Ch├¿vre Saanen","etat_sante":"EXCELLENTE","date_naissance":"2023-03-25","id_ferme":"5"},
+{"id_animal":"11","espece":"dvsdsvvs","etat_sante":"vsd","date_naissance":"2026-04-12","id_ferme":"6"}
+]
+}
+,{"type":"table","name":"conseil","database":"farmai","data":
+[
+{"id_conseil":"1","description_conseil":"Appliquer un engrais phosphat├® pour compenser le manque de phosphore. Dose recommand├®e: 150kg\/ha.","priorite":"HAUTE","id_analyse":"1"},
+{"id_conseil":"2","description_conseil":"Augmenter la fr├®quence d irrigation. Arroser t├┤t le matin pour minimiser l ├®vaporation.","priorite":"MOYENNE","id_analyse":"2"},
+{"id_conseil":"3","description_conseil":"Maintenir les pratiques actuelles. Surveillance r├®guli├¿re recommand├®e.","priorite":"BASSE","id_analyse":"3"},
+{"id_conseil":"4","description_conseil":"Pr├®voir une analyse compl├®mentaire dans 15 jours pour suivre l ├®volution.","priorite":"MOYENNE","id_analyse":"1"}
+]
+}
+,{"type":"table","name":"doctrine_migration_versions","database":"farmai","data":
+[
+{"version":"DoctrineMigrations\\Version20260412083657","executed_at":"2026-04-13 20:49:09","execution_time":"326"}
+]
+}
+,{"type":"table","name":"ferme","database":"farmai","data":
+[
+{"id_ferme":"1","nom_ferme":"Ferme Ben Ali","lieu":"Ariana, Tunisie","surface":"50.5","latitude":"36.8458","longitude":"10.1936","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38","id_user":"2"},
+{"id_ferme":"2","nom_ferme":"Domaine Trabelsi","lieu":"Sidi Bouzid Centre","surface":"120","latitude":"35.0382","longitude":"9.4854","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38","id_user":"2"},
+{"id_ferme":"3","nom_ferme":"Ferme Agricole Gharbi","lieu":"Sousse Nord","surface":"75.25","latitude":"35.8288","longitude":"10.6406","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38","id_user":"5"},
+{"id_ferme":"4","nom_ferme":"Vergers Khadhraoui","lieu":"Nabeul Sud","surface":"45","latitude":"36.456","longitude":"10.7376","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38","id_user":"4"},
+{"id_ferme":"5","nom_ferme":"Ferme Collective du Centre","lieu":"Kairouan Ouest","surface":"200","latitude":"35.6784","longitude":"10.0963","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38","id_user":"5"},
+{"id_ferme":"6","nom_ferme":"aaaa1","lieu":"a1","surface":"5500","latitude":"1","longitude":"1","created_at":"2026-04-13 21:15:33","updated_at":"2026-04-13 21:15:33","id_user":"6"}
+]
+}
+,{"type":"table","name":"messenger_messages","database":"farmai","data":
+[
+
+]
+}
+,{"type":"table","name":"plante","database":"farmai","data":
+[
+{"id_plante":"1","nom_espece":"Bl├® Dur","cycle_vie":"ANNUEL","quantite":"500","id_ferme":"1"},
+{"id_plante":"2","nom_espece":"Orge","cycle_vie":"ANNUEL","quantite":"300","id_ferme":"1"},
+{"id_plante":"3","nom_espece":"Olivier","cycle_vie":"PERENNE","quantite":"150","id_ferme":"2"},
+{"id_plante":"4","nom_espece":"Pomme de Terre","cycle_vie":"ANNUEL","quantite":"1000","id_ferme":"2"},
+{"id_plante":"5","nom_espece":"Tomate","cycle_vie":"ANNUEL","quantite":"250","id_ferme":"3"},
+{"id_plante":"6","nom_espece":"Poivron","cycle_vie":"ANNUEL","quantite":"180","id_ferme":"3"},
+{"id_plante":"8","nom_espece":"Fraise","cycle_vie":"ANNUEL","quantite":"120","id_ferme":"4"},
+{"id_plante":"9","nom_espece":"Figuier","cycle_vie":"PERENNE","quantite":"60","id_ferme":"5"},
+{"id_plante":"10","nom_espece":"Cactus (Figuier de Barbarie)","cycle_vie":"PERENNE","quantite":"200","id_ferme":"5"},
+{"id_plante":"11","nom_espece":"Bl├® Tendre","cycle_vie":"ANNUEL","quantite":"400","id_ferme":"1"},
+{"id_plante":"12","nom_espece":"Avoine","cycle_vie":"ANNUEL","quantite":"250","id_ferme":"2"},
+{"id_plante":"13","nom_espece":"Lentille","cycle_vie":"ANNUEL","quantite":"150","id_ferme":"5"},
+{"id_plante":"14","nom_espece":"svsdvsd","cycle_vie":"15","quantite":"1","id_ferme":"6"}
+]
+}
+,{"type":"table","name":"user","database":"farmai","data":
+[
+{"id_user":"1","nom":"Ben Ali","prenom":"Mohamed","email":"admin@farmia.tn","password":"$2y$13$9y8T9fL7bQ3vX5mN4pK2dO1hG6jF8eA0sD4gH7jK3lP6nB9mV2cX4zA1qW5eR8tY0uI3oP6lK9jH2gF5dS8aQ1wE4rT7yU0iO3pL6kJ9hG2fD5sA8qW1eR4tY7","cin":"12345678","adresse":"Ariana, Tunisie","telephone":"20123456","image_url":null,"role":"ADMIN","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38"},
+{"id_user":"2","nom":"Trabelsi","prenom":"Fatma","email":"fatma.fermier@farmia.tn","password":"$2y$13$9y8T9fL7bQ3vX5mN4pK2dO1hG6jF8eA0sD4gH7jK3lP6nB9mV2cX4zA1qW5eR8tY0uI3oP6lK9jH2gF5dS8aQ1wE4rT7yU0iO3pL6kJ9hG2fD5sA8qW1eR4tY7","cin":"87654321","adresse":"Sidi Bouzid, Tunisie","telephone":"20789012","image_url":null,"role":"AGRICULTEUR","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38"},
+{"id_user":"3","nom":"Gharbi","prenom":"Ali","email":"ali.tech@farmia.tn","password":"$2y$13$9y8T9fL7bQ3vX5mN4pK2dO1hG6jF8eA0sD4gH7jK3lP6nB9mV2cX4zA1qW5eR8tY0uI3oP6lK9jH2gF5dS8aQ1wE4rT7yU0iO3pL6kJ9hG2fD5sA8qW1eR4tY7","cin":"45678912","adresse":"Sousse, Tunisie","telephone":"55342189","image_url":null,"role":"TECHNICIEN","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38"},
+{"id_user":"4","nom":"Khadhraoui","prenom":"Sonia","email":"sonia.expert@farmia.tn","password":"$2y$13$9y8T9fL7bQ3vX5mN4pK2dO1hG6jF8eA0sD4gH7jK3lP6nB9mV2cX4zA1qW5eR8tY0uI3oP6lK9jH2gF5dS8aQ1wE4rT7yU0iO3pL6kJ9hG2fD5sA8qW1eR4tY7","cin":"78912345","adresse":"Nabeul, Tunisie","telephone":"98234167","image_url":null,"role":"EXPERT","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38"},
+{"id_user":"5","nom":"Jebali","prenom":"Karim","email":"karim@farmia.tn","password":"$2y$13$9y8T9fL7bQ3vX5mN4pK2dO1hG6jF8eA0sD4gH7jK3lP6nB9mV2cX4zA1qW5eR8tY0uI3oP6lK9jH2gF5dS8aQ1wE4rT7yU0iO3pL6kJ9hG2fD5sA8qW1eR4tY7","cin":"32165498","adresse":"Kairouan, Tunisie","telephone":"44127890","image_url":null,"role":"AGRICULTEUR","created_at":"2026-04-12 18:24:38","updated_at":"2026-04-12 18:24:38"},
+{"id_user":"6","nom":"ALADIN","prenom":"SLITI","email":"agrigole23@gmail.com","password":"aeab144aec799a37$e31b8401ced098c5991f6e6612c8455e4431413162a2f083758ff92dff24d79b","cin":"55522266","adresse":"agrigole23@gmail.com","telephone":"52394602","image_url":null,"role":"AGRICOLE","created_at":"2026-04-12 19:37:45","updated_at":"2026-04-12 19:37:45"},
+{"id_user":"7","nom":"ALADIN","prenom":"SLITI","email":"dinalad042@gmail.com","password":"eb9bfc613fb676db$f84e0896a9ae81d4cc26639fafd4afef427394ee372c8266f1d4d1025e28d7ca","cin":"55555522","adresse":"agrigole23@gmail.com","telephone":"52394644","image_url":null,"role":"EXPERT","created_at":"2026-04-13 21:19:24","updated_at":"2026-04-13 21:19:24"}
+]
+}
+,{"type":"table","name":"user_face","database":"farmai","data":
+[
+
+]
+}
+,{"type":"table","name":"user_log","database":"farmai","data":
+[
+{"id":"1","action_type":"LOGIN","timestamp":"2026-04-12 19:34:54","description":"FAILED","user_id":"2","performed_by":null},
+{"id":"2","action_type":"LOGIN","timestamp":"2026-04-12 19:37:08","description":"FAILED","user_id":"2","performed_by":null},
+{"id":"3","action_type":"LOGIN","timestamp":"2026-04-12 19:37:24","description":"FAILED","user_id":"2","performed_by":null},
+{"id":"4","action_type":"SIGNUP_WEB","timestamp":"2026-04-12 19:37:45","description":"SUCCESS","user_id":"6","performed_by":null},
+{"id":"5","action_type":"LOGIN","timestamp":"2026-04-12 19:38:03","description":"SUCCESS","user_id":"6","performed_by":"6"},
+{"id":"6","action_type":"LOGIN","timestamp":"2026-04-12 20:11:24","description":"SUCCESS","user_id":"6","performed_by":"6"},
+{"id":"7","action_type":"LOGIN","timestamp":"2026-04-13 19:52:42","description":"SUCCESS","user_id":"6","performed_by":"6"},
+{"id":"8","action_type":"SIGNUP_WEB","timestamp":"2026-04-13 21:19:24","description":"SUCCESS","user_id":"7","performed_by":null}
+]
+}
+]
