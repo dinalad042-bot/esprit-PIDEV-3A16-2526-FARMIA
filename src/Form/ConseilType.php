@@ -35,8 +35,11 @@ class ConseilType extends AbstractType
                     '🟢 Basse'   => 'BASSE',
                 ],
                 'attr' => ['class' => 'form-control profile-input'],
-            ])
-            ->add('analyse', EntityType::class, [
+            ]);
+
+        // Only show analyse field if not pre-filled (analyse_id is null)
+        if (!$analyseId) {
+            $builder->add('analyse', EntityType::class, [
                 'class'        => Analyse::class,
                 'choice_label' => fn(Analyse $a) =>
                     'Analyse #'.$a->getId()
@@ -45,8 +48,8 @@ class ConseilType extends AbstractType
                 'label'       => 'Analyse associée',
                 'placeholder' => '-- Sélectionner une analyse --',
                 'attr'        => ['class' => 'form-control profile-input'],
-                'data'        => $analyseId ? null : null,
             ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

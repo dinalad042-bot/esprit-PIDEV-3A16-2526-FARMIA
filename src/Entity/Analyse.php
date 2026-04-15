@@ -78,6 +78,9 @@ class Analyse
     #[ORM\Column(name: 'ai_confidence_score', type: 'string', length: 20, nullable: true)]
     private ?string $aiConfidenceScore = null;
 
+    #[ORM\Column(name: 'diagnosis_mode', type: 'string', length: 20, nullable: true)]
+    private ?string $diagnosisMode = null;
+
     public function __construct()
     {
         $this->conseils    = new ArrayCollection();
@@ -164,4 +167,8 @@ class Analyse
     public function setAiConfidenceScore(?string $score): static { $this->aiConfidenceScore = $score; return $this; }
 
     public function hasAiDiagnosis(): bool { return $this->aiDiagnosisResult !== null; }
+
+    // Diagnosis Mode Methods
+    public function getDiagnosisMode(): ?string { return $this->diagnosisMode; }
+    public function setDiagnosisMode(?string $mode): static { $this->diagnosisMode = $mode; return $this; }
 }

@@ -64,7 +64,7 @@
         </form>
         {% endif %}
         
-        {# AI Diagnosis Button #}
+        {# AI Vision Diagnosis Button #}
         {% if analyse.imageUrl %}
             {% if analyse.hasAiDiagnosis %}
             <a href="{{ path('expert_analyse_ai_result', {id: analyse.id}) }}" style="background:#9b59b6; color:#fff; text-decoration:none; border:none; padding:8px 16px; border-radius:8px; display:inline-flex; align-items:center; gap:4px;">
@@ -73,11 +73,16 @@
             {% else %}
             <form method="POST" action="{{ path('expert_analyse_diagnose', {id: analyse.id}) }}" style="display:inline;">
                 <button type="submit" style="background:#9b59b6; color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer;" onclick="return confirm('Lancer le diagnostic IA sur cette image ?');">
-                    <i class="fa-solid fa-robot"></i> Diagnostiquer IA
+                    <i class="fa-solid fa-robot"></i> Diagnostiquer IA (Image)
                 </button>
             </form>
             {% endif %}
         {% endif %}
+
+        {# AI Text Diagnosis Button #}
+        <a href="{{ path('expert_analyse_diagnose_text', {id: analyse.id}) }}" style="background:#3498db; color:#fff; text-decoration:none; border:none; padding:8px 16px; border-radius:8px; display:inline-flex; align-items:center; gap:4px;">
+            <i class="fa-solid fa-keyboard"></i> Diagnostiquer IA (Texte)
+        </a>
 
         {# PDF Export Button #}
         <a href="{{ path('expert_analyse_export_pdf', {id: analyse.id}) }}" style="background:#e74c3c; color:#fff; text-decoration:none; border:none; padding:8px 16px; border-radius:8px; display:inline-flex; align-items:center; gap:4px;">

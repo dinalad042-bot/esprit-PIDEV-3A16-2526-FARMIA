@@ -7,6 +7,7 @@ use App\Entity\Conseil;
 use App\Form\AnalyseType;
 use App\Form\ConseilType;
 use App\Repository\AnalyseRepository;
+use App\Repository\FermeRepository;
 use App\Service\ReportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,24 +24,64 @@ class ExpertAnalyseController extends AbstractController
         private AnalyseRepository $analyseRepo,
         private EntityManagerInterface $em,
         private ReportService $reportService,
+        private FermeRepository $fermeRepo,
     ) {}
 
     #[Route('/analyses', name: 'expert_analyses_list')]
     public function list(Request $request): Response
     {
         $user = $this->getUser();
+        
+        // Get filter parameters
         $search = $request->query->get('search', '');
-
-        // Fetch analyses where the expert is the technicien
+        $mode = $request->query->get('mode', '');
+        $fermeId = $request->query->get('ferme', '');
+        $dateFrom = $request->query->get('date_from', '');
+        $dateTo = $request->query->get('date_to', '');
+        
+        // Build query with filters
+        $qb = $this->analyseRepo->createQueryBuilder('a')
+            ->andWhere('a.technicien = :technicien')
+            ->setParameter('technicien', $user);
+        
+        // Apply search filter
         if ($search) {
-            $analyses = $this->analyseRepo->searchByTechnicien($user->getId(), $search);
-        } else {
-            $analyses = $this->analyseRepo->findByTechnicienId($user->getId());
+            $qb->andWhere('a.resultatTechnique LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
         }
+        
+        // Apply mode filter
+        if ($mode) {
+            $qb->andWhere('a.diagnosisMode = :mode')
+               ->setParameter('mode', $mode);
+        }
+        
+        // Apply ferme filter
+        if ($fermeId) {
+            $qb->andWhere('a.ferme = :ferme')
+               ->setParameter('ferme', $fermeId);
+        }
+        
+        // Apply date filters
+        if ($dateFrom) {
+            $qb->andWhere('a.dateAnalyse >= :dateFrom')
+               ->setParameter('dateFrom', new \DateTime($dateFrom));
+        }
+        if ($dateTo) {
+            $qb->andWhere('a.dateAnalyse <= :dateTo')
+               ->setParameter('dateTo', new \DateTime($dateTo . ' 23:59:59'));
+        }
+        
+        $qb->orderBy('a.dateAnalyse', 'DESC');
+        $analyses = $qb->getQuery()->getResult();
+        
+        // Get all fermes for filter dropdown
+        $fermes = $this->fermeRepo->findAll();
 
         return $this->render('portal/expert/analyses.html.twig', [
             'analyses' => $analyses,
             'search' => $search,
+            'fermes' => $fermes,
         ]);
     }
 
@@ -90,6 +131,9 @@ class ExpertAnalyseController extends AbstractController
     public function new(Request $request): Response
     {
         $analyse = new Analyse();
+        $analyse->setTechnicien($this->getUser());
+        $analyse->setDemandeur($this->getUser());
+        
         $form = $this->createForm(AnalyseType::class, $analyse);
         $form->handleRequest($request);
 

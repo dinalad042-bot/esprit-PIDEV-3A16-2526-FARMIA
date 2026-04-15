@@ -27,29 +27,71 @@
         </a>
     </div>
 
-    {# Search #}
-    <form method="GET" style="margin-bottom:1.5rem; display:flex; gap:0.5rem;">
-        <input type="text" name="search" value="{{ search }}"
-               placeholder="Rechercher dans les résultats techniques..."
-               class="form-control" style="max-width:400px;">
-        <button type="submit" class="btn btn-dark">
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-        {% if search %}
-            <a href="{{ path('expert_analyses_list') }}" class="btn btn-secondary">
-                <i class="fa-solid fa-xmark"></i>
-            </a>
-        {% endif %}
+    {# Search & Filters #}
+    <form method="GET" style="margin-bottom:1.5rem; background:#fff; padding:1rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:end;">
+            <div style="flex:1; min-width:200px;">
+                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:0.25rem;">Recherche</label>
+                <input type="text" name="search" value="{{ search|default('') }}"
+                       placeholder="Résultats techniques..."
+                       class="form-control">
+            </div>
+            <div style="min-width:150px;">
+                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:0.25rem;">Mode diagnostic</label>
+                <select name="mode" class="form-control">
+                    <option value="">Tous les modes</option>
+                    <option value="TEXT" {{ app.request.get('mode') == 'TEXT' ? 'selected' : '' }}>Texte</option>
+                    <option value="VISION" {{ app.request.get('mode') == 'VISION' ? 'selected' : '' }}>Vision</option>
+                </select>
+            </div>
+            <div style="min-width:150px;">
+                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:0.25rem;">Ferme</label>
+                <select name="ferme" class="form-control">
+                    <option value="">Toutes les fermes</option>
+                    {% for f in fermes|default([]) %}
+                        <option value="{{ f.id }}" {{ app.request.get('ferme') == f.id ? 'selected' : '' }}>{{ f.nomFerme }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="min-width:140px;">
+                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:0.25rem;">Date début</label>
+                <input type="date" name="date_from" value="{{ app.request.get('date_from') }}" class="form-control">
+            </div>
+            <div style="min-width:140px;">
+                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:0.25rem;">Date fin</label>
+                <input type="date" name="date_to" value="{{ app.request.get('date_to') }}" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-dark" style="height:38px;">
+                <i class="fa-solid fa-filter"></i> Filtrer
+            </button>
+            {% if search or app.request.get('mode') or app.request.get('ferme') or app.request.get('date_from') or app.request.get('date_to') %}
+                <a href="{{ path('expert_analyses_list') }}" class="btn btn-secondary" style="height:38px;">
+                    <i class="fa-solid fa-xmark"></i> Réinitialiser
+                </a>
+            {% endif %}
+        </div>
     </form>
 
     {# Stats #}
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:1.5rem;">
         <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #2ecc71;">
             <div style="font-size:2rem; font-weight:700; color:#2ecc71;">{{ analyses|length }}</div>
             <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">Total analyses</div>
         </div>
         <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #3498db;">
             <div style="font-size:2rem; font-weight:700; color:#3498db;">
+                {{ analyses|filter(a => a.diagnosisMode == 'TEXT')|length }}
+            </div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">Mode Texte</div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #9b59b6;">
+            <div style="font-size:2rem; font-weight:700; color:#9b59b6;">
+                {{ analyses|filter(a => a.diagnosisMode == 'VISION')|length }}
+            </div>
+            <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">Mode Vision</div>
+        </div>
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #f39c12;">
+            <div style="font-size:2rem; font-weight:700; color:#f39c12;">
                 {{ analyses|filter(a => a.nbConseils > 0)|length }}
             </div>
             <div style="color:#666; font-size:0.9rem; margin-top:0.25rem;">Avec conseils</div>
@@ -94,9 +136,26 @@
                         <span style="color:#2ecc71; font-weight:700; font-size:0.9rem;">
                             #{{ analyse.id }}
                         </span>
-                        <span style="background:#e8f8f0; color:#27ae60; padding:2px 10px; border-radius:12px; font-size:0.78rem;">
-                            {{ analyse.nbConseils }} conseil(s)
-                        </span>
+                        <div style="display:flex; gap:0.25rem;">
+                            {# Diagnosis Mode Badge #}
+                            {% if analyse.diagnosisMode %}
+                                {% if analyse.diagnosisMode == 'TEXT' %}
+                                    <span style="background:#3498db; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600;">
+                                        <i class="fa-solid fa-keyboard"></i> TEXTE
+                                    </span>
+                                {% elseif analyse.diagnosisMode == 'VISION' %}
+                                    <span style="background:#9b59b6; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600;">
+                                        <i class="fa-solid fa-eye"></i> VISION
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                            {# AI Diagnosis Badge #}
+                            {% if analyse.hasAiDiagnosis %}
+                                <span style="background:#e8f8f0; color:#27ae60; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600;">
+                                    <i class="fa-solid fa-robot"></i> IA
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
 
                     <div style="color:#888; font-size:0.82rem; margin-bottom:0.5rem;">
@@ -108,6 +167,20 @@
                     <div style="color:#555; font-size:0.85rem; margin-bottom:0.5rem;">
                         <i class="fa-solid fa-map-marker-alt" style="color:#2ecc71; margin-right:4px;"></i>
                         {{ analyse.ferme.nomFerme }}
+                    </div>
+                    {% endif %}
+
+                    {# Confidence Score #}
+                    {% if analyse.aiConfidenceScore %}
+                    <div style="margin-bottom:0.5rem;">
+                        <span style="font-size:0.75rem; color:#666;">Confiance IA:</span>
+                        {% if analyse.aiConfidenceScore == 'HIGH' %}
+                            <span style="background:#d4edda; color:#155724; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600;">HAUTE</span>
+                        {% elseif analyse.aiConfidenceScore == 'MEDIUM' %}
+                            <span style="background:#fff3cd; color:#856404; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600;">MOYENNE</span>
+                        {% else %}
+                            <span style="background:#f8d7da; color:#721c24; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600;">FAIBLE</span>
+                        {% endif %}
                     </div>
                     {% endif %}
 

@@ -257,13 +257,13 @@
                 {% if analyse.animalCible %}
                 <div class="info-row">
                     <div class="info-label">Animal concerné :</div>
-                    <div class="info-value">{{ analyse.animalCible.nom }}</div>
+                    <div class="info-value">{{ analyse.animalCible.espece }}</div>
                 </div>
                 {% endif %}
                 {% if analyse.planteCible %}
                 <div class="info-row">
                     <div class="info-label">Plante concernée :</div>
-                    <div class="info-value">{{ analyse.planteCible.nom }}</div>
+                    <div class="info-value">{{ analyse.planteCible.nomEspece }}</div>
                 </div>
                 {% endif %}
                 {% if analyse.descriptionDemande %}

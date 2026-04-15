@@ -1,0 +1,197 @@
+{% extends 'layouts/expert.html.twig' %}
+
+{% block title %}Diagnostic IA Unifié — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:900px; margin:0 auto;">
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <div style="margin-bottom:1.5rem;">
+        <a href="{{ path('expert_analyse_show', {id: analyse.id}) }}" style="color:#666; text-decoration:none;">
+            <i class="fa-solid fa-arrow-left"></i> Retour à l'analyse
+        </a>
+    </div>
+
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); overflow:hidden;">
+        {# Header #}
+        <div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:2rem; color:#fff;">
+            <h2 style="margin:0; font-size:1.5rem; font-weight:700;">
+                <i class="fa-solid fa-robot"></i> Diagnostic IA Unifié
+            </h2>
+            <p style="margin:0.5rem 0 0; opacity:0.9;">
+                Analyse #{{ analyse.id }} - {{ analyse.ferme ? analyse.ferme.nomFerme : 'Ferme inconnue' }}
+            </p>
+        </div>
+
+        <div style="padding:2rem;">
+            {# Mode Selection Tabs #}
+            <div style="display:flex; gap:1rem; margin-bottom:2rem; border-bottom:2px solid #f0f0f0;">
+                <button type="button" id="tab-text" onclick="switchMode('text')"
+                        style="flex:1; padding:1rem; background:#3498db; color:#fff; border:none; border-radius:8px 8px 0 0; cursor:pointer; font-weight:600;">
+                    <i class="fa-solid fa-keyboard"></i> Mode Texte
+                    <p style="margin:0.25rem 0 0; font-size:0.8rem; font-weight:400; opacity:0.9;">
+                        Décrivez les symptômes
+                    </p>
+                </button>
+                <button type="button" id="tab-vision" onclick="switchMode('vision')"
+                        style="flex:1; padding:1rem; background:#f8f9fa; color:#666; border:none; border-radius:8px 8px 0 0; cursor:pointer; font-weight:600;">
+                    <i class="fa-solid fa-eye"></i> Mode Vision
+                    <p style="margin:0.25rem 0 0; font-size:0.8rem; font-weight:400; opacity:0.7;">
+                        Analyse par image
+                    </p>
+                </button>
+            </div>
+
+            {# Text Diagnosis Form #}
+            <div id="form-text" style="display:block;">
+                <form method="POST" action="{{ path('expert_analyse_diagnose_text', {id: analyse.id}) }}">
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block; font-weight:600; color:#333; margin-bottom:0.5rem;">
+                            <i class="fa-solid fa-comment-medical"></i> Description des symptômes
+                        </label>
+                        <textarea name="observation" rows="8" required
+                                  placeholder="Décrivez en détail les symptômes observés : couleur des feuilles, comportement de l'animal, changements récents, etc."
+                                  style="width:100%; padding:1rem; border:2px solid #e0e0e0; border-radius:8px; font-size:0.95rem; resize:vertical;">{{ observation|default('') }}</textarea>
+                    </div>
+
+                    <div style="background:#f8f9fa; border-radius:8px; padding:1rem; margin-bottom:1.5rem;">
+                        <h4 style="margin:0 0 0.5rem; font-size:0.9rem; color:#666;">
+                            <i class="fa-solid fa-lightbulb"></i> Conseils pour un meilleur diagnostic
+                        </h4>
+                        <ul style="margin:0; padding-left:1.2rem; color:#666; font-size:0.85rem;">
+                            <li>Soyez précis sur les symptômes visibles</li>
+                            <li>Mentionnez la durée depuis l'apparition</li>
+                            <li>Indiquez si d'autres plantes/animaux sont affectés</li>
+                            <li>Décrivez les conditions environnementales récentes</li>
+                        </ul>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:1rem; font-size:1rem; background:linear-gradient(135deg, #3498db, #2980b9); border:none; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;">
+                        <i class="fa-solid fa-stethoscope"></i> Lancer le diagnostic IA (Texte)
+                    </button>
+                </form>
+            </div>
+
+            {# Vision Diagnosis Form #}
+            <div id="form-vision" style="display:none;">
+                {% if analyse.imageUrl %}
+                    <div style="margin-bottom:1.5rem;">
+                        <label style="display:block; font-weight:600; color:#333; margin-bottom:0.5rem;">
+                            <i class="fa-solid fa-image"></i> Image à analyser
+                        </label>
+                        <div style="border:2px solid #e0e0e0; border-radius:8px; overflow:hidden;">
+                            <img src="{{ analyse.imageUrl }}" alt="Image à analyser" style="width:100%; max-height:300px; object-fit:contain; background:#f8f9fa;">
+                        </div>
+                        <p style="margin:0.5rem 0 0; font-size:0.85rem; color:#666;">
+                            <i class="fa-solid fa-info-circle"></i> Cette image sera analysée par l'IA
+                        </p>
+                    </div>
+
+                    <form method="POST" action="{{ path('expert_analyse_diagnose', {id: analyse.id}) }}">
+                        <div style="background:#f8f9fa; border-radius:8px; padding:1rem; margin-bottom:1.5rem;">
+                            <h4 style="margin:0 0 0.5rem; font-size:0.9rem; color:#666;">
+                                <i class="fa-solid fa-eye"></i> Diagnostic par Vision IA
+                            </h4>
+                            <p style="margin:0; color:#666; font-size:0.85rem;">
+                                L'IA analysera directement l'image pour détecter les maladies, parasites ou anomalies visibles.
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width:100%; padding:1rem; font-size:1rem; background:linear-gradient(135deg, #9b59b6, #8e44ad); border:none; border-radius:8px; color:#fff; font-weight:600; cursor:pointer;">
+                            <i class="fa-solid fa-camera"></i> Lancer le diagnostic IA (Vision)
+                        </button>
+                    </form>
+                {% else %}
+                    <div style="text-align:center; padding:3rem; background:#f8f9fa; border-radius:8px;">
+                        <i class="fa-solid fa-image" style="font-size:3rem; color:#ddd; margin-bottom:1rem;"></i>
+                        <p style="color:#666; margin:0;">Aucune image n'est associée à cette analyse.</p>
+                        <p style="color:#999; font-size:0.85rem; margin-top:0.5rem;">
+                            Utilisez le mode Texte ou ajoutez une image à l'analyse.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# AI Result Preview (if available) #}
+            {% if aiResult is defined and aiResult %}
+                <div style="margin-top:2rem; padding:1.5rem; background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius:12px;">
+                    <h3 style="margin:0 0 1rem; color:#333;">
+                        <i class="fa-solid fa-check-circle" style="color:#27ae60;"></i> Résultat du diagnostic
+                    </h3>
+                    
+                    <div style="display:grid; gap:1rem;">
+                        <div style="background:#fff; padding:1rem; border-radius:8px;">
+                            <strong style="color:#666;">Condition détectée:</strong>
+                            <p style="margin:0.25rem 0 0; color:#333; font-size:1.1rem;">{{ aiResult.condition }}</p>
+                        </div>
+                        
+                        {% if aiResult.confidence %}
+                        <div style="background:#fff; padding:1rem; border-radius:8px;">
+                            <strong style="color:#666;">Niveau de confiance:</strong>
+                            {% if aiResult.confidence == 'HIGH' %}
+                                <span style="background:#d4edda; color:#155724; padding:4px 12px; border-radius:12px; font-size:0.85rem; font-weight:600; margin-left:0.5rem;">HAUTE</span>
+                            {% elseif aiResult.confidence == 'MEDIUM' %}
+                                <span style="background:#fff3cd; color:#856404; padding:4px 12px; border-radius:12px; font-size:0.85rem; font-weight:600; margin-left:0.5rem;">MOYENNE</span>
+                            {% else %}
+                                <span style="background:#f8d7da; color:#721c24; padding:4px 12px; border-radius:12px; font-size:0.85rem; font-weight:600; margin-left:0.5rem;">FAIBLE</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if aiResult.symptoms %}
+                        <div style="background:#fff; padding:1rem; border-radius:8px;">
+                            <strong style="color:#666;">Symptômes:</strong>
+                            <p style="margin:0.25rem 0 0; color:#333;">{{ aiResult.symptoms }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if aiResult.treatment %}
+                        <div style="background:#fff; padding:1rem; border-radius:8px;">
+                            <strong style="color:#666;">Traitement recommandé:</strong>
+                            <p style="margin:0.25rem 0 0; color:#333;">{{ aiResult.treatment }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div style="margin-top:1rem; text-align:center;">
+                        <a href="{{ path('expert_analyse_ai_result', {id: analyse.id}) }}" class="btn btn-dark">
+                            <i class="fa-solid fa-eye"></i> Voir le détail complet
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function switchMode(mode) {
+    const tabText = document.getElementById('tab-text');
+    const tabVision = document.getElementById('tab-vision');
+    const formText = document.getElementById('form-text');
+    const formVision = document.getElementById('form-vision');
+    
+    if (mode === 'text') {
+        tabText.style.background = '#3498db';
+        tabText.style.color = '#fff';
+        tabVision.style.background = '#f8f9fa';
+        tabVision.style.color = '#666';
+        formText.style.display = 'block';
+        formVision.style.display = 'none';
+    } else {
+        tabText.style.background = '#f8f9fa';
+        tabText.style.color = '#666';
+        tabVision.style.background = '#9b59b6';
+        tabVision.style.color = '#fff';
+        formText.style.display = 'none';
+        formVision.style.display = 'block';
+    }
+}
+</script>
+{% endblock %}

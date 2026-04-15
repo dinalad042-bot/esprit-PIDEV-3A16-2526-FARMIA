@@ -1,0 +1,198 @@
+{% extends 'layouts/expert.html.twig' %}
+
+{% block title %}Diagnostic Texte IA - Analyse #{{ analyse.id }} — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:900px;">
+
+    {# Header #}
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+        <a href="{{ path('expert_analyse_show', {id: analyse.id}) }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div>
+            <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
+                <i class="fa-solid fa-keyboard" style="color:#3498db;"></i>
+                Diagnostic par Description Texte
+            </h2>
+            <p style="color:#666; margin:0.25rem 0 0; font-size:0.9rem;">Analyse #{{ analyse.id }} - {{ analyse.ferme.nomFerme }}</p>
+        </div>
+    </div>
+
+    {# Context Info Card #}
+    <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border-radius:16px; padding:1.5rem; color:#fff; margin-bottom:2rem;">
+        <h4 style="margin:0 0 1rem; font-size:1rem;">
+            <i class="fa-solid fa-info-circle" style="margin-right:8px;"></i> Contexte de la Ferme
+        </h4>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+            <div>
+                <div style="font-size:0.8rem; opacity:0.8;">Ferme</div>
+                <div style="font-weight:600;">{{ analyse.ferme.nomFerme }}</div>
+            </div>
+            {% if analyse.ferme.lieu %}
+            <div>
+                <div style="font-size:0.8rem; opacity:0.8;">Lieu</div>
+                <div style="font-weight:600;">{{ analyse.ferme.lieu }}</div>
+            </div>
+            {% endif %}
+            {% if analyse.planteCible %}
+            <div>
+                <div style="font-size:0.8rem; opacity:0.8;">Plante cible</div>
+                <div style="font-weight:600;"><i class="fa-solid fa-seedling"></i> {{ analyse.planteCible.nomEspece }}</div>
+            </div>
+            {% endif %}
+            {% if analyse.animalCible %}
+            <div>
+                <div style="font-size:0.8rem; opacity:0.8;">Animal cible</div>
+                <div style="font-weight:600;"><i class="fa-solid fa-paw"></i> {{ analyse.animalCible.espece }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Input Form #}
+    {% if not aiResult %}
+    <div style="background:#fff; border-radius:16px; padding:2rem; box-shadow:0 2px 12px rgba(0,0,0,0.08); margin-bottom:2rem;">
+        <h3 style="margin:0 0 1.5rem; color:#1a1a2e; font-size:1.1rem;">
+            <i class="fa-solid fa-pen-to-square" style="color:#3498db; margin-right:8px;"></i>
+            Décrivez les symptômes observés
+        </h3>
+        
+        <form method="POST" action="{{ path('expert_analyse_diagnose_text', {id: analyse.id}) }}">
+            <div style="margin-bottom:1.5rem;">
+                <label for="observation" style="display:block; margin-bottom:0.5rem; color:#444; font-weight:500;">
+                    Observation détaillée
+                </label>
+                <textarea 
+                    id="observation"
+                    name="observation" 
+                    rows="8" 
+                    required
+                    style="width:100%; padding:1rem; border:2px solid #e0e0e0; border-radius:12px; font-size:0.95rem; resize:vertical; font-family:inherit;"
+                    placeholder="Exemple: Les feuilles de la plante présentent des taches jaunes au bord, qui s'étendent progressivement vers le centre. Les taches sont entourées d'un halo brun. Certaines feuilles inférieures sont complètement jaunies et tombent. La croissance semble ralentie..."
+                >{{ observation }}</textarea>
+                <div style="margin-top:0.5rem; color:#666; font-size:0.85rem;">
+                    <i class="fa-solid fa-lightbulb" style="color:#f39c12;"></i>
+                    Plus votre description est détaillée, plus le diagnostic sera précis.
+                </div>
+            </div>
+            
+            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                <button type="submit" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#fff; border:none; padding:12px 24px; border-radius:10px; cursor:pointer; font-weight:600; font-size:1rem;">
+                    <i class="fa-solid fa-robot" style="margin-right:8px;"></i>
+                    Lancer le diagnostic IA
+                </button>
+                <a href="{{ path('expert_analyse_show', {id: analyse.id}) }}" style="background:#f0f0f0; color:#444; text-decoration:none; padding:12px 24px; border-radius:10px; font-weight:500;">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    {# Results Display #}
+    {% if aiResult %}
+    <div style="background:linear-gradient(135deg,#27ae60 0%,#2ecc71 100%); border-radius:16px; padding:1.5rem; color:#fff; margin-bottom:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+            <div>
+                <div style="font-size:0.85rem; opacity:0.8; margin-bottom:0.5rem;">Condition détectée</div>
+                <h3 style="font-size:1.4rem; font-weight:700; margin:0;">{{ aiResult.condition|default('Non déterminé') }}</h3>
+            </div>
+            <div style="text-align:right;">
+                <div style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:12px; margin-bottom:0.5rem;">
+                    <span style="font-size:0.75rem; opacity:0.8;">Confiance</span>
+                    <div style="font-size:1.2rem; font-weight:600;">{{ aiResult.confidence|default(analyse.aiConfidenceScore) }}</div>
+                </div>
+                <div style="font-size:0.8rem; opacity:0.7;">
+                    {{ analyse.aiDiagnosisDate|date('d/m/Y à H:i') }}
+                </div>
+            </div>
+        </div>
+
+        {# Urgency Badge #}
+        <div style="margin-bottom:1rem;">
+            <span style="background:{% if aiResult.urgency == 'Immédiat' %}#e74c3c{% elseif aiResult.urgency == 'Dans la semaine' %}#f39c12{% else %}rgba(255,255,255,0.3){% endif %}; 
+                         color:#fff; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:500;">
+                <i class="fa-solid fa-clock"></i> Urgence: {{ aiResult.urgency|default('Surveiller') }}
+            </span>
+            {% if aiResult.needsExpert %}
+            <span style="background:#e74c3c; color:#fff; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:500; margin-left:0.5rem;">
+                <i class="fa-solid fa-user-doctor"></i> Consultation expert recommandée
+            </span>
+            {% endif %}
+        </div>
+
+        {# Action Buttons #}
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="{{ path('expert_analyse_diagnose_text', {id: analyse.id}) }}" style="background:rgba(255,255,255,0.2); color:#fff; text-decoration:none; padding:10px 20px; border-radius:8px; font-weight:500;">
+                <i class="fa-solid fa-rotate"></i> Nouveau diagnostic
+            </a>
+            <a href="{{ path('expert_analyse_ai_result', {id: analyse.id}) }}" style="background:#fff; color:#27ae60; text-decoration:none; padding:10px 20px; border-radius:8px; font-weight:500;">
+                <i class="fa-solid fa-eye"></i> Voir détail complet
+            </a>
+            <a href="{{ path('expert_analyse_conseil_new', {id: analyse.id}) }}" style="background:#fff; color:#27ae60; text-decoration:none; padding:10px 20px; border-radius:8px; font-weight:500;">
+                <i class="fa-solid fa-plus"></i> Créer un conseil
+            </a>
+        </div>
+    </div>
+
+    {# Detailed Results #}
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+        
+        {# Symptoms #}
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <h4 style="margin:0 0 1rem; color:#1a1a2e; font-size:1rem;">
+                <i class="fa-solid fa-heart-pulse" style="color:#e74c3c; margin-right:8px;"></i> Symptômes identifiés
+            </h4>
+            <div style="color:#444; line-height:1.7;">
+                {{ aiResult.symptoms|default('Aucun symptôme spécifique mentionné.')|nl2br }}
+            </div>
+        </div>
+
+        {# Treatment #}
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <h4 style="margin:0 0 1rem; color:#1a1a2e; font-size:1rem;">
+                <i class="fa-solid fa-pills" style="color:#3498db; margin-right:8px;"></i> Traitement recommandé
+            </h4>
+            <div style="color:#444; line-height:1.7;">
+                {{ aiResult.treatment|default('Aucun traitement spécifique mentionné.')|nl2br }}
+            </div>
+        </div>
+
+        {# Prevention #}
+        <div style="background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); grid-column:1/-1;">
+            <h4 style="margin:0 0 1rem; color:#1a1a2e; font-size:1rem;">
+                <i class="fa-solid fa-shield-halved" style="color:#27ae60; margin-right:8px;"></i> Prévention
+            </h4>
+            <div style="color:#444; line-height:1.7;">
+                {{ aiResult.prevention|default('Aucune mesure préventive mentionnée.')|nl2br }}
+            </div>
+        </div>
+    </div>
+
+    {# Original Observation #}
+    <div style="margin-top:1.5rem; background:#f8f9fa; border-radius:12px; padding:1.5rem; border-left:4px solid #3498db;">
+        <h4 style="margin:0 0 1rem; color:#1a1a2e; font-size:1rem;">
+            <i class="fa-solid fa-quote-left" style="color:#3498db; margin-right:8px;"></i> Votre observation
+        </h4>
+        <div style="color:#555; line-height:1.7; font-style:italic;">
+            {{ observation|nl2br }}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Disclaimer #}
+    <div style="margin-top:1.5rem; padding:1rem; background:#fff3e0; border-radius:8px; border-left:4px solid #f39c12;">
+        <div style="display:flex; align-items:flex-start; gap:0.75rem;">
+            <i class="fa-solid fa-triangle-exclamation" style="color:#f39c12; margin-top:2px;"></i>
+            <div>
+                <div style="font-weight:600; color:#1a1a2e; margin-bottom:0.25rem;">Avertissement</div>
+                <div style="color:#666; font-size:0.9rem; line-height:1.5;">
+                    Ce diagnostic est généré par une intelligence artificielle basée sur votre description textuelle. 
+                    Il ne remplace pas l'expertise d'un professionnel agricole. Veuillez toujours valider les recommandations avec un expert qualifié.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

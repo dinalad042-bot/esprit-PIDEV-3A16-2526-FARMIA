@@ -17,13 +17,56 @@ class GroqService
 
     // ─── Text Diagnostic ──────────────────────────────────────────────
 
-    public function generateTextDiagnostic(string $observation): DiagnosisResult
+    public function generateTextDiagnostic(string $observation, array $contextData = []): DiagnosisResult
     {
+        // Build context section if data available
+        $contextSection = '';
+        if (!empty($contextData['ferme'])) {
+            $contextSection .= "\nCONTEXTE DE LA FERME:\n";
+            $contextSection .= "- Ferme: {$contextData['ferme']['nom']}\n";
+            if ($contextData['ferme']['lieu']) {
+                $contextSection .= "- Lieu: {$contextData['ferme']['lieu']}\n";
+            }
+            
+            // Add related plantes
+            if (!empty($contextData['plantes'])) {
+                $contextSection .= "\nAutres plantes dans cette ferme:\n";
+                foreach (array_slice($contextData['plantes'], 0, 5) as $plante) {
+                    $contextSection .= "- {$plante['nom']}";
+                    if ($plante['type']) {
+                        $contextSection .= " (sol: {$plante['type']})";
+                    }
+                    $contextSection .= "\n";
+                }
+            }
+            
+            // Add related animaux
+            if (!empty($contextData['animaux'])) {
+                $contextSection .= "\nAutres animaux dans cette ferme:\n";
+                foreach (array_slice($contextData['animaux'], 0, 5) as $animal) {
+                    $contextSection .= "- {$animal['espece']}";
+                    if ($animal['race']) {
+                        $contextSection .= " (race: {$animal['race']})";
+                    }
+                    if ($animal['etat']) {
+                        $contextSection .= " [état: {$animal['etat']}]";
+                    }
+                    $contextSection .= "\n";
+                }
+            }
+            
+            // Add what's being analyzed
+            if (!empty($contextData['analyseCible']['type'])) {
+                $contextSection .= "\nSUJET DE L'ANALYSE: {$contextData['analyseCible']['nom']} ({$contextData['analyseCible']['type']})\n";
+            }
+        }
+
         $prompt = <<<PROMPT
 Tu es un expert agronome spécialisé en diagnostic agricole.
 Analyse cette observation de terrain et fournis un diagnostic structuré.
 
 OBSERVATION: {$observation}
+{$contextSection}
 
 Réponds UNIQUEMENT en JSON valide avec cette structure exacte:
 {
@@ -36,6 +79,8 @@ Réponds UNIQUEMENT en JSON valide avec cette structure exacte:
   "needsExpertConsult": true|false,
   "rawResponse": ""
 }
+
+Utilise le contexte de la ferme pour affiner ton diagnostic (maladies courantes dans la région, interactions avec d'autres cultures/animaux, etc.).
 PROMPT;
 
         try {
@@ -82,12 +127,54 @@ PROMPT;
 
     // ─── Vision Diagnostic (Image URL) ───────────────────────────────
 
-    public function generateVisionDiagnostic(string $imageUrl): DiagnosisResult
+    public function generateVisionDiagnostic(string $imageUrl, array $contextData = []): DiagnosisResult
     {
+        // Build context section if data available
+        $contextSection = '';
+        if (!empty($contextData['ferme'])) {
+            $contextSection .= "\nCONTEXTE DE LA FERME:\n";
+            $contextSection .= "- Ferme: {$contextData['ferme']['nom']}\n";
+            if ($contextData['ferme']['lieu']) {
+                $contextSection .= "- Lieu: {$contextData['ferme']['lieu']}\n";
+            }
+            
+            // Add related plantes
+            if (!empty($contextData['plantes'])) {
+                $contextSection .= "\nAutres plantes dans cette ferme:\n";
+                foreach (array_slice($contextData['plantes'], 0, 5) as $plante) {
+                    $contextSection .= "- {$plante['nom']}";
+                    if ($plante['type']) {
+                        $contextSection .= " (sol: {$plante['type']})";
+                    }
+                    $contextSection .= "\n";
+                }
+            }
+            
+            // Add related animaux
+            if (!empty($contextData['animaux'])) {
+                $contextSection .= "\nAutres animaux dans cette ferme:\n";
+                foreach (array_slice($contextData['animaux'], 0, 5) as $animal) {
+                    $contextSection .= "- {$animal['espece']}";
+                    if ($animal['race']) {
+                        $contextSection .= " (race: {$animal['race']})";
+                    }
+                    if ($animal['etat']) {
+                        $contextSection .= " [état: {$animal['etat']}]";
+                    }
+                    $contextSection .= "\n";
+                }
+            }
+            
+            // Add what's being analyzed
+            if (!empty($contextData['analyseCible']['type'])) {
+                $contextSection .= "\nSUJET DE L'ANALYSE: {$contextData['analyseCible']['nom']} ({$contextData['analyseCible']['type']})\n";
+            }
+        }
+
         $prompt = <<<PROMPT
 Tu es un expert agronome. Analyse cette image de plante ou de culture agricole.
 Identifie toute maladie, carence, ou problème visible.
-
+{$contextSection}
 Réponds UNIQUEMENT en JSON valide avec cette structure:
 {
   "condition": "condition détectée",
@@ -99,6 +186,8 @@ Réponds UNIQUEMENT en JSON valide avec cette structure:
   "needsExpertConsult": true|false,
   "rawResponse": ""
 }
+
+Utilise le contexte de la ferme pour affiner ton diagnostic (maladies courantes dans la région, interactions avec d'autres cultures/animaux, etc.).
 PROMPT;
 
         try {

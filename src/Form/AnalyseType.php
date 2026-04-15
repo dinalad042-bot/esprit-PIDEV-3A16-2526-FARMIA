@@ -64,16 +64,8 @@ class AnalyseType extends AbstractType
                     'placeholder' => 'Décrivez votre demande d\'analyse...',
                 ],
             ])
-            ->add('technicien', EntityType::class, [
-                'class'         => User::class,
-                'choice_label'  => fn(User $u) => $u->getPrenom().' '.$u->getNom().' ('.$u->getEmail().')',
-                'query_builder' => fn($repo) => $repo->createQueryBuilder('u')
-                    ->where("u.role IN ('EXPERT', 'ADMIN')")
-                    ->orderBy('u.nom', 'ASC'),
-                'label'       => 'Expert / Technicien',
-                'placeholder' => '-- Sélectionner un expert --',
-                'attr'        => ['class' => 'form-control profile-input'],
-            ])
+            // Note: technicien is auto-set in controller for expert context
+            // This field is only shown in admin context
             ->add('ferme', EntityType::class, [
                 'class'        => Ferme::class,
                 'choice_label' => fn(Ferme $f) => $f->getNomFerme().' — '.$f->getLieu(),
