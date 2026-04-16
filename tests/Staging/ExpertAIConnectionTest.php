@@ -19,12 +19,13 @@ use App\DTO\DiagnosisResult;
 class ExpertAIConnectionTest extends BaseWebTestCase
 {
     private $groqService;
-    
+    private $expertUser;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loginAsExpert();
-        
+        $this->expertUser = $this->loginAsExpert();
+
         // Create a more detailed mock AI service
         $this->groqService = $this->createMock(GroqService::class);
     }
@@ -60,7 +61,7 @@ class ExpertAIConnectionTest extends BaseWebTestCase
         $this->assertResponseRedirects('/expert/analyse/' . $analyse->getId());
         self::$client->followRedirect();
         
-        $this->assertSelectorExists('.alert-success:contains("Diagnostic IA effectué")');
+        $this->assertSelectorExists('.alert-success:contains("Diagnostic IA effectué avec succès")');
         
         // Verify AI results stored
         self::$em->refresh($analyse);
@@ -79,20 +80,21 @@ class ExpertAIConnectionTest extends BaseWebTestCase
      */
     private function createAnalysisWithImage(): Analyse
     {
-        $expert = $this->getUser();
+        $expert = $this->expertUser;
         
         $ferme = new Ferme();
         $ferme->setNomFerme('AI Test Farm');
         $ferme->setLieu('Test Location');
         $ferme->setSurface(100);
-        $ferme->setProprietaire($expert);
+        $ferme->setUser($expert);
         
         $analyse = new Analyse();
         $analyse->setDateAnalyse(new \DateTime());
         $analyse->setResultatTechnique('AI handshake test analysis');
-        $analyse->setStatut(StatutAnalyse::EN_COURS);
+        $analyse->setStatut(StatutAnalyse::EN_COURS->value);
         $analyse->setFerme($ferme);
         $analyse->setTechnicien($expert);
+        $analyse->setDemandeur($expert); // Add demandeur (required field)
         $analyse->setImageUrl('https://example.com/test-plant-image.jpg');
         
         self::$em->persist($ferme);
@@ -107,20 +109,21 @@ class ExpertAIConnectionTest extends BaseWebTestCase
      */
     private function createAnalysisWithoutImage(): Analyse
     {
-        $expert = $this->getUser();
-        
+        $expert = $this->expertUser;
+
         $ferme = new Ferme();
         $ferme->setNomFerme('AI Test Farm');
         $ferme->setLieu('Test Location');
         $ferme->setSurface(100);
-        $ferme->setProprietaire($expert);
-        
+        $ferme->setUser($expert);
+
         $analyse = new Analyse();
         $analyse->setDateAnalyse(new \DateTime());
         $analyse->setResultatTechnique('AI handshake test analysis');
-        $analyse->setStatut(StatutAnalyse::EN_COURS);
+        $analyse->setStatut(StatutAnalyse::EN_COURS->value);
         $analyse->setFerme($ferme);
         $analyse->setTechnicien($expert);
+        $analyse->setDemandeur($expert); // Add demandeur (required field)
         
         self::$em->persist($ferme);
         self::$em->persist($analyse);
