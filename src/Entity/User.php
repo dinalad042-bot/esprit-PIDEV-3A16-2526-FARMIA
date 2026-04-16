@@ -39,18 +39,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'password', type: 'string', length: 255, nullable: false)]
     private ?string $password = null;
 
-    #[ORM\Column(name: 'cin', type: 'string', length: 20, unique: true, nullable: true)]
+    #[ORM\Column(name: 'cin', type: 'string', length: 8, unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'Le CIN est obligatoire.')]
-    #[Assert\Length(exactly: 8, exactMessage: 'Le CIN doit contenir exactement 8 caractères.')]
+    #[Assert\Regex(pattern: '/^\d{8}$/', message: 'Le CIN doit contenir exactement 8 chiffres.')]
     private ?string $cin = null;
 
     #[ORM\Column(name: 'adresse', type: 'text', nullable: true)]
     #[Assert\NotBlank(message: 'L\'adresse est obligatoire.')]
     private ?string $adresse = null;
 
-    #[ORM\Column(name: 'telephone', type: 'string', length: 20, nullable: true)]
+    #[ORM\Column(name: 'latitude', type: 'float', nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(name: 'longitude', type: 'float', nullable: true)]
+    private ?float $longitude = null;
+
+    #[ORM\Column(name: 'telephone', type: 'string', length: 8, unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'Le téléphone est obligatoire.')]
-    #[Assert\Length(exactly: 8, exactMessage: 'Le téléphone doit contenir exactement 8 caractères.')]
+    #[Assert\Regex(pattern: '/^\d{8}$/', message: 'Le téléphone doit contenir exactement 8 chiffres.')]
     private ?string $telephone = null;
 
     #[ORM\Column(name: 'image_url', type: 'string', length: 255, nullable: true)]
@@ -64,6 +70,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    #[ORM\Column(name: 'reset_code', type: 'string', length: 6, nullable: true)]
+    private ?string $resetCode = null;
+
+    #[ORM\Column(name: 'reset_code_expires_at', type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $resetCodeExpiresAt = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
@@ -153,7 +165,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function setEmail(string $email): static
     {
-        $this->email = $email;
+        $this->email = strtolower(trim($email));
         return $this;
     }
 
@@ -173,7 +185,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function setCin(?string $cin): static
     {
-        $this->cin = $cin;
+        $this->cin = $cin !== null ? str_replace(' ', '', trim($cin)) : null;
         return $this;
     }
 
@@ -193,7 +205,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function setTelephone(?string $telephone): static
     {
-        $this->telephone = $telephone;
+        $this->telephone = $telephone !== null ? str_replace(' ', '', trim($telephone)) : null;
         return $this;
     }
 
@@ -204,6 +216,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAdresse(?string $adresse): static
     {
         $this->adresse = $adresse;
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+    public function setLatitude(?float $latitude): static
+    {
+        $this->latitude = $latitude;
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+    public function setLongitude(?float $longitude): static
+    {
+        $this->longitude = $longitude;
         return $this;
     }
 
@@ -234,6 +266,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getResetCode(): ?string
+    {
+        return $this->resetCode;
+    }
+    public function setResetCode(?string $resetCode): static
+    {
+        $this->resetCode = $resetCode;
+        return $this;
+    }
+
+    public function getResetCodeExpiresAt(): ?\DateTimeInterface
+    {
+        return $this->resetCodeExpiresAt;
+    }
+    public function setResetCodeExpiresAt(?\DateTimeInterface $resetCodeExpiresAt): static
+    {
+        $this->resetCodeExpiresAt = $resetCodeExpiresAt;
         return $this;
     }
 

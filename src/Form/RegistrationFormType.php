@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -60,6 +61,12 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'L\'adresse est obligatoire.']),
                 ],
+            ])
+            ->add('latitude', HiddenType::class, [
+                'required' => false,
+            ])
+            ->add('longitude', HiddenType::class, [
+                'required' => false,
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
