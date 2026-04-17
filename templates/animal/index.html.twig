@@ -140,49 +140,83 @@
                             <th style="padding: 18px; color: #64748b; font-size: 0.9rem;">Santé</th>
                             <th style="padding: 18px; color: #64748b; font-size: 0.9rem;">Naissance</th>
                             <th style="padding: 18px; color: #64748b; font-size: 0.9rem;">Ferme</th>
-                            <th style="padding: 18px; text-align: center; color: #64748b; font-size: 0.9rem;">Actions</th>
+                            <th style="padding: 18px; color: #64748b; font-size: 0.9rem; width: 200px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for animal in animals %}
                             <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 18px;">
+                                <td style="padding: 18px; vertical-align: middle;">
                                     <div style="font-weight: 700; color: #1e293b;">{{ animal.espece }}</div>
                                 </td>
-                                <td style="padding: 18px;">
+                                
+                                <td style="padding: 18px; vertical-align: middle;">
                                     {% set is_critical = animal.etatSante|lower in ['malade', 'critique', 'faible', 'urgence'] %}
                                     
                                     {% if is_critical %}
-                                        {# SI MALADE : Lien vers Consultation IA #}
-                                        <a href="{{ path('app_animal_consultation', {'id_animal': animal.idAnimal}) }}" title="Consulter l'IA Vétérinaire" style="text-decoration: none;">
-                                            <span style="padding: 6px 12px; background: #fef2f2; color: #dc2626; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #fecaca; cursor: pointer; transition: 0.3s;">
-                                                <i class="fa-solid fa-robot" style="margin-right: 5px;"></i> {{ animal.etatSante }}
+                                        <a href="{{ path('app_animal_consultation', {'id_animal': animal.idAnimal}) }}" title="Consulter l'IA Vétérinaire" style="text-decoration: none; display: inline-flex;">
+                                            <span style="padding: 6px 12px; background: #fef2f2; color: #dc2626; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 6px; transition: 0.3s;">
+                                                <i class="fa-solid fa-robot"></i> {{ animal.etatSante }}
                                             </span>
                                         </a>
                                     {% else %}
-                                        {# SI SAIN : Simple Badge #}
-                                        <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #bbf7d0;">
+                                        <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #bbf7d0; display: inline-block;">
                                             {{ animal.etatSante }}
                                         </span>
                                     {% endif %}
                                 </td>
-                                <td style="padding: 18px; color: #475569;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}</td>
-                                <td style="padding: 18px;">
-                                    <span style="color: #2d7a36; font-weight: 700;">
-                                        <i class="fa-solid fa-location-dot" style="font-size: 0.8rem; margin-right: 5px;"></i>
+
+                                <td style="padding: 18px; vertical-align: middle; color: #475569;">
+                                    {{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}
+                                </td>
+
+                                <td style="padding: 18px; vertical-align: middle;">
+                                    <span style="color: #2d7a36; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-location-dot" style="font-size: 0.8rem;"></i>
                                         {{ animal.ferme ? animal.ferme.nomFerme : 'Non affecté' }}
                                     </span>
                                 </td>
-                                <td style="padding: 18px; display: flex; gap: 10px; justify-content: center;">
-                                    <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px; border-radius: 8px; border: 1px solid #bbf7d0; text-decoration: none;">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-                                    <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer cet animal ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ animal.idAnimal) }}">
-                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; cursor: pointer;">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+
+                                <td style="padding: 18px; vertical-align: middle;">
+                                    {# --- BLOC ACTIONS ALIGNÉ --- #}
+                                    <div style="display: flex; gap: 8px; align-items: center; justify-content: flex-start;">
+                                        
+                                        {% set btn_base = "width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; text-decoration: none; transition: 0.2s; flex-shrink: 0; font-size: 0.9rem;" %}
+
+                                        {# 1. Bouton Carnet de Santé (Nouveau) #}
+                                        <a href="{{ path('app_animal_carnet', {'id_animal': animal.idAnimal}) }}" 
+                                           style="{{ btn_base }} color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb;" 
+                                           title="Carnet de santé">
+                                            <i class="fa-solid fa-book-medical"></i>
+                                        </a>
+
+                                        {# 2. Zone Localisation (Uniquement si Malade) #}
+                                        <div style="width: 36px;">
+                                            {% if animal.etatSante|lower == 'malade' %}
+                                                <a href="{{ path('app_animal_map', {'id_animal': animal.idAnimal}) }}" 
+                                                   target="_blank" 
+                                                   style="{{ btn_base }} color: #3b82f6; background: #eff6ff; border: 1px solid #bfdbfe;" 
+                                                   title="Vétérinaires proches">
+                                                     <i class="fa-solid fa-location-dot"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                        {# 3. Bouton Modifier #}
+                                        <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal}) }}" 
+                                           style="{{ btn_base }} color: #2d7a36; background: #f0fdf4; border: 1px solid #bbf7d0;"
+                                           title="Modifier">
+                                             <i class="fa-solid fa-pen"></i>
+                                        </a>
+
+                                        {# 4. Bouton Supprimer #}
+                                        <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer cet animal ?');" style="margin: 0;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ animal.idAnimal) }}">
+                                            <button type="submit" style="{{ btn_base }} color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; cursor: pointer; border-style: solid;">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
