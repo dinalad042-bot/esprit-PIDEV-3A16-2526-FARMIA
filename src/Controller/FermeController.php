@@ -6,6 +6,7 @@ use App\Entity\Ferme;
 use App\Form\FermeType;
 use App\Repository\FermeRepository;
 use App\Service\WeatherService;
+use App\Service\FarmPredictor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -195,6 +196,23 @@ public function weather(int $id, FermeRepository $repo, WeatherService $weatherS
     return $this->render('ferme/weather.html.twig', [
         'ferme' => $ferme,
         'weather' => $weatherData
+    ]);
+}
+#[Route('/{id_ferme}/prediction', name: 'app_ferme_prediction', methods: ['GET'])]
+public function prediction(int $id_ferme, FermeRepository $repo, FarmPredictor $predictor): Response
+{
+    $ferme = $repo->find($id_ferme);
+    
+    if (!$ferme) {
+        throw $this->createNotFoundException('Ferme non trouvée');
+    }
+
+    // Appel au service que nous avons créé précédemment
+    $planExpert = $predictor->generateFullPlan($ferme);
+
+    return $this->render('ferme/prediction.html.twig', [
+        'ferme' => $ferme,
+        'plan' => $planExpert
     ]);
 }
 }
