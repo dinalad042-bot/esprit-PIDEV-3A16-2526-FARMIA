@@ -46,14 +46,14 @@ class RegistrationFormType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotBlank(['message' => 'Le CIN est obligatoire.']),
-                    new Length(['exactly' => 8, 'exactMessage' => 'Le CIN doit contenir exactement 8 caractères.']),
+                    new Length(['min' => 8, 'max' => 8, 'exactMessage' => 'Le CIN doit contenir exactement 8 caractères.']),
                 ],
             ])
             ->add('telephone', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(['message' => 'Le téléphone est obligatoire.']),
-                    new Length(['exactly' => 8, 'exactMessage' => 'Le téléphone doit contenir exactement 8 caractères.']),
+                    new Length(['min' => 8, 'max' => 8, 'exactMessage' => 'Le téléphone doit contenir exactement 8 caractères.']),
                 ],
             ])
             ->add('adresse', TextType::class, [
