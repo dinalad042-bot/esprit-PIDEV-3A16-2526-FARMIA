@@ -239,16 +239,37 @@ class AnimalController extends AbstractController
         ]);
     }
 
+/**
+     * Redirection vers Google Maps pour trouver les vétérinaires proches de la ferme
+     */
     #[Route('/{id_animal}/map', name: 'app_animal_map', methods: ['GET'])]
     public function viewMap(int $id_animal, AnimalRepository $repo): Response
     {
         $animal = $repo->find($id_animal);
+        
         if (!$animal || !$animal->getFerme()) {
-            $this->addFlash('error', 'Localisation indisponible.');
+            $this->addFlash('error', 'Localisation indisponible : aucune ferme associée.');
             return $this->redirectToRoute('app_animal_index');
         }
-        $lieu = $animal->getFerme()->getNomFerme();
-        $url = "https://www.google.com/maps/search/?api=1&query=" . urlencode($lieu);
+
+        $ferme = $animal->getFerme();
+        
+        // --- LOGIQUE DE LOCALISATION ---
+        // 1. On vérifie d'abord si on a des coordonnées GPS (précision maximale)
+        if ($ferme->getLatitude() && $ferme->getLongitude()) {
+            $location = $ferme->getLatitude() . ',' . $ferme->getLongitude();
+        } 
+        // 2. Sinon, on utilise le champ 'lieu' (qui correspond à l'adresse/ville dans votre entité)
+        else {
+            $location = $ferme->getLieu();
+        }
+
+        // On construit la requête de recherche ciblée
+        $searchQuery = "veterinaire proche de " . $location;
+        
+        // URL Google Maps pour une recherche de points d'intérêt à proximité
+        $url = "https://www.google.com/maps/search/" . urlencode($searchQuery);
+
         return $this->redirect($url);
     }
 
