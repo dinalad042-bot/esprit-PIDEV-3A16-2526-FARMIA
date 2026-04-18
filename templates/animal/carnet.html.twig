@@ -5,8 +5,21 @@
 {% block body %}
 <div style="background: #f1f5f9; min-height: 100vh; padding: 40px; font-family: 'Inter', sans-serif;">
     
+    {# --- AFFICHAGE DES MESSAGES FLASH (ERREURS & SUCCÈS) --- #}
+    <div style="max-width: 1200px; margin: 0 auto;">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'danger' ? 'danger' : 'success' }} shadow-sm mb-4" 
+                     style="border-radius: 12px; padding: 15px; border: none; font-weight: 500; background-color: {{ label == 'danger' ? '#fee2e2' : '#dcfce7' }}; color: {{ label == 'danger' ? '#b91c1c' : '#15803d' }};">
+                    <i class="fa-solid {{ label == 'danger' ? 'fa-triangle-exclamation' : 'fa-check-circle' }} mr-2"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
     {# --- HEADER --- #}
-    <div style="max-width: 1000px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center;">
+    <div style="max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center;">
         <div>
             <a href="{{ path('app_animal_index') }}" style="text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.9rem;">
                 <i class="fa-solid fa-chevron-left"></i> Retour au cheptel
@@ -20,9 +33,9 @@
         </div>
     </div>
 
-    <div style="max-width: 1000px; margin: auto; display: grid; grid-template-columns: 300px 1fr; gap: 40px;">
+    <div style="max-width: 1200px; margin: auto; display: grid; grid-template-columns: 300px 1fr 350px; gap: 30px;">
         
-        {# --- FICHE D'IDENTITÉ --- #}
+        {# --- COLONNE 1 : FICHE D'IDENTITÉ --- #}
         <div style="position: sticky; top: 40px; height: fit-content;">
             <div style="background: white; border-radius: 24px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); text-align: center;">
                 <div style="width: 80px; height: 80px; background: #f8fafc; border: 2px solid #e2e8f0; color: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 2rem;">
@@ -33,77 +46,189 @@
                 
                 <div style="margin-top: 25px; text-align: left; border-top: 1px solid #f1f5f9; padding-top: 20px;">
                     <div style="margin-bottom: 15px;">
-                        <small style="color: #94a3b8; display: block; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.05em;">État de santé</small>
-                        <b style="color: {{ animal.etatSante == 'Sain' ? '#059669' : '#dc2626' }}; font-size: 1rem;">
-                            <i class="fa-solid fa-circle" style="font-size: 0.6rem; vertical-align: middle; margin-right: 5px;"></i>
-                            {{ animal.etatSante }}
-                        </b>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <small style="color: #94a3b8; display: block; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.05em;">Lieu de résidence</small>
-                        <b style="color: #1e293b;">{{ animal.ferme ? animal.ferme.nomFerme : 'Non assigné' }}</b>
-                    </div>
+    <small style="color: #94a3b8; display: block; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.05em;">État de santé</small>
+    <b style="color: {{ animal.etatSante|lower == 'sain' or animal.etatSante|lower == 'excellente' ? '#059669' : '#dc2626' }}; font-size: 1rem;">
+        <i class="fa-solid fa-circle" style="font-size: 0.6rem; vertical-align: middle; margin-right: 5px;"></i>
+        {{ animal.etatSante }}
+    </b>
+</div>
                     <div>
-                        <small style="color: #94a3b8; display: block; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.05em;">Âge enregistré</small>
-                        <b style="color: #1e293b;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : 'Inconnu' }}</b>
+                        <small style="color: #94a3b8; display: block; text-transform: uppercase; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.05em;">Date de naissance</small>
+                        <b style="color: #1e293b;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : 'Non renseignée' }}</b>
                     </div>
                 </div>
             </div>
         </div>
 
-        {# --- LISTE DES INTERVENTIONS --- #}
+        {# --- COLONNE 2 : TIMELINE GLOBALE (AVEC RÉDUCTION DIAGNOSTIC) --- #}
         <div>
-            {% if historique is empty %}
-                <div style="background: white; border-radius: 24px; padding: 60px; text-align: center; border: 2px dashed #cbd5e1;">
-                    <i class="fa-solid fa-notes-medical" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 20px;"></i>
-                    <h3 style="color: #64748b;">Aucun historique médical</h3>
-                    <p style="color: #94a3b8;">Lancez une consultation IA pour commencer le suivi.</p>
+            <h3 style="color: #475569; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px;">Timeline de l'animal</h3>
+            {% if historique_complet is empty %}
+                <div style="background: white; border-radius: 24px; padding: 40px; text-align: center; border: 2px dashed #cbd5e1;">
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Aucun historique enregistré.</p>
                 </div>
             {% else %}
-                {% for suivi in historique %}
-                    <div style="display: flex; gap: 20px; margin-bottom: 30px; position: relative;">
-                        {# Ligne de timeline #}
-                        {% if not loop.last %}
-                        <div style="position: absolute; left: 25px; top: 50px; bottom: -40px; width: 2px; background: #e2e8f0;"></div>
-                        {% endif %}
-
-                        {# Point sur la timeline #}
-                        <div style="width: 52px; height: 52px; background: white; border: 2px solid #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1; flex-shrink: 0; color: #059669; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                            <i class="fa-solid fa-stethoscope"></i>
+                {% for suivi in historique_complet %}
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <div style="width: 45px; height: 45px; background: white; border: 2px solid {{ suivi.type == 'vaccin' ? '#3b82f6' : (suivi.type == 'reproduction' ? '#ec4899' : '#059669') }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: {{ suivi.type == 'vaccin' ? '#3b82f6' : (suivi.type == 'reproduction' ? '#ec4899' : '#059669') }};">
+                            <i class="fa-solid {{ suivi.type == 'vaccin' ? 'fa-syringe' : (suivi.type == 'reproduction' ? 'fa-venus-mars' : (suivi.type == 'traitement' ? 'fa-pills' : 'fa-stethoscope')) }}"></i>
                         </div>
-
-                        {# Carte d'info #}
-                        <div style="background: white; border-radius: 20px; padding: 25px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); flex-grow: 1; position: relative;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                                <div>
-                                    <span style="color: #1e293b; font-weight: 800; font-size: 1.1rem;">Analyse FarmAI</span>
-                                    <span style="display: block; color: #94a3b8; font-size: 0.8rem; font-weight: 600;">
-                                        {{ suivi.dateConsultation|date('d F Y à H:i') }}
-                                    </span>
-                                </div>
-                                <span style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 5px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">
-                                    Statut : {{ suivi.etatAuMoment }}
-                                </span>
-                            </div>
-
-                            <div style="background: #f8fafc; border-radius: 12px; padding: 20px; color: #334155; line-height: 1.6; font-size: 0.95rem; border-left: 4px solid #059669;">
-                                {{ suivi.diagnostic|nl2br }}
+                        <div style="background: white; border-radius: 20px; padding: 20px; border: 1px solid #e2e8f0; flex-grow: 1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <b style="color: #1e293b; font-size: 0.9rem; text-transform: uppercase;">{{ suivi.type ?: 'Diagnostic IA' }}</b>
+                                <small style="color: #94a3b8;">{{ suivi.dateConsultation|date('d/m/Y') }}</small>
                             </div>
                             
-                            <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px; color: #64748b; font-size: 0.8rem;">
-                                <i class="fa-solid fa-shield-halved" style="color: #059669;"></i>
-                                Archivage certifié FarmAI - Diagnostic n°{{ suivi.id }}
+                            <div style="font-size: 0.85rem; color: #334155; line-height: 1.5;">
+                                {# Extrait court #}
+                                <div id="summary-{{ loop.index }}">
+                                    {{ suivi.diagnostic|slice(0, 120) ~ (suivi.diagnostic|length > 120 ? '...' : '') }}
+                                </div>
+
+                                {# Texte complet caché #}
+                                <div id="full-{{ loop.index }}" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e2e8f0; color: #475569;">
+                                    {{ suivi.diagnostic|nl2br }}
+                                </div>
+
+                                {# Bouton toggle #}
+                                {% if suivi.diagnostic|length > 120 %}
+                                    <button onclick="toggleDiagnostic({{ loop.index }})" id="btn-diag-{{ loop.index }}" style="background: none; border: none; color: #3b82f6; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 0; margin-top: 5px;">
+                                        Lire la suite...
+                                    </button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
         </div>
+
+        {# --- COLONNE 3 : FORMULAIRES --- #}
+        <div style="display: flex; flex-direction: column; gap: 25px;">
+            
+            {# SECTION VACCINATIONS #}
+            <div style="background: white; border-radius: 20px; padding: 25px; border: 1px solid #e2e8f0; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #3b82f6;"></div>
+                <h3 style="margin: 0 0 5px 0; font-size: 1rem; color: #1e293b;"><i class="fa-solid fa-syringe" style="color: #3b82f6;"></i> Vaccinations</h3>
+                <div style="width: 40px; height: 3px; background: #ef4444; margin-bottom: 15px;"></div>
+
+                <form action="{{ path('api_animal_add_sante', {'id': animal.idAnimal}) }}" method="POST">
+                    <input type="hidden" name="type" value="vaccin">
+                    <input type="text" name="valeur" placeholder="Nom du vaccin" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+                    <input type="date" name="date" required min="{{ animal.dateNaissance ? animal.dateNaissance|date('Y-m-d') : '' }}" max="{{ "now"|date('Y-m-d') }}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+                    <button type="submit" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 10px;">Enregistrer</button>
+                </form>
+                
+                <button class="btn btn-outline-secondary btn-sm w-100" type="button" data-bs-toggle="collapse" data-bs-target="#histVaccin" style="background: none; border: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; cursor: pointer; padding: 5px;">
+                    <i class="fa-solid fa-history"></i> Voir historique
+                </button>
+
+                <div class="collapse mt-2" id="histVaccin" style="display:none;">
+                    <div style="max-height: 150px; overflow-y: auto; font-size: 0.8rem; background: #f8fafc; padding: 10px; border-radius: 8px;">
+                        {% for suivi in historique_complet|filter(s => s.type == 'vaccin') %}
+                            <div style="border-bottom: 1px solid #e2e8f0; padding: 5px 0;">
+                                <small style="color: #64748b;">{{ suivi.dateConsultation|date('d/m/Y') }}</small><br>
+                                <b>{{ suivi.diagnostic }}</b>
+                            </div>
+                        {% else %}
+                            <small class="text-muted">Aucun vaccin enregistré.</small>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {# SECTION REPRODUCTION #}
+            <div style="background: white; border-radius: 20px; padding: 25px; border: 1px solid #e2e8f0; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ec4899;"></div>
+                <h3 style="margin: 0 0 5px 0; font-size: 1rem; color: #ec4899;"><i class="fa-solid fa-venus-mars"></i> Reproduction</h3>
+                <div style="width: 40px; height: 3px; background: #ef4444; margin-bottom: 15px;"></div>
+
+                <form action="{{ path('api_animal_add_sante', {'id': animal.idAnimal}) }}" method="POST">
+                    <input type="hidden" name="type" value="reproduction">
+                    <label style="font-size: 0.7rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 5px;">DATE DE MISE BAS / ACTE</label>
+                    <input type="date" name="date" required min="{{ animal.dateNaissance ? animal.dateNaissance|date('Y-m-d') : '' }}" max="{{ "now"|date('Y-m-d') }}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+                    <button type="submit" style="width: 100%; background: #ec4899; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 10px;">Déclarer</button>
+                </form>
+
+                <button class="btn btn-outline-secondary btn-sm w-100" type="button" data-bs-toggle="collapse" data-bs-target="#histRepro" style="background: none; border: 1px solid #cbd5e1; color: #64748b; font-size: 0.8rem; cursor: pointer; padding: 5px;">
+                    <i class="fa-solid fa-history"></i> Voir historique
+                </button>
+
+                <div class="collapse mt-2" id="histRepro" style="display:none;">
+                    <div style="max-height: 150px; overflow-y: auto; font-size: 0.8rem; background: #f8fafc; padding: 10px; border-radius: 8px;">
+                        {% for suivi in historique_complet|filter(s => s.type == 'reproduction') %}
+                            <div style="border-bottom: 1px solid #e2e8f0; padding: 5px 0;">
+                                <i class="fa-solid fa-calendar-day"></i> {{ suivi.dateConsultation|date('d/m/Y') }}
+                            </div>
+                        {% else %}
+                            <small class="text-muted">Aucune déclaration.</small>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {# SECTION TRAITEMENTS #}
+            <div style="background: #1e293b; border-radius: 20px; padding: 25px; color: white; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #10b981;"></div>
+                <h3 style="margin: 0 0 5px 0; font-size: 1rem; color: #10b981;"><i class="fa-solid fa-pills"></i> Traitements</h3>
+                <div style="width: 40px; height: 3px; background: #ef4444; margin-bottom: 15px;"></div>
+
+                <form action="{{ path('api_animal_add_sante', {'id': animal.idAnimal}) }}" method="POST">
+                    <input type="hidden" name="type" value="traitement">
+                    <input type="text" name="valeur" placeholder="Médicament et posologie" required style="width: 100%; padding: 10px; border-radius: 8px; border: none; margin-bottom: 10px; background: #334155; color: white;">
+                    <input type="date" name="date" required min="{{ animal.dateNaissance ? animal.dateNaissance|date('Y-m-d') : '' }}" max="{{ "now"|date('Y-m-d') }}" style="width: 100%; padding: 10px; border-radius: 8px; border: none; margin-bottom: 10px; background: #334155; color: white;">
+                    <button type="submit" style="width: 100%; background: #10b981; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 10px;">Ajouter Traitement</button>
+                </form>
+
+                <button class="btn btn-outline-light btn-sm w-100" type="button" data-bs-toggle="collapse" data-bs-target="#histTraite" style="background: none; border: 1px solid #475569; color: #94a3b8; font-size: 0.8rem; cursor: pointer; padding: 5px;">
+                    <i class="fa-solid fa-history"></i> Voir historique
+                </button>
+
+                <div class="collapse mt-2" id="histTraite" style="display:none;">
+                    <div style="max-height: 150px; overflow-y: auto; font-size: 0.8rem; background: #334155; padding: 10px; border-radius: 8px;">
+                        {% for suivi in historique_complet|filter(s => s.type == 'traitement') %}
+                            <div style="border-bottom: 1px solid #475569; padding: 5px 0; color: #cbd5e1;">
+                                <small>{{ suivi.dateConsultation|date('d/m/Y') }}</small><br>
+                                {{ suivi.diagnostic }}
+                            </div>
+                        {% else %}
+                            <small style="color: #94a3b8;">Aucun traitement.</small>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-</style>
+<script>
+    {# Script pour réduire le diagnostic dans la timeline #}
+    function toggleDiagnostic(id) {
+        const full = document.getElementById('full-' + id);
+        const summary = document.getElementById('summary-' + id);
+        const btn = document.getElementById('btn-diag-' + id);
+
+        if (full.style.display === 'none') {
+            full.style.display = 'block';
+            summary.style.display = 'none';
+            btn.innerText = 'Réduire';
+        } else {
+            full.style.display = 'none';
+            summary.style.display = 'block';
+            btn.innerText = 'Lire la suite...';
+        }
+    }
+
+    {# Script pour les collapses de l'historique à droite #}
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-bs-target');
+            const targetEl = document.querySelector(targetId);
+            if (targetEl) {
+                targetEl.style.display = (targetEl.style.display === 'block') ? 'none' : 'block';
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -178,19 +178,17 @@
                                 </td>
 
                                 <td style="padding: 18px; vertical-align: middle;">
-                                    {# --- BLOC ACTIONS ALIGNÉ --- #}
                                     <div style="display: flex; gap: 8px; align-items: center; justify-content: flex-start;">
                                         
                                         {% set btn_base = "width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; text-decoration: none; transition: 0.2s; flex-shrink: 0; font-size: 0.9rem;" %}
 
-                                        {# 1. Bouton Carnet de Santé (Nouveau) #}
-                                        <a href="{{ path('app_animal_carnet', {'id_animal': animal.idAnimal}) }}" 
+                                        {# CORRECTION ICI : Utilisation de 'id' au lieu de 'id_animal' si nécessaire #}
+                                        <a href="{{ path('app_animal_carnet', {'id': animal.idAnimal}) }}" 
                                            style="{{ btn_base }} color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb;" 
                                            title="Carnet de santé">
                                             <i class="fa-solid fa-book-medical"></i>
                                         </a>
 
-                                        {# 2. Zone Localisation (Uniquement si Malade) #}
                                         <div style="width: 36px;">
                                             {% if animal.etatSante|lower == 'malade' %}
                                                 <a href="{{ path('app_animal_map', {'id_animal': animal.idAnimal}) }}" 
@@ -202,17 +200,15 @@
                                             {% endif %}
                                         </div>
 
-                                        {# 3. Bouton Modifier #}
                                         <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal}) }}" 
                                            style="{{ btn_base }} color: #2d7a36; background: #f0fdf4; border: 1px solid #bbf7d0;"
                                            title="Modifier">
                                              <i class="fa-solid fa-pen"></i>
                                         </a>
 
-                                        {# 4. Bouton Supprimer #}
                                         <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer cet animal ?');" style="margin: 0;">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ animal.idAnimal) }}">
-                                            <button type="submit" style="{{ btn_base }} color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; cursor: pointer; border-style: solid;">
+                                            <button type="submit" style="{{ btn_base }} color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; cursor: pointer;">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>

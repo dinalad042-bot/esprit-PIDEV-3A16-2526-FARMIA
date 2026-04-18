@@ -7,6 +7,7 @@ use App\Entity\SuiviSante;
 use App\Repository\AnimalRepository;
 use App\Repository\FermeRepository;
 use App\Repository\SuiviSanteRepository;
+use App\Repository\AnimalSanteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,21 +53,18 @@ class AnimalController extends AbstractController
     /**
      * Carnet de santé de l'animal (Historique des diagnostics)
      */
-    #[Route('/{id_animal}/carnet', name: 'app_animal_carnet', methods: ['GET'])]
-    public function carnet(int $id_animal, AnimalRepository $repo, SuiviSanteRepository $suiviRepo): Response
+    #[Route('/{id}/carnet', name: 'app_animal_carnet')]
+    public function carnet(Animal $animal, SuiviSanteRepository $suiviRepo): Response
     {
-        $animal = $repo->find($id_animal);
-
-        if (!$animal) {
-            throw $this->createNotFoundException('Animal non trouvé');
-        }
-
-        // On récupère les suivis de santé triés du plus récent au plus ancien
-        $historique = $suiviRepo->findBy(['animal' => $animal], ['dateConsultation' => 'DESC']);
+        // On récupère TOUT le suivi (IA et Manuel) en une seule fois
+        $tous_les_suivis = $suiviRepo->findBy(
+            ['animal' => $animal], 
+            ['dateConsultation' => 'DESC']
+        );
 
         return $this->render('animal/carnet.html.twig', [
             'animal' => $animal,
-            'historique' => $historique
+            'historique_complet' => $tous_les_suivis,
         ]);
     }
 
@@ -128,7 +126,9 @@ class AnimalController extends AbstractController
                     $suivi->setAnimal($animal);
                     $suivi->setDiagnostic($diagnosticFinal);
                     $suivi->setEtatAuMoment($animal->getEtatSante());
-                    $suivi->setDateConsultation(new \DateTime()); // Assurez-vous d'avoir ce setter
+                    $suivi->setDateConsultation(new \DateTime()); 
+                    
+                    $suivi->setType($data['type']);// Assurez-vous d'avoir ce setter
                     
                     $em->persist($suivi);
                     $em->flush();
@@ -239,7 +239,7 @@ class AnimalController extends AbstractController
         ]);
     }
 
-/**
+    /**
      * Redirection vers Google Maps pour trouver les vétérinaires proches de la ferme
      */
     #[Route('/{id_animal}/map', name: 'app_animal_map', methods: ['GET'])]
@@ -299,5 +299,56 @@ class AnimalController extends AbstractController
             'currentSort' => 'espece',
             'currentDirection' => 'ASC'
         ]);
+    }
+
+    /**
+     * Enregistrement manuel d'un acte de santé (Vaccin, Reproduction, Traitement)
+     */
+#[Route('/{id}/add-sante', name: 'api_animal_add_sante', methods: ['POST'])]
+    public function addSante(Animal $animal, Request $request, EntityManagerInterface $em): Response
+    {
+        $type = $request->request->get('type');
+        $valeur = trim($request->request->get('valeur'));
+        $dateStr = $request->request->get('date');
+
+        // 1. Contrôle de saisie : Champs vides
+        if (empty($type) || (empty($valeur) && $type !== 'reproduction') || empty($dateStr)) {
+            $this->addFlash('danger', 'Veuillez remplir tous les champs obligatoires.');
+            return $this->redirectToRoute('app_animal_carnet', ['id' => $animal->getIdAnimal()]);
+        }
+
+        try {
+            $dateActe = new \DateTime($dateStr);
+            $dateNaissance = $animal->getDateNaissance();
+
+            // 2. Contrôle : Date supérieure à la date de naissance
+            if ($dateNaissance && $dateActe < $dateNaissance) {
+                $this->addFlash('danger', 'La date ne peut pas être antérieure à la naissance (' . $dateNaissance->format('d/m/Y') . ').');
+                return $this->redirectToRoute('app_animal_carnet', ['id' => $animal->getIdAnimal()]);
+            }
+
+            // 3. Contrôle : Date dans le futur (optionnel mais conseillé)
+            if ($dateActe > new \DateTime()) {
+                $this->addFlash('danger', 'La date ne peut pas être dans le futur.');
+                return $this->redirectToRoute('app_animal_carnet', ['id' => $animal->getIdAnimal()]);
+            }
+
+            $suivi = new SuiviSante();
+            $suivi->setAnimal($animal);
+            $suivi->setType($type);
+            $suivi->setDiagnostic($valeur ?: "Déclaration de reproduction");
+            $suivi->setEtatAuMoment($animal->getEtatSante());
+            $suivi->setDateConsultation($dateActe);
+
+            $em->persist($suivi);
+            $em->flush();
+
+            $this->addFlash('success', 'Enregistrement effectué avec succès.');
+
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Format de date invalide.');
+        }
+
+        return $this->redirectToRoute('app_animal_carnet', ['id' => $animal->getIdAnimal()]);
     }
 }

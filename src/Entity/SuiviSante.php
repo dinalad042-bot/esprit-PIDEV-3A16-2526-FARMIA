@@ -14,7 +14,6 @@ class SuiviSante
     #[ORM\Column]
     private ?int $id = null;
 
-    // Relation avec l'animal : Si l'animal est supprimé, son historique l'est aussi (on-delete CASCADE)
     #[ORM\ManyToOne(targetEntity: Animal::class)]
     #[ORM\JoinColumn(name: "id_animal", referencedColumnName: "id_animal", nullable: false, onDelete: "CASCADE")]
     private ?Animal $animal = null;
@@ -25,12 +24,14 @@ class SuiviSante
     #[ORM\Column(type: Types::TEXT)]
     private ?string $diagnostic = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, nullable: true)] // Rendu nullable pour les vaccins
     private ?string $etatAuMoment = null;
 
-    /**
-     * Le constructeur initialise la date de consultation automatiquement à "maintenant"
-     */
+    // --- NOUVEAUX CHAMPS POUR LES VACCINS / ACTES MANUELS ---
+    
+    #[ORM\Column(length: 30, nullable: true)] 
+    private ?string $type = null; // Ex: VACCIN, MEDICAMENT, REPRODUCTION, IA
+
     public function __construct()
     {
         $this->dateConsultation = new \DateTime();
@@ -79,9 +80,20 @@ class SuiviSante
         return $this->etatAuMoment;
     }
 
-    public function setEtatAuMoment(string $etatAuMoment): self
+    public function setEtatAuMoment(?string $etatAuMoment): self
     {
         $this->etatAuMoment = $etatAuMoment;
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
         return $this;
     }
 }
