@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlanteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -34,6 +36,15 @@ class Plante
     #[Assert\NotBlank(message: "La quantité est obligatoire.")]
     #[Assert\Positive(message: "La quantité doit être un nombre supérieur à 0.")]
     private ?int $quantite = null;
+
+    // --- AJOUT DE LA RELATION AVEC ARROSAGE ---
+    #[ORM\OneToMany(mappedBy: 'plante', targetEntity: Arrosage::class, cascade: ['remove'], orphanRemoval: true)]
+    private Collection $arrosages;
+
+    public function __construct()
+    {
+        $this->arrosages = new ArrayCollection();
+    }
 
     public function getIdPlante(): ?int 
     { 
@@ -82,5 +93,32 @@ class Plante
     { 
         $this->quantite = $quantite; 
         return $this; 
+    }
+
+    // --- GETTER POUR LES ARROSAGES ---
+    /** @return Collection<int, Arrosage> */
+    public function getArrosages(): Collection 
+    {
+        return $this->arrosages;
+    }
+
+    public function addArrosage(Arrosage $arrosage): static
+    {
+        if (!$this->arrosages->contains($arrosage)) {
+            $this->arrosages->add($arrosage);
+            $arrosage->setPlante($this);
+        }
+        return $this;
+    }
+
+    public function removeArrosage(Arrosage $arrosage): static
+    {
+        if ($this->arrosages->removeElement($arrosage)) {
+            // set the owning side to null (unless already changed)
+            if ($arrosage->getPlante() === $this) {
+                $arrosage->setPlante(null);
+            }
+        }
+        return $this;
     }
 }

@@ -166,7 +166,8 @@ class PlanteController extends AbstractController
             'details' => $details,
             'maint' => $maint,
             'nextWatering' => (clone $dateBase)->modify("+$wateringInterval days"),
-            'harvestDate' => $harvestDate, // On repasse harvestDate pour Twig
+            'harvestDate' => $harvestDate,
+            'plante' => $planteEntity, // On repasse harvestDate pour Twig
         ]);
     }
 
