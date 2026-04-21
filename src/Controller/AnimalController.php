@@ -128,13 +128,13 @@ class AnimalController extends AbstractController
                     $suivi->setEtatAuMoment($animal->getEtatSante());
                     $suivi->setDateConsultation(new \DateTime()); 
                     
-                    $suivi->setType($data['type']);// Assurez-vous d'avoir ce setter
+                    $suivi->setType('Diagnostic IA');// Assurez-vous d'avoir ce setter
                     
                     $em->persist($suivi);
                     $em->flush();
 
                     $this->addFlash('success', 'Bilan de santé enregistré dans le carnet !');
-                    return $this->redirectToRoute('app_animal_carnet', ['id_animal' => $animal->getIdAnimal()]);
+                    return $this->redirectToRoute('app_animal_carnet', ['id' => $animal->getIdAnimal()]);
                 }
             }
         }
