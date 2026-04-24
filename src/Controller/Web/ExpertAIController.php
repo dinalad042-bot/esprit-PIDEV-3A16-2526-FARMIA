@@ -4,6 +4,7 @@ namespace App\Controller\Web;
 
 use App\Entity\Analyse;
 use App\Service\GroqService;
+use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,7 @@ class ExpertAIController extends AbstractController
 {
     public function __construct(
         private GroqService $groqService,
+        private WeatherService $weatherService,
         private EntityManagerInterface $em,
     ) {}
 
@@ -52,6 +54,13 @@ class ExpertAIController extends AbstractController
 
             $analyse->setAiConfidenceScore($diagnosisResult->confidence);
             $analyse->setAiDiagnosisDate(new \DateTime());
+
+            // Fetch weather data for farm location if available
+            if ($analyse->getFerme()?->getLieu()) {
+                $weather = $this->weatherService->getWeatherForLocation($analyse->getFerme()->getLieu());
+                $analyse->setWeatherData($weather);
+                $analyse->setWeatherFetchedAt(new \DateTime());
+            }
 
             $this->em->flush();
 
@@ -98,6 +107,13 @@ class ExpertAIController extends AbstractController
         }
 
         try {
+            // Fetch weather FIRST before vision analysis
+            if ($analyse->getFerme()?->getLieu()) {
+                $weather = $this->weatherService->getWeatherForLocation($analyse->getFerme()->getLieu());
+                $analyse->setWeatherData($weather);
+                $analyse->setWeatherFetchedAt(new \DateTime());
+            }
+            
             $diagnosisResult = $this->groqService->generateVisionDiagnostic($analyse->getImageUrl());
 
             // Store results

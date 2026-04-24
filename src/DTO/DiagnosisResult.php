@@ -18,7 +18,7 @@ class DiagnosisResult
         $r = new self();
         $r->condition   = $data['condition']        ?? 'Inconnu';
         $r->confidence  = $data['confidence']       ?? 'LOW';
-        $r->symptoms    = $data['symptoms']         ?? [];
+        $r->symptoms     = is_array($data['symptoms'] ?? []) ? $data['symptoms'] : [$data['symptoms']];
         $r->treatment   = $data['treatment']        ?? '';
         $r->prevention  = $data['prevention']       ?? '';
         $r->urgency     = $data['urgency']          ?? '';

@@ -83,6 +83,11 @@ class Plante
     public function setQuantite(?int $quantite): static 
     { 
         $this->quantite = $quantite; 
-        return $this; 
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom_espece;
     }
 }

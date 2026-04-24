@@ -52,4 +52,9 @@ class Animal
         $this->ferme = $ferme; 
         return $this; 
     }
+
+    public function getNom(): ?string
+    {
+        return $this->espece;
+    }
 }
