@@ -24,10 +24,18 @@ class WeatherService
      */
     public function getWeather(string $city): array
     {
+        return $this->getWeatherForLocation($city);
+    }
+
+    /**
+     * Récupère la météo pour un lieu donné (ville ou localisation)
+     */
+    public function getWeatherForLocation(string $location): array
+    {
         try {
             $response = $this->client->request('GET', "https://api.openweathermap.org/data/2.5/weather", [
                 'query' => [
-                    'q'     => $city,
+                    'q'     => $location,
                     'appid' => $this->apiKey,
                     'units' => 'metric',
                     'lang'  => 'fr'
@@ -46,13 +54,13 @@ class WeatherService
             // Cela permet à la vue Twig de ne pas planter.
             return [
                 'main' => [
-                    'temp'       => 0, 
-                    'feels_like' => 0, 
+                    'temp'       => 0,
+                    'feels_like' => 0,
                     'humidity'   => 0
                 ],
                 'weather' => [
                     [
-                        'description' => 'Météo indisponible (clé API en cours d\'activation)', 
+                        'description' => 'Météo indisponible (clé API en cours d\'activation)',
                         'icon'        => '01n'
                     ]
                 ],

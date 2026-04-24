@@ -81,6 +81,8 @@ class Ferme
 
     public function getUser(): ?User { return $this->user; }
     public function setUser(?User $user): static { $this->user = $user; return $this; }
+    public function getProprietaire(): ?User { return $this->user; }
+    public function setProprietaire(?User $proprietaire): static { $this->user = $proprietaire; return $this; }
 
     /**
      * @return Collection<int, Plante>

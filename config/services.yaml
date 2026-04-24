@@ -19,6 +19,7 @@ services:
             $weatherApiKey: '%app.weather_api_key%'
             $perenualApiKey: '%env(PERENUAL_API_KEY)%'
             $groqApiKey: '%app.groq_api_key%'
+            $apiKey: '%app.groq_api_key%'
 
     # Chargement automatique des classes de src/
     App\:

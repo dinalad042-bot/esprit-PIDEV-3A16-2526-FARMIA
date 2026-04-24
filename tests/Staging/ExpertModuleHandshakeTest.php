@@ -17,11 +17,12 @@ use App\DTO\DiagnosisResult;
 class ExpertModuleHandshakeTest extends BaseWebTestCase
 {
     private $groqService;
+    private $expertUser;
     
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loginAsExpert();
+        $this->expertUser = $this->loginAsExpert();
         
         // Mock AI service for consistent testing
         $this->groqService = $this->createMock(GroqService::class);
@@ -104,7 +105,7 @@ class ExpertModuleHandshakeTest extends BaseWebTestCase
      */
     private function createAnalyse(StatutAnalyse $status = StatutAnalyse::EN_ATTENTE): Analyse
     {
-        $expert = $this->getUser();
+        $expert = $this->expertUser;
         
         $ferme = new Ferme();
         $ferme->setNomFerme('Test Farm - Handshake');
@@ -115,7 +116,7 @@ class ExpertModuleHandshakeTest extends BaseWebTestCase
         $analyse = new Analyse();
         $analyse->setDateAnalyse(new \DateTime());
         $analyse->setResultatTechnique('Test analysis for handshake testing');
-        $analyse->setStatut($status);
+        $analyse->setStatut($status->value);
         $analyse->setFerme($ferme);
         
         if ($status !== StatutAnalyse::EN_ATTENTE) {
