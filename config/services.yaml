@@ -1,18 +1,26 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
+# config/services.yaml
 
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    # Paramètres pour les APIs existantes
+    app.weather_api_key: '%env(OPENWEATHER_API_KEY)%'
+    
+    # Nouveau paramètre pour l'IA via Groq
+    app.groq_api_key: '%env(GROQ_API_KEY)%'
 
 services:
-    # default configuration for services in *this* file
+    # Configuration par défaut
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true      
+        autoconfigure: true 
+        
+        # Le BIND global permet d'injecter automatiquement les clés dans vos constructeurs
+        # Il suffit de nommer l'argument exactement comme ci-dessous
+        bind:
+            $weatherApiKey: '%app.weather_api_key%'
+            $perenualApiKey: '%env(PERENUAL_API_KEY)%'
+            $groqApiKey: '%app.groq_api_key%'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    # Chargement automatique des classes de src/
     App\:
         resource: '../src/'
         exclude:
@@ -20,23 +28,14 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-
-    App\Service\FaceEnrollmentService:
+    # Configuration du service PlantService
+    App\Service\PlantService:
         arguments:
-            $pythonApiUrl: '%env(string:PYTHON_API_URL)%'
-            $datasetBasePath: '%kernel.project_dir%/python_api/dataset'
+            $trefleApiToken: '%env(TREFLE_API_TOKEN)%'
 
-    App\Service\PythonFaceRecognitionService:
+    # Injection spécifique pour AnimalController
+    # (Le bind global suffit normalement, mais on le définit explicitement pour la clarté)
+    App\Controller\AnimalController:
         arguments:
-            $pythonApiUrl: '%env(string:PYTHON_API_URL)%'
-
-    App\Service\GroqService:
-        arguments:
-            $apiKey: '%env(string:GROQ_API_KEY)%'
-            $model: '%env(string:GROQ_MODEL)%'
-
-    App\Service\WeatherService:
-        arguments:
-            $apiKey: '%env(string:OPENWEATHER_API_KEY)%'
+            $groqApiKey: '%app.groq_api_key%'
+        tags: ['controller.service_arguments']

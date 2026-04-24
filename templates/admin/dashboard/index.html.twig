@@ -1,4 +1,4 @@
-﻿{% extends 'layouts/admin.html.twig' %}
+{% extends 'layouts/admin.html.twig' %}
 
 {% block title %}Dashboard Admin - FarmAI{% endblock %}
 
@@ -11,7 +11,7 @@
 
 <div class="welcome-section">
     <h1 class="welcome-title">Bienvenue, {{ app.user.prenom|default('aymen') }} {{ app.user.nom|default('aymen') }}!</h1>
-    <p class="welcome-subtitle">Ne remettez jamais ├á demain ce qui peut ├¬tre fait aujourd'hui ! <i class="fa-solid fa-seedling" style="color: var(--primary-green);"></i></p>
+    <p class="welcome-subtitle">Ne remettez jamais à demain ce qui peut être fait aujourd'hui ! <i class="fa-solid fa-seedling" style="color: var(--primary-green);"></i></p>
 </div>
 
 <div class="stats-grid">
@@ -48,7 +48,7 @@
             <div class="stat-label">Agricoles</div>
             <div class="stat-sublabel">Exploitants</div>
             <div class="stat-footer stat-footer-line">
-                <i class="fa-solid fa-check" style="color: #4ade80;"></i> V├⌐rifi├⌐s
+                <i class="fa-solid fa-check" style="color: #4ade80;"></i> Vérifiés
             </div>
         </div>
     </a>
@@ -79,7 +79,7 @@
 
     <div class="enterprise-card">
         <h3 class="enterprise-title"><i class="fa-solid fa-building"></i> FarmAI Enterprise</h3>
-        <p class="enterprise-text">G├⌐rez votre exploitation agricole intelligente avec les derni├¿res technologies d'IA.</p>
+        <p class="enterprise-text">Gérez votre exploitation agricole intelligente avec les dernières technologies d'IA.</p>
         <i class="fa-solid fa-seedling enterprise-icon"></i>
     </div>
 </div>

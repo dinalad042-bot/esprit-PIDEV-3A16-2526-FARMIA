@@ -9,31 +9,18 @@
         <tbody>
             <tr>
                 <th>Id</th>
-                <td>{{ plante.idPlante }}</td>
+                <td>{{ plante.id }}</td>
             </tr>
             <tr>
-                <th>Nom espèce</th>
-                <td>{{ plante.nomEspece }}</td>
-            </tr>
-            <tr>
-                <th>Cycle de vie</th>
-                <td>{{ plante.cycleVie }}</td>
-            </tr>
-            <tr>
-                <th>Quantité</th>
-                <td>{{ plante.quantite }}</td>
-            </tr>
-            <tr>
-                <th>Ferme</th>
-                <td>{{ plante.ferme ? plante.ferme.nomFerme : 'Non assigné' }}</td>
+                <th>Nom</th>
+                <td>{{ plante.nom }}</td>
             </tr>
         </tbody>
     </table>
 
     <a href="{{ path('app_plante_index') }}">back to list</a>
 
-    <a href="{{ path('app_plante_edit', {'id': plante.idPlante}) }}">edit</a>
+    <a href="{{ path('app_plante_edit', {'id': plante.id}) }}">edit</a>
 
     {{ include('plante/_delete_form.html.twig') }}
 {% endblock %}
-

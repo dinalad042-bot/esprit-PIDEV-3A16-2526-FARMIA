@@ -2,8 +2,11 @@
 
 namespace App\Controller\Web;
 
-use App\Repository\AnalyseRepository;
-use App\Repository\ConseilRepository;
+// Ajout des Repositories avec les bons noms : Plante et Animal
+use App\Repository\FermeRepository;
+use App\Repository\PlanteRepository; 
+use App\Repository\AnimalRepository;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,11 +14,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardController extends AbstractController
 {
-    public function __construct(
-        private AnalyseRepository $analyseRepo,
-        private ConseilRepository $conseilRepo
-    ) {}
-
     #[Route('/dashboard', name: 'dashboard_default')]
     public function index(): Response
     {
@@ -41,54 +39,50 @@ class DashboardController extends AbstractController
     #[IsGranted('ROLE_EXPERT')]
     public function expert(): Response
     {
-        $user = $this->getUser();
-        $userId = $user->getId();
-
-        $stats = [
-            'analysesThisMonth' => $this->analyseRepo->countByTechnicienThisMonth($userId),
-            'analysesTotal' => $this->analyseRepo->countByTechnicien($userId),
-            'conseilsTotal' => $this->conseilRepo->countByTechnicien($userId),
-            'conseilsUrgent' => $this->conseilRepo->countByTechnicienAndPriorite($userId, 'HAUTE'),
-            'pendingRequests' => $this->analyseRepo->countPendingRequests(),
-        ];
-
         return $this->render('portal/expert/index.html.twig', [
-            'user' => $user,
-            'stats' => $stats
+            'user' => $this->getUser()
         ]);
     }
+
+    // -----------------------------------------------------------
+    // --- ESPACE AGRICOLE ---
+    // -----------------------------------------------------------
 
     #[Route('/agricole/dashboard', name: 'dashboard_agricole')]
     #[IsGranted('ROLE_AGRICOLE')]
-    public function agricole(): Response
-    {
-        $user = $this->getUser();
-        $fermes = $user->getFermes();
-        
-        // Calculate real stats
-        $fermeCount = $fermes->count();
-        $planteCount = 0;
-        $animalCount = 0;
-        $conseilCount = 0;
-        
-        foreach ($fermes as $ferme) {
-            $planteCount += $ferme->getPlantes()->count();
-            $animalCount += $ferme->getAnimals()->count();
-            // Count conseils from analyses of this ferme
-            foreach ($ferme->getAnalyses() as $analyse) {
-                $conseilCount += $analyse->getConseils()->count();
-            }
-        }
-        
+    public function agricole(
+        FermeRepository $fermeRepo, 
+        PlanteRepository $planteRepo, // Changé ici (Plante au lieu de Culture)
+        AnimalRepository $animalRepo
+    ): Response {
+        // Comptage dynamique depuis la base de données
+        $nbFermes = $fermeRepo->count([]);
+        $nbPlantes = $planteRepo->count([]); // Changé ici
+        $nbAnimaux = $animalRepo->count([]);
+
         return $this->render('portal/agricole/index.html.twig', [
-            'user' => $user,
-            'fermeCount' => $fermeCount,
-            'planteCount' => $planteCount,
-            'animalCount' => $animalCount,
-            'conseilCount' => $conseilCount,
-            'hasFermes' => $fermeCount > 0
+            'user' => $this->getUser(),
+            // Transmission des variables à la vue Twig
+            'nb_fermes' => $nbFermes,
+            'nb_plantes' => $nbPlantes, // Changé ici
+            'nb_animaux' => $nbAnimaux,
         ]);
     }
+
+    // Ajout de la route pour le sous-menu "Gestion de l'Exploitation"
+    #[Route('/agricole/exploitation', name: 'app_exploitation')]
+    #[IsGranted('ROLE_AGRICOLE')]
+    public function exploitation(): Response
+    {
+        // Assure-toi de placer ton fichier twig d'exploitation dans ce dossier
+        return $this->render('portal/agricole/exploitation.html.twig', [
+            'user' => $this->getUser()
+        ]);
+    }
+
+    // -----------------------------------------------------------
+    // --- ESPACE FOURNISSEUR ---
+    // -----------------------------------------------------------
 
     #[Route('/fournisseur/dashboard', name: 'dashboard_fournisseur')]
     #[IsGranted('ROLE_FOURNISSEUR')]

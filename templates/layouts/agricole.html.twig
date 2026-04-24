@@ -8,6 +8,61 @@
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/profile_modal.css') }}">
     {% block stylesheets %}{% endblock %}
+
+    <style>
+        /* --- PERSISTANCE ET NETTOYAGE GOOGLE --- */
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        body { top: 0px !important; }
+
+        /* --- STYLE DU BOUTON FLOTTANT (TOUJOURS PRÉSENT) --- */
+        .translate-floating-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 9999;
+            background: #10b981; /* Vert FarmAI */
+            color: white;
+            padding: 12px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+
+        .translate-floating-btn:hover {
+            transform: scale(1.05);
+            background: #059669;
+        }
+
+        .translate-floating-btn i {
+            font-size: 1.4rem;
+            margin-right: 8px;
+        }
+
+        /* Masquer le texte par défaut de Google et ne garder que le sélecteur */
+        #google_translate_element {
+            display: inline-block;
+        }
+
+        .goog-te-gadget-simple {
+            background-color: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .goog-te-menu-value span {
+            color: white !important; /* Texte en blanc sur le bouton vert */
+            font-weight: 600 !important;
+            font-size: 0.85rem !important;
+            text-transform: uppercase;
+        }
+
+        .goog-te-gadget-icon { display: none !important; }
+    </style>
 </head>
 <body>
     <aside class="sidebar">
@@ -38,27 +93,15 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ path('app_ferme_index') }}" class="{% if current_route starts with 'app_ferme' %}active{% endif %}">
+                <a href="{{ path('app_exploitation_menu') }}" class="{% if current_route == 'app_exploitation_menu' %}active{% endif %}">
                     <i class="fa-solid fa-tractor"></i>
-                    <span>Mes Fermes</span>
+                    <span>Mon Exploitation</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ path('app_plante_index') }}" class="{% if current_route starts with 'app_plante' %}active{% endif %}">
-                    <i class="fa-solid fa-seedling"></i>
-                    <span>Cultures</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ path('farmer_my_requests') }}" class="{% if current_route starts with 'farmer' %}active{% endif %}">
-                    <i class="fa-solid fa-flask"></i>
-                    <span>Mes Analyses</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ path('app_animal_index') }}" class="{% if current_route starts with 'app_animal' %}active{% endif %}">
-                    <i class="fa-solid fa-cow"></i>
-                    <span>Animaux</span>
+                <a href="#">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Recommandations</span>
                 </a>
             </li>
         </ul>
@@ -75,10 +118,6 @@
         <header class="topbar">
             <div class="brand-title">FarmAI Platform</div>
             <div class="topbar-right">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Rechercher...">
-                </div>
                 <div class="topbar-avatar" style="display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border-radius: 50%;" onclick="openProfileModal()">
                     {% include 'components/_avatar.html.twig' with {'user': app.user, 'size': '100%', 'fontSize': '1rem'} %}
                 </div>
@@ -88,8 +127,25 @@
         {% block body %}{% endblock %}
     </main>
 
+    <div class="translate-floating-btn">
+        <i class="fa-solid fa-language"></i>
+        <div id="google_translate_element"></div>
+    </div>
+
     {% include 'components/_profile_modal.html.twig' %}
-    {% include 'components/_chatbot.html.twig' %}
-    {% block javascripts %}{% endblock %}
+    
+    {% block javascripts %}
+        <script type="text/javascript">
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'fr', 
+                    includedLanguages: 'en,ar,es,it,de', 
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                }, 'google_translate_element');
+            }
+        </script>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    {% endblock %}
 </body>
 </html>

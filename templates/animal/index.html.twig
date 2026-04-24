@@ -55,7 +55,7 @@
 
         <div style="display: flex; align-items: center; gap: 15px;">
             <form action="{{ path('app_animal_index') }}" method="GET" style="display: flex; align-items: center; background: white; padding: 5px 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                <input type="text" name="search" value="{{ search }}" placeholder="Rechercher..." style="border: none; outline: none; padding: 8px; width: 150px; font-size: 0.9rem;">
+                <input type="text" name="search" value="{{ searchTerm }}" placeholder="Rechercher..." style="border: none; outline: none; padding: 8px; width: 150px; font-size: 0.9rem;">
                 <button type="submit" style="background: none; border: none; color: #64748b; cursor: pointer;"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
 
@@ -81,7 +81,6 @@
             {% set action_url = animal_edit ? path('app_animal_update', {'id_animal': animal_edit.idAnimal}) : path('app_animal_new') %}
             
             <form action="{{ action_url }}" method="POST" novalidate>
-                {# ESPÈCE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">Espèce / Race</label>
                     <input type="text" name="espece" value="{{ animal_edit ? animal_edit.espece : '' }}" placeholder="Ex: Bovin" style="width: 100%; padding: 12px; border: 1px solid {{ errors.espece is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
@@ -90,7 +89,6 @@
                     {% endif %}
                 </div>
 
-                {# SANTÉ #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">État de Santé</label>
                     <input type="text" name="etat_sante" value="{{ animal_edit ? animal_edit.etatSante : '' }}" placeholder="Ex: Excellente" style="width: 100%; padding: 12px; border: 1px solid {{ errors.etat_sante is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
@@ -99,7 +97,6 @@
                     {% endif %}
                 </div>
 
-                {# DATE NAISSANCE #}
                 <div style="margin-bottom: 18px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">Date de Naissance</label>
                     <input type="date" name="date_naissance" value="{{ animal_edit and animal_edit.dateNaissance ? animal_edit.dateNaissance|date('Y-m-d') : '' }}" style="width: 100%; padding: 12px; border: 1px solid {{ errors.date_naissance is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
@@ -108,7 +105,6 @@
                     {% endif %}
                 </div>
 
-                {# AFFECTATION FERME #}
                 <div style="margin-bottom: 25px;">
                     <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 0.85rem;">Affectation à une Ferme</label>
                     <select name="id_ferme" style="width: 100%; padding: 12px; border: 1px solid {{ errors.id_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; background-color: white; outline-color: #2d7a36;">
@@ -144,38 +140,79 @@
                             <th style="padding: 18px; color: #64748b; font-size: 0.9rem;">Santé</th>
                             <th style="padding: 18px; color: #64748b; font-size: 0.9rem;">Naissance</th>
                             <th style="padding: 18px; color: #64748b; font-size: 0.9rem;">Ferme</th>
-                            <th style="padding: 18px; text-align: center; color: #64748b; font-size: 0.9rem;">Actions</th>
+                            <th style="padding: 18px; color: #64748b; font-size: 0.9rem; width: 200px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for animal in animals %}
                             <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 18px;">
+                                <td style="padding: 18px; vertical-align: middle;">
                                     <div style="font-weight: 700; color: #1e293b;">{{ animal.espece }}</div>
                                 </td>
-                                <td style="padding: 18px;">
-                                    {% set is_critical = animal.etatSante|lower in ['malade', 'critique'] %}
-                                    <span style="padding: 6px 12px; background: {{ is_critical ? '#fef2f2' : '#f0fdf4' }}; color: {{ is_critical ? '#dc2626' : '#166534' }}; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid {{ is_critical ? '#fecaca' : '#bbf7d0' }};">
-                                        {{ animal.etatSante }}
-                                    </span>
+                                
+                                <td style="padding: 18px; vertical-align: middle;">
+                                    {% set is_critical = animal.etatSante|lower in ['malade', 'critique', 'faible', 'urgence'] %}
+                                    
+                                    {% if is_critical %}
+                                        <a href="{{ path('app_animal_consultation', {'id_animal': animal.idAnimal}) }}" title="Consulter l'IA Vétérinaire" style="text-decoration: none; display: inline-flex;">
+                                            <span style="padding: 6px 12px; background: #fef2f2; color: #dc2626; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 6px; transition: 0.3s;">
+                                                <i class="fa-solid fa-robot"></i> {{ animal.etatSante }}
+                                            </span>
+                                        </a>
+                                    {% else %}
+                                        <span style="padding: 6px 12px; background: #f0fdf4; color: #166534; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid #bbf7d0; display: inline-block;">
+                                            {{ animal.etatSante }}
+                                        </span>
+                                    {% endif %}
                                 </td>
-                                <td style="padding: 18px; color: #475569;">{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}</td>
-                                <td style="padding: 18px;">
-                                    <span style="color: #2d7a36; font-weight: 700;">
-                                        <i class="fa-solid fa-location-dot" style="font-size: 0.8rem; margin-right: 5px;"></i>
+
+                                <td style="padding: 18px; vertical-align: middle; color: #475569;">
+                                    {{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '-' }}
+                                </td>
+
+                                <td style="padding: 18px; vertical-align: middle;">
+                                    <span style="color: #2d7a36; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-location-dot" style="font-size: 0.8rem;"></i>
                                         {{ animal.ferme ? animal.ferme.nomFerme : 'Non affecté' }}
                                     </span>
                                 </td>
-                                <td style="padding: 18px; display: flex; gap: 10px; justify-content: center;">
-                                    <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal}) }}" style="color: #2d7a36; background: #f0fdf4; padding: 8px; border-radius: 8px; border: 1px solid #bbf7d0; text-decoration: none;">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-                                    <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer cet animal ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ animal.idAnimal) }}">
-                                        <button style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 8px; cursor: pointer;">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+
+                                <td style="padding: 18px; vertical-align: middle;">
+                                    <div style="display: flex; gap: 8px; align-items: center; justify-content: flex-start;">
+                                        
+                                        {% set btn_base = "width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; text-decoration: none; transition: 0.2s; flex-shrink: 0; font-size: 0.9rem;" %}
+
+                                        {# CORRECTION ICI : Utilisation de 'id' au lieu de 'id_animal' si nécessaire #}
+                                        <a href="{{ path('app_animal_carnet', {'id': animal.idAnimal}) }}" 
+                                           style="{{ btn_base }} color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb;" 
+                                           title="Carnet de santé">
+                                            <i class="fa-solid fa-book-medical"></i>
+                                        </a>
+
+                                        <div style="width: 36px;">
+                                            {% if animal.etatSante|lower == 'malade' %}
+                                                <a href="{{ path('app_animal_map', {'id_animal': animal.idAnimal}) }}" 
+                                                   target="_blank" 
+                                                   style="{{ btn_base }} color: #3b82f6; background: #eff6ff; border: 1px solid #bfdbfe;" 
+                                                   title="Vétérinaires proches">
+                                                     <i class="fa-solid fa-location-dot"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                        <a href="{{ path('app_animal_edit', {'id_animal': animal.idAnimal}) }}" 
+                                           style="{{ btn_base }} color: #2d7a36; background: #f0fdf4; border: 1px solid #bbf7d0;"
+                                           title="Modifier">
+                                             <i class="fa-solid fa-pen"></i>
+                                        </a>
+
+                                        <form method="post" action="{{ path('app_animal_delete', {'id_animal': animal.idAnimal}) }}" onsubmit="return confirm('Supprimer cet animal ?');" style="margin: 0;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ animal.idAnimal) }}">
+                                            <button type="submit" style="{{ btn_base }} color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; cursor: pointer;">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}

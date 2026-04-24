@@ -67,15 +67,4 @@ class AnimalRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
-
-    public function findByFerme(int $fermeId): array
-    {
-        return $this->createQueryBuilder('a')
-            ->join('a.ferme', 'f')
-            ->andWhere('f.id = :fermeId')
-            ->setParameter('fermeId', $fermeId)
-            ->orderBy('a.espece', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
 }

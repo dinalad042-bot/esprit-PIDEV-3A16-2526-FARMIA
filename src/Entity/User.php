@@ -39,24 +39,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'password', type: 'string', length: 255, nullable: false)]
     private ?string $password = null;
 
-    #[ORM\Column(name: 'cin', type: 'string', length: 8, unique: true, nullable: true)]
+    #[ORM\Column(name: 'cin', type: 'string', length: 20, unique: true, nullable: true)]
     #[Assert\NotBlank(message: 'Le CIN est obligatoire.')]
-    #[Assert\Regex(pattern: '/^\d{8}$/', message: 'Le CIN doit contenir exactement 8 chiffres.')]
+    #[Assert\Length(exactly: 8, exactMessage: 'Le CIN doit contenir exactement 8 caractères.')]
     private ?string $cin = null;
 
     #[ORM\Column(name: 'adresse', type: 'text', nullable: true)]
     #[Assert\NotBlank(message: 'L\'adresse est obligatoire.')]
     private ?string $adresse = null;
 
-    #[ORM\Column(name: 'latitude', type: 'float', nullable: true)]
-    private ?float $latitude = null;
-
-    #[ORM\Column(name: 'longitude', type: 'float', nullable: true)]
-    private ?float $longitude = null;
-
-    #[ORM\Column(name: 'telephone', type: 'string', length: 8, unique: true, nullable: true)]
+    #[ORM\Column(name: 'telephone', type: 'string', length: 20, nullable: true)]
     #[Assert\NotBlank(message: 'Le téléphone est obligatoire.')]
-    #[Assert\Regex(pattern: '/^\d{8}$/', message: 'Le téléphone doit contenir exactement 8 chiffres.')]
+    #[Assert\Length(exactly: 8, exactMessage: 'Le téléphone doit contenir exactement 8 caractères.')]
     private ?string $telephone = null;
 
     #[ORM\Column(name: 'image_url', type: 'string', length: 255, nullable: true)]
@@ -71,42 +65,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\Column(name: 'reset_code', type: 'string', length: 6, nullable: true)]
-    private ?string $resetCode = null;
-
-    #[ORM\Column(name: 'reset_code_expires_at', type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $resetCodeExpiresAt = null;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
-    /**
-     * Visages enregistrés pour cet utilisateur (données biométriques en BDD).
-     * PRESERVED FROM MAIN - Facial Authentication
-     */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private Collection $userFaces;
-
-    /**
-     * ANALYSES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH
-     * Analyses réalisées par ce technicien
-     */
-    #[ORM\OneToMany(mappedBy: 'technicien', targetEntity: Analyse::class)]
-    private Collection $analyses;
-
-    /**
-     * FERMES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH
-     * Fermes gérées par cet utilisateur
-     */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class, cascade: ['persist'])]
+    // --- RELATION AVEC LES FERMES ---
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class)]
     private Collection $fermes;
 
     public function __construct()
     {
-        $this->userLogs  = new ArrayCollection();
-        $this->userFaces = new ArrayCollection();        // PRESERVED: Facial auth
-        $this->analyses = new ArrayCollection();       // ADDED: Analyses module
-        $this->fermes   = new ArrayCollection();       // ADDED: Ferme module
+        $this->userLogs = new ArrayCollection();
+        $this->fermes = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -119,11 +88,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $dbRole = $this->role;
-        // The DB stores 'ADMIN', 'EXPERT', etc. — prefix with ROLE_ for Symfony
         if ($dbRole && !str_starts_with($dbRole, 'ROLE_')) {
             $dbRole = 'ROLE_' . $dbRole;
         }
-        // MODIFIED: Ensure ROLE_USER is always present (from Alaeddin)
         $r = $dbRole ?: 'ROLE_USER';
         return array_unique([$r, 'ROLE_USER']);
     }
@@ -134,204 +101,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     // ─── Getters / Setters ───────────────────────────────────────────────────
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-    public function setNom(?string $nom): static
-    {
-        $this->nom = $nom;
-        return $this;
-    }
+    public function getNom(): ?string { return $this->nom; }
+    public function setNom(?string $nom): static { $this->nom = $nom; return $this; }
 
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-    public function setPrenom(?string $prenom): static
-    {
-        $this->prenom = $prenom;
-        return $this;
-    }
+    public function getPrenom(): ?string { return $this->prenom; }
+    public function setPrenom(?string $prenom): static { $this->prenom = $prenom; return $this; }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-    public function setEmail(string $email): static
-    {
-        $this->email = strtolower(trim($email));
-        return $this;
-    }
+    public function getEmail(): ?string { return $this->email; }
+    public function setEmail(string $email): static { $this->email = $email; return $this; }
 
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
-        return $this;
-    }
+    public function getPassword(): ?string { return $this->password; }
+    public function setPassword(string $password): static { $this->password = $password; return $this; }
 
-    public function getCin(): ?string
-    {
-        return $this->cin;
-    }
-    public function setCin(?string $cin): static
-    {
-        $this->cin = $cin !== null ? str_replace(' ', '', trim($cin)) : null;
-        return $this;
-    }
+    public function getCin(): ?string { return $this->cin; }
+    public function setCin(?string $cin): static { $this->cin = $cin; return $this; }
 
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-    public function setRole(?string $role): static
-    {
-        $this->role = $role;
-        return $this;
-    }
+    public function getRole(): ?string { return $this->role; }
+    public function setRole(?string $role): static { $this->role = $role; return $this; }
 
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-    public function setTelephone(?string $telephone): static
-    {
-        $this->telephone = $telephone !== null ? str_replace(' ', '', trim($telephone)) : null;
-        return $this;
-    }
+    public function getTelephone(): ?string { return $this->telephone; }
+    public function setTelephone(?string $telephone): static { $this->telephone = $telephone; return $this; }
 
-    public function getAdresse(): ?string
-    {
-        return $this->adresse;
-    }
-    public function setAdresse(?string $adresse): static
-    {
-        $this->adresse = $adresse;
-        return $this;
-    }
+    public function getAdresse(): ?string { return $this->adresse; }
+    public function setAdresse(?string $adresse): static { $this->adresse = $adresse; return $this; }
 
-    public function getLatitude(): ?float
-    {
-        return $this->latitude;
-    }
-    public function setLatitude(?float $latitude): static
-    {
-        $this->latitude = $latitude;
-        return $this;
-    }
+    public function getImageUrl(): ?string { return $this->imageUrl; }
+    public function setImageUrl(?string $imageUrl): static { $this->imageUrl = $imageUrl; return $this; }
 
-    public function getLongitude(): ?float
-    {
-        return $this->longitude;
-    }
-    public function setLongitude(?float $longitude): static
-    {
-        $this->longitude = $longitude;
-        return $this;
-    }
+    public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
+    public function setCreatedAt(?\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
 
-    public function getImageUrl(): ?string
-    {
-        return $this->imageUrl;
-    }
-    public function setImageUrl(?string $imageUrl): static
-    {
-        $this->imageUrl = $imageUrl;
-        return $this;
-    }
+    public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-    public function setCreatedAt(?\DateTimeInterface $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
-
-    public function getResetCode(): ?string
-    {
-        return $this->resetCode;
-    }
-    public function setResetCode(?string $resetCode): static
-    {
-        $this->resetCode = $resetCode;
-        return $this;
-    }
-
-    public function getResetCodeExpiresAt(): ?\DateTimeInterface
-    {
-        return $this->resetCodeExpiresAt;
-    }
-    public function setResetCodeExpiresAt(?\DateTimeInterface $resetCodeExpiresAt): static
-    {
-        $this->resetCodeExpiresAt = $resetCodeExpiresAt;
-        return $this;
-    }
+    public function getUserLogs(): Collection { return $this->userLogs; }
 
     /**
-     * PRESERVED FROM MAIN: Facial authentication methods
-     */
-    public function hasFaceAuth(): bool
-    {
-        foreach ($this->userFaces as $face) {
-            if ($face->isActive()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function getActiveFace(): ?\App\Entity\UserFace
-    {
-        foreach ($this->userFaces as $face) {
-            if ($face->isActive()) {
-                return $face;
-            }
-        }
-        return null;
-    }
-
-    public function getUserFaces(): Collection
-    {
-        return $this->userFaces;
-    }
-
-    public function getUserLogs(): Collection
-    {
-        return $this->userLogs;
-    }
-
-    /**
-     * ADDED FROM ALAEDDIN: Analyses management
-     */
-    public function getAnalyses(): Collection
-    {
-        return $this->analyses;
-    }
-
-    /**
-     * ADDED FROM ALAEDDIN: Ferme management
+     * @return Collection<int, Ferme>
      */
     public function getFermes(): Collection
     {
@@ -350,6 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeFerme(Ferme $ferme): static
     {
         if ($this->fermes->removeElement($ferme)) {
+            // set the owning side to null (unless already changed)
             if ($ferme->getUser() === $this) {
                 $ferme->setUser(null);
             }

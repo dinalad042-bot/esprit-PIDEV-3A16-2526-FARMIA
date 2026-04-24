@@ -9,31 +9,18 @@
         <tbody>
             <tr>
                 <th>Id</th>
-                <td>{{ animal.idAnimal }}</td>
+                <td>{{ animal.id }}</td>
             </tr>
             <tr>
-                <th>Espèce</th>
-                <td>{{ animal.espece }}</td>
-            </tr>
-            <tr>
-                <th>État de santé</th>
-                <td>{{ animal.etatSante }}</td>
-            </tr>
-            <tr>
-                <th>Date de naissance</th>
-                <td>{{ animal.dateNaissance ? animal.dateNaissance|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Ferme</th>
-                <td>{{ animal.ferme ? animal.ferme.nomFerme : 'Non assigné' }}</td>
+                <th>Nom</th>
+                <td>{{ animal.nom }}</td>
             </tr>
         </tbody>
     </table>
 
     <a href="{{ path('app_animal_index') }}">back to list</a>
 
-    <a href="{{ path('app_animal_edit', {'id': animal.idAnimal}) }}">edit</a>
+    <a href="{{ path('app_animal_edit', {'id': animal.id}) }}">edit</a>
 
     {{ include('animal/_delete_form.html.twig') }}
 {% endblock %}
-

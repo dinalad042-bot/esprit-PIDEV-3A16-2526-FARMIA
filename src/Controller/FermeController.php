@@ -5,11 +5,14 @@ namespace App\Controller;
 use App\Entity\Ferme;
 use App\Form\FermeType;
 use App\Repository\FermeRepository;
+use App\Service\WeatherService;
+use App\Service\FarmPredictor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -17,33 +20,24 @@ use Dompdf\Options;
 class FermeController extends AbstractController
 {
     /**
-     * Affiche le formulaire de création d'une nouvelle ferme
-     */
-    #[Route('/new', name: 'app_ferme_new', methods: ['GET'])]
-    public function new(): Response
-    {
-        return $this->render('ferme/new.html.twig');
-    }
-
-    /**
      * PAGE PRINCIPALE : Affiche la liste ET gère l'ajout (POST)
      */
     #[Route('/', name: 'app_ferme_index', methods: ['GET', 'POST'])]
-    public function index(FermeRepository $fermeRepository, Request $request, EntityManagerInterface $em): Response
+    public function index(FermeRepository $fermeRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         $search = $request->query->get('search', '');
         $sort = $request->query->get('sort', 'idFerme');
         $direction = $request->query->get('direction', 'ASC');
 
-        $ferme = new Ferme();
-        $form = $this->createForm(FermeType::class, $ferme);
-        $form->handleRequest($request);
-
         // --- PARTIE AJOUT (POST) ---
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Lie l'utilisateur connecté
-            if ($this->getUser()) {
-                $ferme->setUser($this->getUser());
+        if ($request->isMethod('POST')) {
+            $ferme = new Ferme();
+            $this->mapData($ferme, $request); // Utilise la fonction de mapping existante
+            
+            // Validation
+            $violations = $validator->validate($ferme);
+            if (count($violations) > 0) {
+                return $this->renderWithErrors($violations, $fermeRepository, null, $request);
             }
 
             $em->persist($ferme);
@@ -64,7 +58,7 @@ class FermeController extends AbstractController
             'searchTerm' => $search,
             'currentSort' => $sort,
             'currentDirection' => $direction,
-            'form' => $form->createView(),
+            'errors' => [],
             'ferme_edit' => null // Mode ajout par défaut
         ]);
     }
@@ -105,12 +99,10 @@ class FermeController extends AbstractController
         $sort = $request->query->get('sort', 'idFerme');
         $direction = $request->query->get('direction', 'ASC');
 
-        $form = $this->createForm(FermeType::class, $ferme);
-
         return $this->render('ferme/index.html.twig', [
             'fermes' => $repo->findAll(), // Ou findBySearchAndSort
             'ferme_edit' => $ferme,
-            'form' => $form->createView(),
+            'errors' => [],
             'searchTerm' => $search,
             'currentSort' => $sort,
             'currentDirection' => $direction
@@ -121,30 +113,19 @@ class FermeController extends AbstractController
      * Mise à jour effective en base
      */
     #[Route('/{id_ferme}/update', name: 'app_ferme_update', methods: ['POST'])]
-    public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, FermeRepository $repo): Response
+    public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
     {
-        $form = $this->createForm(FermeType::class, $ferme);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'La ferme a été mise à jour.');
-            return $this->redirectToRoute('app_ferme_index');
+        $this->mapData($ferme, $request);
+        
+        $violations = $validator->validate($ferme);
+        if (count($violations) > 0) {
+            return $this->renderWithErrors($violations, $repo, $ferme, $request);
         }
 
-        // En cas d'erreurs, afficher le formulaire avec les erreurs
-        $search = $request->query->get('search', '');
-        $sort = $request->query->get('sort', 'idFerme');
-        $direction = $request->query->get('direction', 'ASC');
-
-        return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findAll(),
-            'ferme_edit' => $ferme,
-            'form' => $form->createView(),
-            'searchTerm' => $search,
-            'currentSort' => $sort,
-            'currentDirection' => $direction
-        ]);
+        $em->flush();
+        $this->addFlash('success', 'La ferme a été mise à jour.');
+        
+        return $this->redirectToRoute('app_ferme_index');
     }
 
     /**
@@ -161,4 +142,77 @@ class FermeController extends AbstractController
         
         return $this->redirectToRoute('app_ferme_index');
     }
+
+    /**
+     * Mapping manuel des données (Évite d'utiliser FermeType pour rester sur l'index)
+     */
+    private function mapData(Ferme $ferme, Request $request): void
+    {
+        $ferme->setNomFerme($request->request->get('nom_ferme'));
+        $ferme->setLieu($request->request->get('lieu'));
+        
+        $surface = $request->request->get('surface');
+        $ferme->setSurface($surface !== null ? (float)$surface : 0.0);
+
+        $lat = $request->request->get('latitude');
+        $lng = $request->request->get('longitude');
+
+        $ferme->setLatitude($lat !== null && $lat !== '' ? (float)$lat : null);
+        $ferme->setLongitude($lng !== null && $lng !== '' ? (float)$lng : null);
+        
+        // On lie l'utilisateur connecté
+        if ($this->getUser()) {
+            $ferme->setUser($this->getUser());
+        }
+    }
+
+    /**
+     * Centralisation de l'affichage en cas d'erreurs
+     */
+    private function renderWithErrors($violations, FermeRepository $repo, ?Ferme $ferme_edit, Request $request): Response
+    {
+        $errors = [];
+        foreach ($violations as $v) { 
+            $errors[$v->getPropertyPath()] = $v->getMessage(); 
+        }
+
+        return $this->render('ferme/index.html.twig', [
+            'fermes' => $repo->findAll(),
+            'ferme_edit' => $ferme_edit,
+            'errors' => $errors,
+            'searchTerm' => $request->query->get('search'),
+            'currentSort' => $request->query->get('sort', 'idFerme'),
+            'currentDirection' => $request->query->get('direction', 'ASC')
+        ]);
+    }
+    #[Route('/ferme/{id}/weather', name: 'app_ferme_weather')]
+public function weather(int $id, FermeRepository $repo, WeatherService $weatherService): Response
+{
+    $ferme = $repo->find($id);
+    
+    // On récupère la météo en utilisant le lieu (ville) de la ferme
+    $weatherData = $weatherService->getWeather($ferme->getLieu());
+
+    return $this->render('ferme/weather.html.twig', [
+        'ferme' => $ferme,
+        'weather' => $weatherData
+    ]);
+}
+#[Route('/{id_ferme}/prediction', name: 'app_ferme_prediction', methods: ['GET'])]
+public function prediction(int $id_ferme, FermeRepository $repo, FarmPredictor $predictor): Response
+{
+    $ferme = $repo->find($id_ferme);
+    
+    if (!$ferme) {
+        throw $this->createNotFoundException('Ferme non trouvée');
+    }
+
+    // Appel au service que nous avons créé précédemment
+    $planExpert = $predictor->generateFullPlan($ferme);
+
+    return $this->render('ferme/prediction.html.twig', [
+        'ferme' => $ferme,
+        'plan' => $planExpert
+    ]);
+}
 }
