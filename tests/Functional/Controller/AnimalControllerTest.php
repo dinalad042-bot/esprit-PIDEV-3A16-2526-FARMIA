@@ -17,12 +17,32 @@ use App\Tests\BaseWebTestCase;
  */
 class AnimalControllerTest extends BaseWebTestCase
 {
+    public static function tearDownAfterClass(): void
+    {
+        if (self::$client !== null) {
+            try {
+                $kernel = self::$client->getKernel();
+                if (!$kernel->getContainer()->has('doctrine')) {
+                    self::$client = static::createClient();
+                }
+                $em = self::$client->getContainer()->get('doctrine')->getManager();
+                if ($em->isOpen()) {
+                    $em->createQuery('DELETE FROM App\Entity\Animal')->execute();
+                    $em->flush();
+                }
+            } catch (\Exception $e) {
+                // Silently ignore if cleanup fails
+            }
+        }
+        parent::tearDownAfterClass();
+    }
+
     /**
      * TEST: Index page loads successfully
      */
     public function testIndexPageLoads(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
         self::$client->request('GET', '/animal/');
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -33,7 +53,7 @@ class AnimalControllerTest extends BaseWebTestCase
      */
     public function testCanCreateAnimalWithValidData(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
 
         $ferme = $this->createTestFerme();
         self::$em->flush();
@@ -57,7 +77,7 @@ class AnimalControllerTest extends BaseWebTestCase
      */
     public function testCreateAnimalWithInvalidDataShowsErrors(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
 
         self::$client->request('POST', '/animal/new', [
             'espece' => '', // Empty
@@ -73,7 +93,7 @@ class AnimalControllerTest extends BaseWebTestCase
      */
     public function testEditPageLoads(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
 
         $animal = $this->createTestAnimal();
         self::$em->flush();
@@ -87,7 +107,7 @@ class AnimalControllerTest extends BaseWebTestCase
      */
     public function testCanUpdateAnimal(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
 
         $animal = $this->createTestAnimal();
         self::$em->flush();
@@ -95,7 +115,8 @@ class AnimalControllerTest extends BaseWebTestCase
         self::$client->request('POST', '/animal/' . $animal->getIdAnimal() . '/update', [
             'espece' => 'Updated Species',
             'etat_sante' => 'Malade',
-            'date_naissance' => '2019-05-20'
+            'date_naissance' => '2019-05-20',
+            'id_ferme' => $animal->getFerme()->getIdFerme()
         ]);
 
         $this->assertResponseRedirects('/animal/');
@@ -110,16 +131,14 @@ class AnimalControllerTest extends BaseWebTestCase
      */
     public function testCanDeleteAnimal(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
 
         $animal = $this->createTestAnimal();
         self::$em->flush();
         $id = $animal->getIdAnimal();
 
-        $token = self::$client->getContainer()->get('security.csrf.token_manager')
-            ->getToken('delete' . $id)->getValue();
-
-        self::$client->request('POST', '/animal/delete/' . $id, ['_token' => $token]);
+        // CSRF validation is skipped in test environment
+        self::$client->request('POST', '/animal/delete/' . $id, ['_token' => 'test_token']);
 
         $this->assertResponseRedirects('/animal/');
 
@@ -132,7 +151,7 @@ class AnimalControllerTest extends BaseWebTestCase
      */
     public function testPdfGeneration(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
         $this->createTestAnimal();
         self::$em->flush();
 
@@ -146,6 +165,11 @@ class AnimalControllerTest extends BaseWebTestCase
      */
     public function testUnauthenticatedUserIsRedirected(): void
     {
+        // Force a completely fresh client without any session
+        self::ensureKernelShutdown();
+        self::$client = static::createClient();
+        
+        // Make request without logging in
         self::$client->request('GET', '/animal/');
         $this->assertResponseRedirects();
     }

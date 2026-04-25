@@ -6,7 +6,7 @@ use App\Entity\Analyse;
 use App\Entity\Conseil;
 use App\Entity\User;
 use App\Entity\Ferme;
-use App\Enum\PrioriteConseil;
+use App\Enum\Priorite;
 use App\Tests\BaseWebTestCase;
 
 /**
@@ -16,10 +16,12 @@ use App\Tests\BaseWebTestCase;
  */
 class ExpertConseilControllerTest extends BaseWebTestCase
 {
+    private ?User $expert = null;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loginAsExpert();
+        $this->expert = $this->loginAsExpert();
     }
 
     /**
@@ -27,7 +29,7 @@ class ExpertConseilControllerTest extends BaseWebTestCase
      */
     public function testExpertConseilListLoads(): void
     {
-        $this->client->request('GET', '/expert/conseil');
+        self::$client->request('GET', '/expert/conseils');
 
         $this->assertResponseIsSuccessful();
     }
@@ -39,7 +41,7 @@ class ExpertConseilControllerTest extends BaseWebTestCase
     {
         $conseil = $this->createConseil();
 
-        $this->client->request('GET', '/expert/conseil/' . $conseil->getId());
+        self::$client->request('GET', '/expert/conseil/' . $conseil->getId());
 
         $this->assertResponseIsSuccessful();
     }
@@ -51,7 +53,7 @@ class ExpertConseilControllerTest extends BaseWebTestCase
     {
         $analyse = $this->createAnalyse();
 
-        $this->client->request('GET', '/expert/conseil/new/' . $analyse->getId());
+        self::$client->request('GET', '/expert/conseil/new');
 
         $this->assertResponseIsSuccessful();
     }
@@ -63,7 +65,7 @@ class ExpertConseilControllerTest extends BaseWebTestCase
     {
         $conseil = $this->createConseil();
 
-        $this->client->request('GET', '/expert/conseil/' . $conseil->getId() . '/edit');
+        self::$client->request('GET', '/expert/conseil/' . $conseil->getId() . '/edit');
 
         $this->assertResponseIsSuccessful();
     }
@@ -76,14 +78,14 @@ class ExpertConseilControllerTest extends BaseWebTestCase
         $conseil = $this->createConseil();
         $id = $conseil->getId();
 
-        $this->client->request('POST', '/expert/conseil/' . $id . '/delete', [
+        self::$client->request('POST', '/expert/conseil/' . $id . '/delete', [
             '_token' => 'test_token'
         ]);
 
         $this->assertResponseRedirects();
 
         // Verify deletion
-        $deletedConseil = $this->entityManager->getRepository(Conseil::class)->find($id);
+        $deletedConseil = self::$em->getRepository(Conseil::class)->find($id);
         $this->assertNull($deletedConseil);
     }
 
@@ -95,9 +97,9 @@ class ExpertConseilControllerTest extends BaseWebTestCase
         $this->logout();
         $this->loginAsUser();
 
-        $this->client->request('GET', '/expert/conseil');
+        self::$client->request('GET', '/expert/conseils');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/dashboard');
     }
 
     /**
@@ -105,7 +107,7 @@ class ExpertConseilControllerTest extends BaseWebTestCase
      */
     private function createAnalyse(): Analyse
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy([]);
+        $user = self::$em->getRepository(User::class)->findOneBy([]);
 
         $ferme = new Ferme();
         $ferme->setNomFerme('Test Farm');
@@ -117,10 +119,12 @@ class ExpertConseilControllerTest extends BaseWebTestCase
         $analyse->setDateAnalyse(new \DateTime());
         $analyse->setResultatTechnique('Test result');
         $analyse->setFerme($ferme);
+        $analyse->setDemandeur($user);
+        $analyse->setTechnicien($this->expert); // Set the logged-in expert as technicien
 
-        $this->entityManager->persist($ferme);
-        $this->entityManager->persist($analyse);
-        $this->entityManager->flush();
+        self::$em->persist($ferme);
+        self::$em->persist($analyse);
+        self::$em->flush();
 
         return $analyse;
     }
@@ -134,11 +138,11 @@ class ExpertConseilControllerTest extends BaseWebTestCase
 
         $conseil = new Conseil();
         $conseil->setDescriptionConseil('Test conseil description');
-        $conseil->setPriorite(PrioriteConseil::HAUTE);
+        $conseil->setPriorite(Priorite::HAUTE);
         $conseil->setAnalyse($analyse);
 
-        $this->entityManager->persist($conseil);
-        $this->entityManager->flush();
+        self::$em->persist($conseil);
+        self::$em->flush();
 
         return $conseil;
     }

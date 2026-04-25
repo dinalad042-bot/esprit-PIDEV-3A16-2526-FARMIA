@@ -20,12 +20,14 @@ final class Version20260412083657 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE analyse DROP FOREIGN KEY FK_351B0C7E33A2AC9B');
-        $this->addSql('ALTER TABLE analyse ADD statut VARCHAR(20) NOT NULL DEFAULT \'en_attente\', ADD description_demande LONGTEXT DEFAULT NULL, ADD id_demandeur INT DEFAULT NULL, ADD id_animal_cible INT DEFAULT NULL, ADD id_plante_cible INT DEFAULT NULL, CHANGE id_technicien id_technicien INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE analyse ADD CONSTRAINT FK_351B0C7EE6681A34 FOREIGN KEY (id_demandeur) REFERENCES user (id_user) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE analyse ADD CONSTRAINT FK_351B0C7EE36F40BD FOREIGN KEY (id_animal_cible) REFERENCES animal (id_animal) ON DELETE SET NULL');
-        $this->addSql('ALTER TABLE analyse ADD CONSTRAINT FK_351B0C7EA7275E42 FOREIGN KEY (id_plante_cible) REFERENCES plante (id_plante) ON DELETE SET NULL');
-        $this->addSql('ALTER TABLE analyse ADD CONSTRAINT FK_351B0C7E33A2AC9B FOREIGN KEY (id_technicien) REFERENCES user (id_user) ON DELETE SET NULL');
+        // SQLite: use table recreation for column modifications
+        // FK was already inline in Version20260411193339, no need to drop/add
+        $this->addSql('CREATE TABLE analyse_new (id_analyse INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date_analyse DATETIME DEFAULT NULL, resultat_technique LONGTEXT DEFAULT NULL, image_url VARCHAR(255) DEFAULT NULL, id_technicien INT NOT NULL, id_ferme INT NOT NULL, statut VARCHAR(20) NOT NULL DEFAULT \'en_attente\', description_demande LONGTEXT DEFAULT NULL, id_demandeur INT DEFAULT NULL, id_animal_cible INT DEFAULT NULL, id_plante_cible INT DEFAULT NULL, CONSTRAINT FK_351B0C7E33A2AC9B FOREIGN KEY (id_technicien) REFERENCES user (id_user) ON DELETE CASCADE, CONSTRAINT FK_351B0C7E88D30FF2 FOREIGN KEY (id_ferme) REFERENCES ferme (id_ferme) ON DELETE CASCADE)');
+        $this->addSql('INSERT INTO analyse_new (id_analyse, date_analyse, resultat_technique, image_url, id_technicien, id_ferme) SELECT id_analyse, date_analyse, resultat_technique, image_url, id_technicien, id_ferme FROM analyse');
+        $this->addSql('DROP TABLE analyse');
+        $this->addSql('ALTER TABLE analyse_new RENAME TO analyse');
+        $this->addSql('CREATE INDEX IDX_351B0C7E33A2AC9B ON analyse (id_technicien)');
+        $this->addSql('CREATE INDEX IDX_351B0C7E88D30FF2 ON analyse (id_ferme)');
         $this->addSql('CREATE INDEX IDX_351B0C7EE6681A34 ON analyse (id_demandeur)');
         $this->addSql('CREATE INDEX IDX_351B0C7EE36F40BD ON analyse (id_animal_cible)');
         $this->addSql('CREATE INDEX IDX_351B0C7EA7275E42 ON analyse (id_plante_cible)');
@@ -34,14 +36,15 @@ final class Version20260412083657 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE analyse DROP FOREIGN KEY FK_351B0C7EE6681A34');
-        $this->addSql('ALTER TABLE analyse DROP FOREIGN KEY FK_351B0C7EE36F40BD');
-        $this->addSql('ALTER TABLE analyse DROP FOREIGN KEY FK_351B0C7EA7275E42');
-        $this->addSql('ALTER TABLE analyse DROP FOREIGN KEY FK_351B0C7E33A2AC9B');
-        $this->addSql('DROP INDEX IDX_351B0C7EE6681A34 ON analyse');
-        $this->addSql('DROP INDEX IDX_351B0C7EE36F40BD ON analyse');
-        $this->addSql('DROP INDEX IDX_351B0C7EA7275E42 ON analyse');
-        $this->addSql('ALTER TABLE analyse DROP statut, DROP description_demande, DROP id_demandeur, DROP id_animal_cible, DROP id_plante_cible, CHANGE id_technicien id_technicien INT NOT NULL');
-        $this->addSql('ALTER TABLE analyse ADD CONSTRAINT FK_351B0C7E33A2AC9B FOREIGN KEY (id_technicien) REFERENCES user (id_user) ON DELETE CASCADE');
+        // SQLite: use table recreation for column modifications
+        $this->addSql('DROP INDEX IDX_351B0C7EE6681A34');
+        $this->addSql('DROP INDEX IDX_351B0C7EE36F40BD');
+        $this->addSql('DROP INDEX IDX_351B0C7EA7275E42');
+        $this->addSql('CREATE TABLE analyse_new (id_analyse INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date_analyse DATETIME DEFAULT NULL, resultat_technique LONGTEXT DEFAULT NULL, image_url VARCHAR(255) DEFAULT NULL, id_technicien INT NOT NULL, id_ferme INT NOT NULL, CONSTRAINT FK_351B0C7E33A2AC9B FOREIGN KEY (id_technicien) REFERENCES user (id_user) ON DELETE CASCADE, CONSTRAINT FK_351B0C7E88D30FF2 FOREIGN KEY (id_ferme) REFERENCES ferme (id_ferme) ON DELETE CASCADE)');
+        $this->addSql('INSERT INTO analyse_new (id_analyse, date_analyse, resultat_technique, image_url, id_technicien, id_ferme) SELECT id_analyse, date_analyse, resultat_technique, image_url, id_technicien, id_ferme FROM analyse');
+        $this->addSql('DROP TABLE analyse');
+        $this->addSql('ALTER TABLE analyse_new RENAME TO analyse');
+        $this->addSql('CREATE INDEX IDX_351B0C7E33A2AC9B ON analyse (id_technicien)');
+        $this->addSql('CREATE INDEX IDX_351B0C7E88D30FF2 ON analyse (id_ferme)');
     }
 }

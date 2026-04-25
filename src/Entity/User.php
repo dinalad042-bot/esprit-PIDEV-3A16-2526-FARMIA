@@ -72,10 +72,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class)]
     private Collection $fermes;
 
+    #[ORM\OneToMany(mappedBy: 'technicien', targetEntity: Analyse::class)]
+    private Collection $analyses;
+
+    #[ORM\OneToMany(mappedBy: 'demandeur', targetEntity: Analyse::class)]
+    private Collection $demandes;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class)]
+    private Collection $userFaces;
+
     public function __construct()
     {
         $this->userLogs = new ArrayCollection();
         $this->fermes = new ArrayCollection();
+        $this->analyses = new ArrayCollection();
+        $this->demandes = new ArrayCollection();
+        $this->userFaces = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -164,5 +176,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
         return $this;
+    }
+
+    /**
+     * @return Collection<int, UserFace>
+     */
+    public function getUserFaces(): Collection
+    {
+        return $this->userFaces ?? new ArrayCollection();
+    }
+
+    public function hasFaceAuth(): bool
+    {
+        return $this->userFaces !== null && !$this->userFaces->isEmpty();
+    }
+
+    public function getActiveFace(): ?UserFace
+    {
+        if (!$this->hasFaceAuth()) {
+            return null;
+        }
+        // return the first; adjust logic if needed
+        return $this->userFaces->first() ?: null;
+    }
+
+    /**
+     * @return Collection<int, Analyse>
+     */
+    public function getAnalyses(): Collection
+    {
+        return $this->analyses ?? new ArrayCollection();
     }
 }

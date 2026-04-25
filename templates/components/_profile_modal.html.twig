@@ -1,3 +1,4 @@
+{% if app.user %}
 <!-- Profile Modal Component -->
 <div class="profile-modal-overlay" id="profileModal" style="display: none;">
     <div class="profile-modal">
@@ -50,37 +51,37 @@
 
                     <div class="form-row">
                         <label>Nom:</label>
-                        <input type="text" name="nom" id="pf-nom" class="profile-input" value="{{ app.user.nom }}">
+                        <input type="text" name="nom" id="pf-nom" class="profile-input" value="{{ app.user.nom ?? '' }}">
                         <div class="pf-field-error" id="err-nom"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Prénom:</label>
-                        <input type="text" name="prenom" id="pf-prenom" class="profile-input" value="{{ app.user.prenom }}">
+                        <input type="text" name="prenom" id="pf-prenom" class="profile-input" value="{{ app.user.prenom ?? '' }}">
                         <div class="pf-field-error" id="err-prenom"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Email:</label>
-                        <input type="email" name="email" id="pf-email" class="profile-input" value="{{ app.user.email }}">
+                        <input type="email" name="email" id="pf-email" class="profile-input" value="{{ app.user.email ?? '' }}">
                         <div class="pf-field-error" id="err-email"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>CIN:</label>
-                        <input type="text" name="cin" id="pf-cin" class="profile-input" value="{{ app.user.cin }}">
+                        <input type="text" name="cin" id="pf-cin" class="profile-input" value="{{ app.user.cin ?? '' }}">
                         <div class="pf-field-error" id="err-cin"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Téléphone:</label>
-                        <input type="text" name="telephone" id="pf-telephone" class="profile-input" value="{{ app.user.telephone }}">
+                        <input type="text" name="telephone" id="pf-telephone" class="profile-input" value="{{ app.user.telephone ?? '' }}">
                         <div class="pf-field-error" id="err-telephone"></div>
                     </div>
                     
                     <div class="form-row">
                         <label>Adresse:</label>
-                        <input type="text" name="adresse" id="pf-adresse" class="profile-input" value="{{ app.user.adresse }}">
+                        <input type="text" name="adresse" id="pf-adresse" class="profile-input" value="{{ app.user.adresse ?? '' }}">
                         <div class="pf-field-error" id="err-adresse"></div>
                     </div>
                     
@@ -94,13 +95,13 @@
                         <label>Rôle:</label>
                         {% if is_granted('ROLE_ADMIN') %}
                             <select name="role" class="profile-input">
-                                <option value="ADMIN" {% if 'ROLE_ADMIN' in app.user.roles %}selected{% endif %}>ADMIN</option>
-                                <option value="EXPERT" {% if 'ROLE_EXPERT' in app.user.roles %}selected{% endif %}>EXPERT</option>
-                                <option value="AGRICOLE" {% if 'ROLE_AGRICOLE' in app.user.roles %}selected{% endif %}>AGRICOLE</option>
-                                <option value="FOURNISSEUR" {% if 'ROLE_FOURNISSEUR' in app.user.roles %}selected{% endif %}>FOURNISSEUR</option>
+                                <option value="ADMIN" {% if app.user and 'ROLE_ADMIN' in app.user.roles %}selected{% endif %}>ADMIN</option>
+                                <option value="EXPERT" {% if app.user and 'ROLE_EXPERT' in app.user.roles %}selected{% endif %}>EXPERT</option>
+                                <option value="AGRICOLE" {% if app.user and 'ROLE_AGRICOLE' in app.user.roles %}selected{% endif %}>AGRICOLE</option>
+                                <option value="FOURNISSEUR" {% if app.user and 'ROLE_FOURNISSEUR' in app.user.roles %}selected{% endif %}>FOURNISSEUR</option>
                             </select>
                         {% else %}
-                            <input type="text" class="profile-input" value="{{ app.user.role|default('User') }}" disabled style="opacity: 0.7; cursor: not-allowed;">
+                            <input type="text" class="profile-input" value="{{ (app.user.role ?? 'User')|default('User') }}" disabled style="opacity: 0.7; cursor: not-allowed;">
                         {% endif %}
                     </div>
                     
@@ -312,3 +313,4 @@
 
 <!-- Face registration modal -->
 {% include 'components/_face_registration_modal.html.twig' %}
+{% endif %}

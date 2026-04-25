@@ -164,6 +164,7 @@ class FermeRepositoryTest extends BaseKernelTestCase
         $ferme = new Ferme();
         $ferme->setNomFerme('User Farm');
         $ferme->setLieu('User Place');
+        $ferme->setSurface(150.0);
         $ferme->setUser($user);
 
         $this->em->persist($user);

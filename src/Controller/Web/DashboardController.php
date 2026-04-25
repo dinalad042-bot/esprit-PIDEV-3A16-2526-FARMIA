@@ -6,6 +6,8 @@ namespace App\Controller\Web;
 use App\Repository\FermeRepository;
 use App\Repository\PlanteRepository; 
 use App\Repository\AnimalRepository;
+use App\Repository\AnalyseRepository;
+use App\Repository\ConseilRepository;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,10 +39,20 @@ class DashboardController extends AbstractController
 
     #[Route('/expert/dashboard', name: 'dashboard_expert')]
     #[IsGranted('ROLE_EXPERT')]
-    public function expert(): Response
+    public function expert(AnalyseRepository $analyseRepo, ConseilRepository $conseilRepo): Response
     {
+        $userId = $this->getUser()->getId();
+        
+        $stats = [
+            'analysesTotal' => $analyseRepo->countByTechnicien($userId),
+            'analysesThisMonth' => $analyseRepo->countByTechnicienThisMonth($userId),
+            'conseilsTotal' => $conseilRepo->count([]),
+            'pendingRequests' => $analyseRepo->countPendingRequests(),
+        ];
+
         return $this->render('portal/expert/index.html.twig', [
-            'user' => $this->getUser()
+            'user' => $this->getUser(),
+            'stats' => $stats,
         ]);
     }
 

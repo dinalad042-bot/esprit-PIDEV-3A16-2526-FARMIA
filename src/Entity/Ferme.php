@@ -36,6 +36,12 @@ class Ferme
     #[ORM\Column(type: "float", nullable: true)]
     private ?float $longitude = null;
 
+    #[ORM\Column(name: "created_at", type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(name: "updated_at", type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
     // --- RELATION AVEC L'UTILISATEUR ---
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'fermes')]
     #[ORM\JoinColumn(
@@ -54,10 +60,16 @@ class Ferme
     #[ORM\OneToMany(mappedBy: 'ferme', targetEntity: Animal::class)]
     private Collection $animals;
 
+    #[ORM\OneToMany(mappedBy: 'ferme', targetEntity: Analyse::class)]
+    private Collection $analyses;
+
     public function __construct()
     {
         $this->plantes = new ArrayCollection();
         $this->animals = new ArrayCollection();
+        $this->analyses = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     // --- GETTERS ET SETTERS ---
@@ -78,6 +90,12 @@ class Ferme
 
     public function getLongitude(): ?float { return $this->longitude; }
     public function setLongitude(?float $longitude): static { $this->longitude = $longitude; return $this; }
+
+    public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
+    public function setCreatedAt(?\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
+
+    public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
 
     public function getUser(): ?User { return $this->user; }
     public function setUser(?User $user): static { $this->user = $user; return $this; }
@@ -114,6 +132,41 @@ class Ferme
         if (!$this->animals->contains($animal)) {
             $this->animals->add($animal);
             $animal->setFerme($this);
+        }
+        return $this;
+    }
+
+    public function getId(): ?int { return $this->id_ferme; }
+
+    public function __toString(): string
+    {
+        return $this->nom_ferme . ' - ' . $this->lieu;
+    }
+
+    /**
+     * @return Collection<int, Analyse>
+     */
+    public function getAnalyses(): Collection
+    {
+        return $this->analyses;
+    }
+
+    public function addAnalyse(Analyse $analyse): static
+    {
+        if (!$this->analyses->contains($analyse)) {
+            $this->analyses->add($analyse);
+            $analyse->setFerme($this);
+        }
+        return $this;
+    }
+
+    public function removeAnalyse(Analyse $analyse): static
+    {
+        if ($this->analyses->contains($analyse)) {
+            $this->analyses->removeElement($analyse);
+            if ($analyse->getFerme() === $this) {
+                $analyse->setFerme(null);
+            }
         }
         return $this;
     }

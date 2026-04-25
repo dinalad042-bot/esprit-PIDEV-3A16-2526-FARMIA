@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord - FarmAI{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="welcome-section text-center">
+        <h1 class="welcome-title">Bienvenue sur FarmAI</h1>
+        <p class="welcome-subtitle">Votre plateforme de gestion agricole intelligente</p>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>Bonjour, {{ user.prenom|default('') }} {{ user.nom|default('Utilisateur') }} !</h3>
+                    <p class="mt-3">Votre compte est actif. Contactez l'administrateur pour obtenir des permissions spécifiques.</p>
+                    
+                    <div class="mt-4">
+                        <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary">
+                            <i class="fa-solid fa-sign-out-alt"></i> Se déconnecter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

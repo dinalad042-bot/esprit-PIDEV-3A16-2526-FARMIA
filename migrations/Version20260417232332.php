@@ -20,7 +20,7 @@ final class Version20260417232332 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE arrosage (id INT AUTO_INCREMENT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE arrosage (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)');
     }
 
     public function down(Schema $schema): void

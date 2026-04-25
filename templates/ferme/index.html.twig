@@ -101,6 +101,19 @@
                 {{ ferme_edit|default(null) ? 'Modifier la ferme' : 'Nouvelle ferme' }}
             </h2>
             
+            {% if errors is defined and errors is not empty %}
+                <div class="alert-danger" style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                    <strong style="color: #dc2626; display: block; margin-bottom: 10px;">
+                        <i class="fa-solid fa-circle-exclamation"></i> Erreurs de validation
+                    </strong>
+                    <ul style="margin: 0; padding-left: 20px; color: #dc2626;">
+                        {% for field, error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
             {% set action_url = ferme_edit|default(null) ? path('app_ferme_update', {'id_ferme': ferme_edit.idFerme}) : path('app_ferme_index') %}
             
             <form action="{{ action_url }}" method="POST" novalidate>
@@ -109,7 +122,7 @@
                     <input type="text" name="nom_ferme" required placeholder="Ex: Domaine de l'Olivier" value="{{ ferme_edit|default(null) ? ferme_edit.nomFerme : '' }}" 
                            style="width: 100%; padding: 12px; border: 1px solid {{ errors.nom_ferme is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
                     {% if errors.nom_ferme is defined %}
-                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.nom_ferme }}</small>
+                        <div class="invalid-feedback" style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.nom_ferme }}</div>
                     {% endif %}
                 </div>
 
@@ -118,7 +131,7 @@
                     <input type="text" name="lieu" required placeholder="Ex: Bizerte" value="{{ ferme_edit|default(null) ? ferme_edit.lieu : '' }}" 
                            style="width: 100%; padding: 12px; border: 1px solid {{ errors.lieu is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
                     {% if errors.lieu is defined %}
-                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.lieu }}</small>
+                        <div class="invalid-feedback" style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.lieu }}</div>
                     {% endif %}
                 </div>
 
@@ -127,7 +140,7 @@
                     <input type="number" step="0.1" name="surface" required placeholder="Ex: 5000" value="{{ ferme_edit|default(null) ? ferme_edit.surface : '' }}" 
                            style="width: 100%; padding: 12px; border: 1px solid {{ errors.surface is defined ? '#dc2626' : '#e2e8f0' }}; border-radius: 10px; outline-color: #2d7a36;">
                     {% if errors.surface is defined %}
-                        <small style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.surface }}</small>
+                        <div class="invalid-feedback" style="color: #dc2626; font-weight: 600; display: block; margin-top: 5px;">{{ errors.surface }}</div>
                     {% endif %}
                 </div>
 

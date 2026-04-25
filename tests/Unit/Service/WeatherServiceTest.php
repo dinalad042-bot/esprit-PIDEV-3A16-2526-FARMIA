@@ -17,6 +17,7 @@ class WeatherServiceTest extends TestCase
     public function testGetWeatherForLocationReturnsArray(): void
     {
         $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(200);
         $mockResponse->method('toArray')->willReturn([
             'name' => 'Tunis',
             'sys' => ['country' => 'TN'],
@@ -33,9 +34,9 @@ class WeatherServiceTest extends TestCase
 
         $this->assertIsArray($result);
         $this->assertTrue($result['success']);
-        $this->assertEquals('Tunis', $result['location']);
-        $this->assertEquals(25.5, $result['temperature']);
-        $this->assertEquals(60, $result['humidity']);
+        $this->assertEquals('Tunis', $result['name']);
+        $this->assertEquals(25.5, $result['main']['temp']);
+        $this->assertEquals(60, $result['main']['humidity']);
     }
 
     public function testGetWeatherForLocationHandlesError(): void

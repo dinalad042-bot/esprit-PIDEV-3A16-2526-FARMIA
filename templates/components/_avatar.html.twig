@@ -17,7 +17,7 @@
     {% set styleString = styleString ~ customStyle %}
 {% endif %}
 
-{% if user.imageUrl %}
+{% if user is not null and user.imageUrl is defined and user.imageUrl %}
     <img src="{{ asset(user.imageUrl) }}" class="{{ customClass|default('') }}" alt="{{ initials }}" style="{{ styleString }} object-fit: cover; border-radius: 50%; flex-shrink: 0;">
 {% else %}
     <div class="{{ customClass|default('') }}" style="background-color: {{ initialBg }}; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; text-transform: uppercase; flex-shrink: 0; line-height: 1; mso-line-height-rule: exactly; {{ styleString }}">

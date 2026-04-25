@@ -51,8 +51,9 @@ class TemplateRenderingTest extends BaseWebTestCase
      */
     public function testAnimalIndexPageRenders(): void
     {
-        $this->loginWithRole('ROLE_ADMIN');
+        $this->loginWithRole('ROLE_AGRICOLE');
         self::$client->request('GET', '/animal/');
+        
         $this->assertResponseIsSuccessful();
     }
 
@@ -72,7 +73,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testAnalyseIndexPageRenders(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        self::$client->request('GET', '/analyse/');
+        self::$client->request('GET', '/analyse');
         $this->assertResponseIsSuccessful();
     }
 
@@ -82,7 +83,7 @@ class TemplateRenderingTest extends BaseWebTestCase
     public function testConseilIndexPageRenders(): void
     {
         $this->loginWithRole('ROLE_EXPERT');
-        self::$client->request('GET', '/conseil/');
+        self::$client->request('GET', '/conseil');
         $this->assertResponseIsSuccessful();
     }
 
@@ -94,7 +95,7 @@ class TemplateRenderingTest extends BaseWebTestCase
         $this->loginWithRole('ROLE_ADMIN');
         self::$client->request('GET', '/admin/dashboard');
         // May redirect if not configured, just check it doesn't 500
-        $this->assertResponseStatusCodeIsOneOf([200, 301, 302, 403]);
+        $this->assertTrue(in_array(self::$client->getResponse()->getStatusCode(), [200, 301, 302, 403]));
     }
 
     /**
@@ -104,6 +105,12 @@ class TemplateRenderingTest extends BaseWebTestCase
     {
         $this->loginWithRole('ROLE_USER');
         $crawler = self::$client->request('GET', '/');
+        
+        // May redirect to dashboard for authenticated users
+        if (self::$client->getResponse()->isRedirect()) {
+            self::$client->followRedirect();
+        }
+        
         $this->assertResponseIsSuccessful();
         // Check that basic HTML structure exists
         $this->assertSelectorExists('html');

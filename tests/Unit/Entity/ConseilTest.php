@@ -8,4 +8,10 @@ use App\Enum\Priorite;
 use PHPUnit\Framework\TestCase;  
   
 class ConseilTest extends TestCase  
-{ 
+{
+    public function testConseilCreation(): void
+    {
+        $conseil = new Conseil();
+        $this->assertInstanceOf(Conseil::class, $conseil);
+    }
+}

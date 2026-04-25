@@ -20,16 +20,14 @@ final class Version20260413162007 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE plante_besoin');
+        // plante_besoin table doesn't exist in current schema, skip DROP
         $this->addSql('ALTER TABLE animal ADD image VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE user_log ADD CONSTRAINT FK_6429094EA76ED395 FOREIGN KEY (user_id) REFERENCES user (id_user)');
+        // FK already inline in user_log CREATE TABLE, skip ADD CONSTRAINT
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE plante_besoin (id INT AUTO_INCREMENT NOT NULL, nom_espece VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, frequence_arrosage INT NOT NULL, type_engrais VARCHAR(100) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_general_ci`, frequence_engrais INT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_general_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->addSql('ALTER TABLE animal DROP image');
-        $this->addSql('ALTER TABLE user_log DROP FOREIGN KEY FK_6429094EA76ED395');
     }
 }

@@ -44,6 +44,9 @@ abstract class BaseWebTestCase extends WebTestCase
     {
         $schemaTool = new SchemaTool(self::$em);
         $metadata = self::$em->getMetadataFactory()->getAllMetadata();
+        
+        // Drop existing schema and recreate for clean test state
+        $schemaTool->dropSchema($metadata);
         $schemaTool->createSchema($metadata);
     }
     

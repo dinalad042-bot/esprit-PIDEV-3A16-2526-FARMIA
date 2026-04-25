@@ -118,6 +118,6 @@ class FermeTest extends TestCase
         $ferme->setNomFerme('Belle Ferme');
         $ferme->setLieu('Sfax');
 
-        $this->assertEquals('Belle Ferme — Sfax', (string) $ferme);
+        $this->assertEquals('Belle Ferme - Sfax', (string) $ferme);
     }
 }

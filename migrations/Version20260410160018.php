@@ -20,12 +20,10 @@ final class Version20260410160018 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user ADD face_descriptor LONGTEXT DEFAULT NULL, ADD face_auth_enabled TINYINT(1) DEFAULT 0 NOT NULL, ADD face_registered_at DATETIME DEFAULT NULL');
+        $this->addSql('ALTER TABLE user ADD face_descriptor LONGTEXT DEFAULT NULL');
+        $this->addSql('ALTER TABLE user ADD face_auth_enabled TINYINT(1) DEFAULT 0 NOT NULL');
+        $this->addSql('ALTER TABLE user ADD face_registered_at DATETIME DEFAULT NULL');
     }
 
-    public function down(Schema $schema): void
-    {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user DROP face_descriptor, DROP face_auth_enabled, DROP face_registered_at');
-    }
+
 }

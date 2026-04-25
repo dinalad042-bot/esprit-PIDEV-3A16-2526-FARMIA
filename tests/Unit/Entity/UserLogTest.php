@@ -101,3 +101,4 @@ class UserLogTest extends TestCase
         $this->assertEquals('Success', $log->getDescription());
     }
 }
+

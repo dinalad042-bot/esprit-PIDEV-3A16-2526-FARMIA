@@ -149,6 +149,68 @@ PROMPT;
         }
     }
 
+    // ─── Plant Disease Diagnosis ─────────────────────────────────────
+
+    public function diagnosePlantDisease(string $imagePath): DiagnosisResult
+    {
+        $prompt = <<<PROMPT
+Tu es un expert agronome. Analyse cette image de plante et fournis un diagnostic structuré.
+
+Réponds UNIQUEMENT en JSON valide avec cette structure exacte:
+{
+  "plant_name": "nom de la plante",
+  "disease_name": "nom de la maladie ou null si saine",
+  "confidence": 85.5,
+  "description": "description détaillée",
+  "symptoms": ["symptôme 1", "symptôme 2"],
+  "treatment": ["traitement 1", "traitement 2"],
+  "prevention": ["prévention 1", "prévention 2"],
+  "is_healthy": false
+}
+PROMPT;
+
+        try {
+            $response = $this->httpClient->request('POST', self::API_URL, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type'  => 'application/json',
+                ],
+                'json' => [
+                    'model'       => $this->model,
+                    'messages'    => [
+                        [
+                            'role'    => 'user',
+                            'content' => $prompt . "\n\nImage: " . $imagePath,
+                        ],
+                    ],
+                    'temperature' => 0.3,
+                    'max_tokens'  => 1024,
+                ],
+                'timeout' => 30,
+            ]);
+
+            $data    = $response->toArray();
+            $content = $data['choices'][0]['message']['content'] ?? '{}';
+
+            // Clean markdown code blocks if present
+            $content = preg_replace('/```json\s*/i', '', $content);
+            $content = preg_replace('/```\s*/i', '', $content);
+            $content = trim($content);
+
+            $parsed = json_decode($content, true);
+
+            if (!$parsed || !is_array($parsed)) {
+                return DiagnosisResult::error('Réponse IA invalide');
+            }
+
+            $parsed['rawResponse'] = $content;
+            return DiagnosisResult::fromArray($parsed);
+
+        } catch (\Throwable $e) {
+            return DiagnosisResult::error('Failed to get AI diagnosis');
+        }
+    }
+
     // ─── Executive Summary ────────────────────────────────────────────
 
     public function generateExecutiveSummary(

@@ -50,7 +50,7 @@ class Analyse
     #[ORM\Column(name: 'statut', type: 'string', length: 20, nullable: false)]
     private string $statut = 'en_attente';
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'demandes')]
     #[ORM\JoinColumn(name: 'id_demandeur', referencedColumnName: 'id_user', nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull(message: 'Veuillez sélectionner un demandeur.')]
     private ?User $demandeur = null;
@@ -117,7 +117,11 @@ class Analyse
     public function setImageUrl(?string $u): static { $this->imageUrl = $u; return $this; }
 
     public function getStatut(): string { return $this->statut; }
-    public function setStatut(string $statut): static { $this->statut = $statut; return $this; }
+    public function setStatut(string|StatutAnalyse $statut): static
+    {
+        $this->statut = $statut instanceof StatutAnalyse ? $statut->value : $statut;
+        return $this;
+    }
 
     public function getStatutEnum(): StatutAnalyse
     {
