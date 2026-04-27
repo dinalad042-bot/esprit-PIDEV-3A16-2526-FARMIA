@@ -54,4 +54,49 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function existsByEmail(string $email, ?int $excludeId = null): bool
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->where('u.email = :email')
+            ->setParameter('email', strtolower(trim($email)));
+
+        if ($excludeId !== null) {
+            $qb->andWhere('u.id != :excludeId')
+               ->setParameter('excludeId', $excludeId);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    public function existsByCin(string $cin, ?int $excludeId = null): bool
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->where('u.cin = :cin')
+            ->setParameter('cin', str_replace(' ', '', trim($cin)));
+
+        if ($excludeId !== null) {
+            $qb->andWhere('u.id != :excludeId')
+               ->setParameter('excludeId', $excludeId);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    public function existsByTelephone(string $telephone, ?int $excludeId = null): bool
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->where('u.telephone = :telephone')
+            ->setParameter('telephone', str_replace(' ', '', trim($telephone)));
+
+        if ($excludeId !== null) {
+            $qb->andWhere('u.id != :excludeId')
+               ->setParameter('excludeId', $excludeId);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult() > 0;
+    }
 }
