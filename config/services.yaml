@@ -22,3 +22,17 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\ERP\ERPEmailService:
+        arguments:
+            $fromAddress: '%env(MAILER_FROM)%'
+
+    App\Command\TestMailCommand:
+        arguments:
+            $from: '%env(MAILER_FROM)%'
+        tags: ['console.command']
+
+    App\Service\ERP\PaymentService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $qrOutputDir: '%kernel.project_dir%/public/uploads/erp_qr'

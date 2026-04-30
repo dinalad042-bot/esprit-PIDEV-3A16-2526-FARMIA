@@ -1,0 +1,67 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Services — FarmIA Desk{% endblock %}
+
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-boxes-stacked" style="color:#22c55e;"></i> Services / Stock</h1>
+    <a href="{{ path('erp_service_new') }}" class="btn-erp btn-primary">
+        <i class="fa-solid fa-plus"></i> Nouveau service
+    </a>
+</div>
+
+{% if critiques|length > 0 %}
+<div class="stock-warning">
+    <strong><i class="fa-solid fa-triangle-exclamation"></i> {{ critiques|length }} service(s) en stock critique</strong>
+    <table style="margin-top:.5rem;">
+        <tr><th>Service</th><th>Stock</th><th>Seuil</th></tr>
+        {% for s in critiques %}
+        <tr>
+            <td>{{ s.nom }}</td>
+            <td><span class="badge-critique">{{ s.stock }}</span></td>
+            <td>{{ s.seuilCritique }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<table class="erp-table">
+    <thead>
+        <tr>
+            <th>#</th><th>Nom</th><th>Description</th><th>Prix (€)</th>
+            <th>Stock</th><th>Seuil critique</th><th>Statut</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in services %}
+        <tr>
+            <td>{{ s.idService }}</td>
+            <td><strong>{{ s.nom }}</strong></td>
+            <td>{{ (s.description ?? '')|slice(0, 50) }}{% if (s.description ?? '')|length > 50 %}…{% endif %}</td>
+            <td>{{ s.prix|number_format(2, ',', ' ') }} €</td>
+            <td>{{ s.stock }}</td>
+            <td>{{ s.seuilCritique }}</td>
+            <td>
+                {% if s.seuilCritique > 0 and s.isStockCritique %}
+                    <span class="badge-critique"><i class="fa-solid fa-triangle-exclamation"></i> Critique</span>
+                {% else %}
+                    <span class="badge-ok"><i class="fa-solid fa-circle-check"></i> OK</span>
+                {% endif %}
+            </td>
+            <td style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                <a href="{{ path('erp_service_edit', {id: s.idService}) }}" class="btn-erp btn-secondary">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <form method="post" action="{{ path('erp_service_delete', {id: s.idService}) }}"
+                      onsubmit="return confirm('Supprimer ce service ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_service_' ~ s.idService) }}">
+                    <button type="submit" class="btn-erp btn-danger"><i class="fa-solid fa-trash"></i></button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center;color:#94a3b8;padding:2rem;">Aucun service enregistré.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

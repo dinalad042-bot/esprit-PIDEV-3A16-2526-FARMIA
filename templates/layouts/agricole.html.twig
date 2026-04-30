@@ -56,6 +56,29 @@
                     <span>Recommandations</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ path('erp_dashboard') }}" class="{% if current_route starts with 'erp_' %}active{% endif %}">
+                    <i class="fa-solid fa-industry"></i>
+                    <span>Production ERP</span>
+                </a>
+            </li>
+            {% if current_route starts with 'erp_' %}
+            <li class="nav-item" style="padding-left:1rem;">
+                <a href="{{ path('erp_matiere_index') }}" class="{% if current_route starts with 'erp_matiere' %}active{% endif %}">
+                    <i class="fa-solid fa-cubes"></i><span>Matières</span>
+                </a>
+            </li>
+            <li class="nav-item" style="padding-left:1rem;">
+                <a href="{{ path('erp_produit_index') }}" class="{% if current_route starts with 'erp_produit' %}active{% endif %}">
+                    <i class="fa-solid fa-box-open"></i><span>Produits finis</span>
+                </a>
+            </li>
+            <li class="nav-item" style="padding-left:1rem;">
+                <a href="{{ path('erp_achat_index') }}" class="{% if current_route starts with 'erp_achat' %}active{% endif %}">
+                    <i class="fa-solid fa-cart-plus"></i><span>Achats</span>
+                </a>
+            </li>
+            {% endif %}
         </ul>
 
         <div class="logout-container">

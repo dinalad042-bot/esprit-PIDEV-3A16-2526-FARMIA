@@ -54,8 +54,9 @@
         </div>
 
         <div class="btn-group">
-            <a href="#" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouveau Produit</a>
-            <a href="#" class="btn btn-outline-green"><i class="fa-solid fa-clipboard-list"></i> Voir Commandes</a>
+            <a href="{{ path('erp_dashboard') }}" class="btn btn-dark"><i class="fa-solid fa-store"></i> FarmIA Desk ERP</a>
+            <a href="{{ path('erp_vente_new') }}" class="btn btn-outline-green"><i class="fa-solid fa-receipt"></i> Nouvelle Vente</a>
+            <a href="{{ path('erp_vente_index') }}" class="btn btn-outline-green"><i class="fa-solid fa-list"></i> Mes Ventes</a>
         </div>
 
         <div class="action-list">
@@ -71,10 +72,13 @@
     </div>
 
     <div class="enterprise-card">
-        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> Mon Catalogue</h3>
+        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> FarmIA Desk ERP</h3>
         <p class="enterprise-text">
-            Publiez vos produits agricoles, gérez les commandes et suivez vos ventes en temps réel.
+            Gérez votre catalogue de services, enregistrez vos achats et ventes, suivez votre stock et recevez des alertes automatiques.
         </p>
+        <a href="{{ path('erp_dashboard') }}" style="display:inline-block;margin-top:.75rem;background:#22c55e;color:#fff;padding:.4rem .9rem;border-radius:8px;font-size:.85rem;font-weight:600;text-decoration:none;">
+            <i class="fa-solid fa-arrow-right"></i> Accéder à l'ERP
+        </a>
         <i class="fa-solid fa-truck-field enterprise-icon"></i>
     </div>
 </div>

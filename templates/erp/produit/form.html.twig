@@ -1,0 +1,143 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}{{ title }} — FarmIA Desk{% endblock %}
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-box-open" style="color:#22c55e;"></i> {{ title }}</h1>
+    <a href="{{ path('erp_produit_index') }}" class="btn-erp btn-secondary"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+</div>
+
+<div class="erp-form-card" style="max-width:800px;">
+    {{ form_start(form) }}
+
+    <div class="form-group">{{ form_label(form.nom) }}{{ form_widget(form.nom) }}{{ form_errors(form.nom) }}</div>
+    <div class="form-group">{{ form_label(form.description) }}{{ form_widget(form.description) }}{{ form_errors(form.description) }}</div>
+    <div class="form-group">{{ form_label(form.prixVente) }}{{ form_widget(form.prixVente) }}{{ form_errors(form.prixVente) }}</div>
+
+    {# Simple product toggle #}
+    <div class="form-group" style="background:#f8fafc;border-radius:8px;padding:.75rem 1rem;border:1px solid #e2e8f0;">
+        <label style="display:flex;align-items:center;gap:.75rem;cursor:pointer;font-weight:600;color:#475569;">
+            {{ form_widget(form.isSimple) }}
+            <span>{{ form_label(form.isSimple) }}</span>
+        </label>
+        {{ form_errors(form.isSimple) }}
+    </div>
+
+    {# Stock field — only for simple products #}
+    <div id="simple-section" style="display:none;">
+        <div class="form-group">
+            {{ form_label(form.stock) }}
+            {{ form_widget(form.stock) }}
+            {{ form_errors(form.stock) }}
+            <small style="color:#94a3b8;">Stock actuel de ce produit (géré manuellement).</small>
+        </div>
+    </div>
+
+    {# Recipe section — only for manufactured products #}
+    <div id="recipe-section">
+        <div class="form-group">
+            {{ form_label(form.quantiteProduite) }}
+            {{ form_widget(form.quantiteProduite) }}
+            {{ form_errors(form.quantiteProduite) }}
+            <small style="color:#94a3b8;">Combien d'unités cette recette produit-elle ? Ex: 3 bois + 2 métal → 2 chaises = mettre 2.</small>
+        </div>
+
+        <h3 style="margin:1.5rem 0 .5rem;font-size:1rem;color:#475569;"><i class="fa-solid fa-flask"></i> Recette — matières nécessaires</h3>
+        <p style="font-size:.8rem;color:#94a3b8;margin-bottom:.75rem;">Ex: 3 bois + 2 métal → produit {{ form.vars.data.quantiteProduite|default(1) }} unité(s)</p>
+        {{ form_errors(form.recette) }}
+
+        <div id="recette-container"
+             data-prototype="{{ form_widget(form.recette.vars.prototype)|e('html_attr') }}"
+             data-index="{{ form.recette|length }}">
+            {% for ing in form.recette %}
+            <div class="ligne-row" style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
+                <div style="flex:2;">{{ form_label(ing.matiere) }}{{ form_widget(ing.matiere) }}{{ form_errors(ing.matiere) }}</div>
+                <div style="flex:1;">{{ form_label(ing.quantite) }}{{ form_widget(ing.quantite) }}{{ form_errors(ing.quantite) }}</div>
+                <div style="padding-bottom:.1rem;">
+                    <button type="button" class="btn-erp btn-danger remove-ing"><i class="fa-solid fa-minus"></i></button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add-ing" class="btn-erp btn-secondary" style="margin-top:.5rem;">
+            <i class="fa-solid fa-plus"></i> Ajouter un ingrédient
+        </button>
+    </div>
+
+    <div style="margin-top:1.5rem;">
+        <button type="submit" class="btn-erp btn-primary"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
+    </div>
+    {{ form_end(form) }}
+</div>
+
+<style>
+/* Make prototype-added rows display correctly */
+#recette-container .ligne-row { display:flex; gap:.75rem; align-items:flex-end; flex-wrap:wrap; margin-bottom:.75rem; padding:.75rem; background:#f8fafc; border-radius:8px; }
+#recette-container .ligne-row > div { flex:1; min-width:120px; }
+#recette-container .ligne-row > div:first-child { flex:2; }
+#recette-container .ligne-row > div:last-child { flex:0 0 auto; }
+#recette-container label { display:block; font-size:.85rem; font-weight:600; color:#475569; margin-bottom:.3rem; }
+#recette-container input, #recette-container select { width:100%; padding:.5rem .75rem; border:1px solid #e2e8f0; border-radius:8px; font-size:.9rem; }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+(function() {
+    // Symfony generates checkbox id as formName_fieldName = "produit_isSimple"
+    const isSimpleChk = document.querySelector('input[type="checkbox"][id$="isSimple"]');
+    const simpleSection = document.getElementById('simple-section');
+    const recipeSection = document.getElementById('recipe-section');
+
+    function toggleSections() {
+        if (!isSimpleChk) return;
+        if (isSimpleChk.checked) {
+            simpleSection.style.display = 'block';
+            recipeSection.style.display = 'none';
+        } else {
+            simpleSection.style.display = 'none';
+            recipeSection.style.display = 'block';
+        }
+    }
+
+    if (isSimpleChk) {
+        isSimpleChk.addEventListener('change', toggleSections);
+    }
+    toggleSections();
+
+    // Recipe ingredient add/remove
+    const container = document.getElementById('recette-container');
+    if (!container) return;
+
+    function bindRemove(row) {
+        const btn = row.querySelector('.remove-ing');
+        if (btn) btn.addEventListener('click', () => row.remove());
+    }
+
+    container.querySelectorAll('.ligne-row').forEach(bindRemove);
+
+    document.getElementById('add-ing').addEventListener('click', function() {
+        const proto = container.dataset.prototype;
+        const idx = parseInt(container.dataset.index);
+        // Replace placeholder with current index
+        const html = proto.replace(/__name__/g, idx);
+        container.dataset.index = idx + 1;
+
+        // Create wrapper row
+        const row = document.createElement('div');
+        row.className = 'ligne-row';
+        // Insert prototype HTML directly — it already contains the form fields
+        row.innerHTML = html;
+
+        // Add remove button as last element
+        const actionCol = document.createElement('div');
+        actionCol.style.cssText = 'padding-top:1.5rem;display:flex;align-items:flex-end;';
+        actionCol.innerHTML = '<button type="button" class="btn-erp btn-danger remove-ing"><i class="fa-solid fa-minus"></i></button>';
+        row.appendChild(actionCol);
+
+        container.appendChild(row);
+        bindRemove(row);
+    });
+})();
+</script>
+{% endblock %}
