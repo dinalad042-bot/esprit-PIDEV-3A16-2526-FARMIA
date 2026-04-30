@@ -3,6 +3,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Repository\FermeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -187,6 +188,35 @@ class UserController extends AbstractController
         $writer->save($temp_file);
 
         return $this->file($temp_file, 'utilisateurs_farmia.xlsx', ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    /**
+     * Affiche la carte des fermes d'un agriculteur avec ses plantes et animaux
+     */
+    #[Route('/agriculteur/{id}/map', name: 'admin_agriculteur_map', methods: ['GET'])]
+    public function viewMap(User $user, FermeRepository $fermeRepo): Response
+    {
+        $role = is_array($user->getRoles()) ? implode(',', $user->getRoles()) : (string)$user->getRole();
+
+        if (!str_contains($role, 'AGRICOLE')) {
+            $this->addFlash('error', "Cet utilisateur n'est pas un agriculteur.");
+            return $this->redirectToRoute('admin_users_index');
+        }
+
+        $fermes = $fermeRepo->createQueryBuilder('f')
+            ->leftJoin('f.plantes', 'p')
+            ->addSelect('p')
+            ->leftJoin('f.animals', 'a')
+            ->addSelect('a')
+            ->where('f.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('admin/users/map.html.twig', [
+            'user' => $user,
+            'fermes' => $fermes,
+        ]);
     }
 
     private function getFilteredUsers(Request $request, UserRepository $userRepository): array

@@ -2,11 +2,9 @@
 
 namespace App\Controller\Web;
 
-// Ajout des Repositories avec les bons noms : Plante et Animal
 use App\Repository\FermeRepository;
 use App\Repository\PlanteRepository;
 use App\Repository\AnimalRepository;
-
 use App\Repository\AnalyseRepository;
 use App\Repository\ConseilRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +34,6 @@ class DashboardController extends AbstractController
         if (in_array('ROLE_AGRICOLE', $roles, true)) return $this->redirectToRoute('dashboard_agricole');
         if (in_array('ROLE_FOURNISSEUR', $roles, true)) return $this->redirectToRoute('dashboard_fournisseur');
 
-        // Fallback générique
         return $this->render('dashboard/default.html.twig', [
             'user' => $user,
         ]);
@@ -51,14 +48,15 @@ class DashboardController extends AbstractController
 
         $stats = [
             'analysesThisMonth' => $this->analyseRepo->countByTechnicienThisMonth($userId),
-            'analysesTotal' => $this->analyseRepo->countByTechnicien($userId),
-            'conseilsTotal' => $this->conseilRepo->countByTechnicien($userId),
-            'conseilsUrgent' => $this->conseilRepo->countByTechnicienAndPriorite($userId, 'HAUTE'),
-            'pendingRequests' => $this->analyseRepo->countPendingRequests(),
+            'analysesTotal'     => $this->analyseRepo->countByTechnicien($userId),
+            'conseilsTotal'     => $this->conseilRepo->countByTechnicien($userId),
+            'conseilsUrgent'    => $this->conseilRepo->countByTechnicienAndPriorite($userId, 'HAUTE'),
+            'pendingRequests'   => $this->analyseRepo->countPendingRequests(),
         ];
 
         return $this->render('portal/expert/index.html.twig', [
-            'user' => $this->getUser()
+            'user'  => $user,
+            'stats' => $stats,
         ]);
     }
 
@@ -70,21 +68,13 @@ class DashboardController extends AbstractController
     #[IsGranted('ROLE_AGRICOLE')]
     public function agricole(
         FermeRepository $fermeRepo,
-        PlanteRepository $planteRepo, // Changé ici (Plante au lieu de Culture)
+        PlanteRepository $planteRepo,
         AnimalRepository $animalRepo
     ): Response {
-        // Comptage dynamique depuis la base de données
-        $nbFermes = $fermeRepo->count([]);
-        $nbPlantes = $planteRepo->count([]); // Changé ici
-        $nbAnimaux = $animalRepo->count([]);
-
-    public function agricole(): Response
-    {
         $user = $this->getUser();
         $fermes = $user->getFermes();
 
-        // Calculate real stats
-        $fermeCount = $fermes->count();
+        $fermeCount  = $fermes->count();
         $planteCount = 0;
         $animalCount = 0;
         $conseilCount = 0;
@@ -92,35 +82,54 @@ class DashboardController extends AbstractController
         foreach ($fermes as $ferme) {
             $planteCount += $ferme->getPlantes()->count();
             $animalCount += $ferme->getAnimals()->count();
-            // Count conseils from analyses of this ferme
             foreach ($ferme->getAnalyses() as $analyse) {
                 $conseilCount += $analyse->getConseils()->count();
             }
         }
 
         return $this->render('portal/agricole/index.html.twig', [
-            'user' => $this->getUser(),
-            // Transmission des variables à la vue Twig
-            'nb_fermes' => $nbFermes,
-            'nb_plantes' => $nbPlantes, // Changé ici
-            'nb_animaux' => $nbAnimaux,
+            'user'         => $user,
+            'nb_fermes'    => $fermeCount,
+            'nb_plantes'   => $planteCount,
+            'nb_animaux'   => $animalCount,
+            'fermeCount'   => $fermeCount,
+            'planteCount'  => $planteCount,
+            'animalCount'  => $animalCount,
+            'conseilCount' => $conseilCount,
+            'hasFermes'    => $fermeCount > 0,
         ]);
     }
 
-    // Ajout de la route pour le sous-menu "Gestion de l'Exploitation"
     #[Route('/agricole/exploitation', name: 'app_exploitation')]
     #[IsGranted('ROLE_AGRICOLE')]
-    public function exploitation(): Response
-    {
-        // Assure-toi de placer ton fichier twig d'exploitation dans ce dossier
+    public function exploitation(
+        FermeRepository $fermeRepo,
+        PlanteRepository $planteRepo,
+        AnimalRepository $animalRepo
+    ): Response {
+        $user = $this->getUser();
+        $fermes = $user->getFermes();
+
+        $fermeCount  = $fermes->count();
+        $planteCount = 0;
+        $animalCount = 0;
+        $conseilCount = 0;
+
+        foreach ($fermes as $ferme) {
+            $planteCount += $ferme->getPlantes()->count();
+            $animalCount += $ferme->getAnimals()->count();
+            foreach ($ferme->getAnalyses() as $analyse) {
+                $conseilCount += $analyse->getConseils()->count();
+            }
+        }
+
         return $this->render('portal/agricole/exploitation.html.twig', [
-            'user' => $this->getUser()
-            'user' => $user,
-            'fermeCount' => $fermeCount,
-            'planteCount' => $planteCount,
-            'animalCount' => $animalCount,
+            'user'         => $user,
+            'fermeCount'   => $fermeCount,
+            'planteCount'  => $planteCount,
+            'animalCount'  => $animalCount,
             'conseilCount' => $conseilCount,
-            'hasFermes' => $fermeCount > 0
+            'hasFermes'    => $fermeCount > 0,
         ]);
     }
 

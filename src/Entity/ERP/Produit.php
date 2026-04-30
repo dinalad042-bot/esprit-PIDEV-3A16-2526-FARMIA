@@ -40,6 +40,9 @@ class Produit
     #[ORM\Column(name: 'stock', type: 'float', options: ['default' => 0])]
     private float $stock = 0.0;
 
+    #[ORM\Column(name: 'seuil_critique', type: 'float', options: ['default' => 0])]
+    private float $seuilCritique = 0.0;
+
     /**
      * If true: simple product sold directly (eggs, milk…), no recipe needed.
      * Stock is managed manually via Achat or direct entry.
@@ -91,6 +94,14 @@ class Produit
 
     public function getStock(): float { return $this->stock; }
     public function setStock(float $stock): static { $this->stock = $stock; return $this; }
+
+    public function getSeuilCritique(): float { return $this->seuilCritique; }
+    public function setSeuilCritique(float $s): static { $this->seuilCritique = $s; return $this; }
+
+    public function isStockCritique(): bool
+    {
+        return $this->seuilCritique > 0 && $this->stock <= $this->seuilCritique;
+    }
 
     public function isSimple(): bool { return $this->isSimple; }
     public function setIsSimple(bool $isSimple): static { $this->isSimple = $isSimple; return $this; }

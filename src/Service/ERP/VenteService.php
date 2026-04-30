@@ -101,10 +101,11 @@ class VenteService
             // Check produit stock alerts
             if ($recipientEmail) {
                 $pRow = $conn->fetchAssociative(
-                    'SELECT nom, stock FROM erp_produit WHERE id_produit = :id', ['id' => $idProduit]
+                    'SELECT nom, stock, seuil_critique FROM erp_produit WHERE id_produit = :id', ['id' => $idProduit]
                 );
                 if ($pRow) {
                     $newStock = (float) $pRow['stock'];
+                    $seuil    = (float) $pRow['seuil_critique'];
                     $nom      = (string) $pRow['nom'];
                     $this->logger->info('[ERP] Produit stock after vente', ['produit' => $nom, 'stock' => $newStock]);
 
@@ -112,6 +113,9 @@ class VenteService
                         if ($newStock <= 0) {
                             $this->emailService->sendStockZeroAlert($nom, $idProduit, $recipientEmail, $recipientName);
                             $this->logger->info('[ERP] Zero-stock email sent for produit', ['produit' => $nom]);
+                        } elseif ($seuil > 0 && $newStock <= $seuil) {
+                            $this->emailService->sendStockCritiqueAlert($nom, $idProduit, (int) $newStock, (int) $seuil, $recipientEmail, $recipientName);
+                            $this->logger->info('[ERP] Critical-stock email sent for produit', ['produit' => $nom, 'stock' => $newStock, 'seuil' => $seuil]);
                         }
                     } catch (\Throwable $e) {
                         $this->logger->error('[ERP] Email alert failed', ['produit' => $nom, 'error' => $e->getMessage()]);

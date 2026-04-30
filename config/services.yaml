@@ -36,3 +36,24 @@ services:
         arguments:
             $apiKey: '%env(string:GROQ_API_KEY)%'
             $model: '%env(string:GROQ_MODEL)%'
+
+    App\Command\TestMailCommand:
+        arguments:
+            $from: '%env(string:MAILER_FROM)%'
+
+    App\Command\TestStockAlertCommand:
+        arguments:
+            $alertEmail: '%env(string:ALERT_EMAIL)%'
+
+    App\Service\ERP\PaymentService:
+        arguments:
+            $stripeSecretKey: '%env(string:STRIPE_SECRET_KEY)%'
+            $qrOutputDir: '%env(string:ERP_QR_OUTPUT_DIR)%'
+
+    App\Service\ERP\ERPEmailService:
+        arguments:
+            $fromAddress: '%env(string:ERP_EMAIL_FROM)%'
+
+    App\Service\WeatherService:
+        arguments:
+            $apiKey: '%env(string:WEATHER_API_KEY)%'

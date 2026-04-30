@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Animal;
-use App\Form\AnimalType;
 use App\Repository\AnimalRepository;
 use App\Repository\FermeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -23,9 +23,8 @@ class AnimalController extends AbstractController
     #[Route('/', name: 'app_animal_index', methods: ['GET'])]
     public function index(Request $request, AnimalRepository $aRepo, FermeRepository $fRepo): Response
     {
-        // Récupération des paramètres de recherche et tri
         $search = $request->query->get('search');
-        $sort = $request->query->get('sort', 'espece'); // Tri par défaut sur l'espèce
+        $sort = $request->query->get('sort', 'espece');
         $direction = $request->query->get('direction', 'ASC');
 
         return $this->render('animal/index.html.twig', [
@@ -33,7 +32,7 @@ class AnimalController extends AbstractController
             'fermes' => $fRepo->findAll(),
             'animal_edit' => null,
             'errors' => [],
-            'search' => $search,
+            'searchTerm' => $search,
             'currentSort' => $sort,
             'currentDirection' => $direction
         ]);
@@ -42,26 +41,23 @@ class AnimalController extends AbstractController
     /**
      * Création d'un nouvel animal
      */
-    #[Route('/new', name: 'app_animal_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, AnimalRepository $aRepo, FermeRepository $fRepo): Response
+    #[Route('/new', name: 'app_animal_new', methods: ['POST'])]
+    public function new(Request $request, EntityManagerInterface $em, ValidatorInterface $validator, AnimalRepository $aRepo, FermeRepository $fRepo): Response
     {
         $animal = new Animal();
-        $form = $this->createForm(AnimalType::class, $animal);
-        $form->handleRequest($request);
+        $this->mapData($animal, $request, $fRepo);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($animal);
-            $em->flush();
-            
-            $this->addFlash('success', 'Animal enregistré avec succès !');
-            return $this->redirectToRoute('app_animal_index');
+        $violations = $validator->validate($animal);
+
+        if (count($violations) > 0) {
+            return $this->renderErrors($violations, $aRepo, $fRepo, null, $request);
         }
 
-        // En cas d'erreurs ou GET, afficher le formulaire
-        return $this->render('animal/new.html.twig', [
-            'form' => $form->createView(),
-            'fermes' => $fRepo->findAll(),
-        ]);
+        $em->persist($animal);
+        $em->flush();
+
+        $this->addFlash('success', 'Animal enregistré avec succès !');
+        return $this->redirectToRoute('app_animal_index');
     }
 
     /**
@@ -93,31 +89,40 @@ class AnimalController extends AbstractController
     /**
      * Mode édition : charge l'animal dans le formulaire
      */
-    #[Route('/{id_animal}/edit', name: 'app_animal_edit', methods: ['GET', 'POST'])]
-    public function edit(Animal $animal, Request $request, EntityManagerInterface $em, AnimalRepository $aRepo, FermeRepository $fRepo): Response
+    #[Route('/{id_animal}/edit', name: 'app_animal_edit', methods: ['GET'])]
+    public function edit(Animal $animal, Request $request, AnimalRepository $aRepo, FermeRepository $fRepo): Response
     {
-        $form = $this->createForm(AnimalType::class, $animal);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Mise à jour réussie !');
-            return $this->redirectToRoute('app_animal_index');
-        }
-
         $search = $request->query->get('search');
         $sort = $request->query->get('sort', 'espece');
         $direction = $request->query->get('direction', 'ASC');
 
-        return $this->render('animal/edit.html.twig', [
-            'form' => $form->createView(),
-            'animal' => $animal,
-            'fermes' => $fRepo->findAll(),
+        return $this->render('animal/index.html.twig', [
             'animals' => $aRepo->findBySearchAndSort($search, $sort, $direction),
-            'search' => $search,
+            'fermes' => $fRepo->findAll(),
+            'animal_edit' => $animal,
+            'errors' => [],
+            'searchTerm' => $search,
             'currentSort' => $sort,
             'currentDirection' => $direction
         ]);
+    }
+
+    /**
+     * Action de mise à jour en base
+     */
+    #[Route('/{id_animal}/update', name: 'app_animal_update', methods: ['POST'])]
+    public function update(Request $request, Animal $animal, EntityManagerInterface $em, ValidatorInterface $validator, AnimalRepository $aRepo, FermeRepository $fRepo): Response
+    {
+        $this->mapData($animal, $request, $fRepo);
+        $violations = $validator->validate($animal);
+
+        if (count($violations) > 0) {
+            return $this->renderErrors($violations, $aRepo, $fRepo, $animal, $request);
+        }
+
+        $em->flush();
+        $this->addFlash('success', 'Mise à jour réussie !');
+        return $this->redirectToRoute('app_animal_index');
     }
 
     /**
@@ -132,5 +137,54 @@ class AnimalController extends AbstractController
             $this->addFlash('danger', 'Animal supprimé du registre.');
         }
         return $this->redirectToRoute('app_animal_index');
+    }
+
+    /**
+     * Mapping des données du formulaire vers l'entité
+     */
+    private function mapData(Animal $animal, Request $request, FermeRepository $fRepo): void
+    {
+        $animal->setEspece($request->request->get('espece') ?: null);
+        $animal->setEtatSante($request->request->get('etat_sante') ?: null);
+
+        $date = $request->request->get('date_naissance');
+        try {
+            $animal->setDateNaissance($date ? new \DateTime($date) : null);
+        } catch (\Exception $e) {
+            $animal->setDateNaissance(null);
+        }
+
+        $idFerme = $request->request->get('id_ferme');
+        if ($idFerme) {
+            $ferme = $fRepo->find($idFerme);
+            $animal->setFerme($ferme);
+        } else {
+            $animal->setFerme(null);
+        }
+    }
+
+    /**
+     * Gestion centralisée des erreurs de validation
+     */
+    private function renderErrors($violations, $aRepo, $fRepo, $animal_edit, Request $request): Response
+    {
+        $errors = [];
+        foreach ($violations as $v) {
+            $errors[$v->getPropertyPath()] = $v->getMessage();
+        }
+
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort', 'espece');
+        $direction = $request->query->get('direction', 'ASC');
+
+        return $this->render('animal/index.html.twig', [
+            'animals' => $aRepo->findBySearchAndSort($search, $sort, $direction),
+            'fermes' => $fRepo->findAll(),
+            'animal_edit' => $animal_edit,
+            'errors' => $errors,
+            'searchTerm' => $search,
+            'currentSort' => $sort,
+            'currentDirection' => $direction
+        ]);
     }
 }
