@@ -1,0 +1,84 @@
+{% extends 'erp/layout.html.twig' %}
+
+{% block title %}FarmIA Desk — Tableau de bord ERP{% endblock %}
+
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-store" style="color:#22c55e;"></i> FarmIA Desk — Gestion Achat & Stocks</h1>
+</div>
+
+<div class="stats-grid" style="margin-bottom:2rem;">
+    <div class="stat-card green">
+        <div class="stat-value"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <div class="stat-label">Services</div>
+        <div class="stat-sublabel">Catalogue</div>
+        <div class="stat-footer stat-footer-line">
+            <a href="{{ path('erp_service_index') }}" style="color:#fff;">Gérer →</a>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color:var(--dark-bg);"><i class="fa-solid fa-cart-plus"></i></div>
+        <div class="stat-label" style="color:var(--dark-bg);">Achats</div>
+        <div class="stat-sublabel">Commandes fournisseur</div>
+        <div class="stat-footer stat-footer-line" style="color:#cbd5e1;">
+            <a href="{{ path('erp_achat_index') }}" style="color:#334155;">Gérer →</a>
+        </div>
+    </div>
+    <div class="stat-card light-gray">
+        <div class="stat-value" style="color:var(--dark-bg);"><i class="fa-solid fa-receipt"></i></div>
+        <div class="stat-label" style="color:var(--dark-bg);">Ventes</div>
+        <div class="stat-sublabel">Commandes client</div>
+        <div class="stat-footer stat-footer-line" style="color:#cbd5e1;">
+            <a href="{{ path('erp_vente_index') }}" style="color:#334155;">Gérer →</a>
+        </div>
+    </div>
+    <div class="stat-card dark">
+        <div class="stat-value">{{ critiques|length }}</div>
+        <div class="stat-label">Ruptures</div>
+        <div class="stat-sublabel">Stock critique</div>
+        <div class="stat-footer stat-footer-line">
+            <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i>
+            {% if critiques|length > 0 %}Réapprovisionner{% else %}Tout est OK{% endif %}
+        </div>
+    </div>
+</div>
+
+{% if critiques|length > 0 %}
+<div class="stock-warning">
+    <strong><i class="fa-solid fa-triangle-exclamation"></i> Services en stock critique</strong>
+    <table style="margin-top:.5rem;">
+        <tr>
+            <th>Service</th><th>Stock actuel</th><th>Seuil critique</th><th>Action</th>
+        </tr>
+        {% for s in critiques %}
+        <tr>
+            <td>{{ s.nom }}</td>
+            <td><span class="badge-critique">{{ s.stock }}</span></td>
+            <td>{{ s.seuilCritique }}</td>
+            <td><a href="{{ path('erp_achat_new') }}" class="btn-erp btn-warning" style="font-size:.75rem;padding:.2rem .6rem;">Réapprovisionner</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<div class="bottom-grid">
+    <div class="action-card">
+        <div class="action-header">
+            <h3 class="action-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h3>
+        </div>
+        <div class="btn-group">
+            <a href="{{ path('erp_service_new') }}" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouveau Service</a>
+            <a href="{{ path('erp_achat_new') }}" class="btn btn-outline-green"><i class="fa-solid fa-cart-plus"></i> Nouvel Achat</a>
+            <a href="{{ path('erp_vente_new') }}" class="btn btn-outline-green"><i class="fa-solid fa-receipt"></i> Nouvelle Vente</a>
+        </div>
+    </div>
+    <div class="enterprise-card">
+        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> FarmIA Desk ERP</h3>
+        <p class="enterprise-text">
+            Gérez votre catalogue de services agricoles, enregistrez vos achats et ventes, suivez votre stock en temps réel et recevez des alertes automatiques.
+        </p>
+        <i class="fa-solid fa-seedling enterprise-icon"></i>
+    </div>
+</div>
+{% endblock %}

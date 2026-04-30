@@ -1,0 +1,244 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Achats — FarmIA Desk{% endblock %}
+
+{% block stylesheets %}
+<style>
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+    padding: .25rem 0;
+}
+.order-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    transition: transform .15s, box-shadow .15s;
+    display: flex;
+    flex-direction: column;
+}
+.order-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+.order-card-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: #e2e8f0;
+    display: block;
+}
+.order-card-img-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, #1e293b 0%, #22c55e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: rgba(255,255,255,.6);
+}
+.order-card-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+.order-card-header { display: flex; align-items: center; justify-content: space-between; }
+.order-card-id { font-size: .75rem; color: #94a3b8; font-weight: 600; }
+.order-card-date { font-size: .8rem; color: #64748b; }
+.order-card-lines { flex: 1; }
+.order-card-line { font-size: .8rem; color: #475569; padding: .2rem 0; border-bottom: 1px solid #f1f5f9; }
+.order-card-line:last-child { border-bottom: none; }
+.order-card-total { font-size: 1.1rem; font-weight: 700; color: #22c55e; margin-top: .25rem; }
+.order-card-footer { padding: .75rem 1rem; border-top: 1px solid #f1f5f9; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.empty-state { text-align: center; padding: 4rem 2rem; color: #94a3b8; }
+.empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+/* Pay modal styles (same as before) */
+.pay-modal-overlay { display:none; position:fixed; inset:0; background:rgba(15,23,42,.55); z-index:2000; align-items:center; justify-content:center; }
+.pay-modal-overlay.open { display:flex; }
+.pay-modal { background:#fff; border-radius:16px; padding:2rem; width:480px; max-width:95vw; box-shadow:0 20px 60px rgba(0,0,0,.2); position:relative; animation:slideUp .2s ease; }
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.pay-modal-close { position:absolute; top:1rem; right:1rem; background:#f1f5f9; border:none; border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; color:#64748b; }
+.pay-modal-close:hover { background:#e2e8f0; }
+.pay-modal h2 { font-size:1.1rem; font-weight:700; color:#1e293b; margin:0 0 1rem; }
+.pay-modal-total { font-size:1.3rem; font-weight:700; color:#22c55e; text-align:center; margin:1rem 0; }
+.pay-modal-actions { display:flex; gap:.75rem; }
+.pay-modal-actions button { flex:1; padding:.6rem; border-radius:8px; font-weight:600; font-size:.9rem; cursor:pointer; border:none; display:inline-flex; align-items:center; justify-content:center; gap:.4rem; }
+.btn-cancel { background:#f1f5f9; color:#475569; }
+.btn-pay-confirm { background:#635bff; color:#fff; }
+.btn-pay-confirm:disabled { opacity:.6; cursor:not-allowed; }
+.spinner { display:inline-block; width:18px; height:18px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.qr-container { text-align:center; margin:1rem 0; }
+.qr-container img { border:1px solid #e2e8f0; border-radius:8px; padding:.5rem; background:#fff; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-cart-plus" style="color:#22c55e;"></i> Achats de matières</h1>
+    <a href="{{ path('erp_achat_new') }}" class="btn-erp btn-primary"><i class="fa-solid fa-plus"></i> Nouvel achat</a>
+</div>
+
+{% if achats|length == 0 %}
+<div class="empty-state">
+    <i class="fa-solid fa-cart-plus"></i>
+    <p>Aucun achat enregistré.</p>
+    <a href="{{ path('erp_achat_new') }}" class="btn-erp btn-primary" style="margin-top:1rem;">
+        <i class="fa-solid fa-plus"></i> Créer le premier achat
+    </a>
+</div>
+{% else %}
+<div class="cards-grid">
+    {% for a in achats %}
+    {% set firstMatiere = a.lignes|first %}
+    {% set keyword = firstMatiere ? firstMatiere.matiere.nom|lower|replace({' ': '-'}) : 'agriculture' %}
+    {% set imgSeed = a.idAchat %}
+    <div class="order-card">
+        <img class="order-card-img"
+             src="https://picsum.photos/seed/achat{{ imgSeed }}/600/320"
+             alt="{{ keyword }}"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="order-card-img-placeholder" style="display:none;">
+            <i class="fa-solid fa-cart-plus"></i>
+        </div>
+
+        <div class="order-card-body">
+            <div class="order-card-header">
+                <span class="order-card-id">#{{ a.idAchat }}</span>
+                <span class="order-card-date"><i class="fa-regular fa-calendar"></i> {{ a.dateAchat|date('d/m/Y') }}</span>
+            </div>
+
+            <div class="order-card-lines">
+                {% for l in a.lignes %}
+                <div class="order-card-line">
+                    <i class="fa-solid fa-cube" style="color:#22c55e;font-size:.7rem;"></i>
+                    {{ l.matiere.nom }} — {{ l.quantite }} {{ l.matiere.unite }}
+                    <span style="float:right;font-weight:600;">{{ l.sousTotal|number_format(2,',',' ') }} €</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="order-card-total">
+                <i class="fa-solid fa-coins"></i> {{ a.total|number_format(2,',',' ') }} €
+            </div>
+        </div>
+
+        <div class="order-card-footer">
+            {% if a.paid %}
+                <span class="badge-ok" style="padding:.35rem .75rem;">
+                    <i class="fa-solid fa-circle-check"></i> Payé
+                </span>
+            {% else %}
+                <button type="button"
+                        class="btn-erp btn-warning open-pay-modal"
+                        style="flex:1;"
+                        data-id="{{ a.idAchat }}"
+                        data-total="{{ a.total|number_format(2,',',' ') }}"
+                        data-token="{{ csrf_token('pay_achat_' ~ a.idAchat) }}"
+                        data-pay-url="{{ path('erp_achat_pay', {id: a.idAchat}) }}"
+                        data-lines="{{ a.lignes|map(l => l.matiere.nom ~ ' × ' ~ l.quantite ~ ' ' ~ l.matiere.unite)|join(', ') }}">
+                    <i class="fa-brands fa-stripe"></i> Payer
+                </button>
+            {% endif %}
+            <form method="post" action="{{ path('erp_achat_delete', {id: a.idAchat}) }}"
+                  onsubmit="return confirm('Supprimer ? Le stock sera restauré.')">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_achat_' ~ a.idAchat) }}">
+                <button type="submit" class="btn-erp btn-danger">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# Confirm Payment Modal #}
+<div class="pay-modal-overlay" id="confirmModal">
+    <div class="pay-modal">
+        <button class="pay-modal-close" id="closeConfirm"><i class="fa-solid fa-xmark"></i></button>
+        <h2><i class="fa-brands fa-stripe" style="color:#635bff;"></i> Confirmer le paiement</h2>
+        <div class="pay-modal-total" id="modalTotal"></div>
+        <p style="font-size:.8rem;color:#94a3b8;text-align:center;margin-bottom:1rem;">
+            Un QR code Stripe sera généré pour finaliser le paiement.
+        </p>
+        <div class="pay-modal-actions">
+            <button type="button" class="btn-cancel" id="cancelPay">Annuler</button>
+            <button type="button" class="btn-pay-confirm" id="confirmPay">
+                <i class="fa-brands fa-stripe"></i> Payer avec Stripe
+            </button>
+        </div>
+    </div>
+</div>
+
+{# Payment Success Modal #}
+<div class="pay-modal-overlay" id="successModal">
+    <div class="pay-modal" style="width:520px;text-align:center;">
+        <button class="pay-modal-close" id="closeSuccess"><i class="fa-solid fa-xmark"></i></button>
+        <div style="font-size:3rem;margin-bottom:.75rem;">✅</div>
+        <h2 style="color:#16a34a;">Paiement initié !</h2>
+        <p style="font-size:.875rem;color:#64748b;margin:.5rem 0 1rem;">Scannez le QR code ou ouvrez le lien Stripe.</p>
+        <div class="qr-container" id="successQr"></div>
+        <a id="stripeLink" href="#" target="_blank" class="btn-erp btn-primary" style="display:inline-flex;margin-top:.75rem;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Ouvrir Stripe
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+(function () {
+    let currentPayUrl = '', currentToken = '';
+    const confirmModal = document.getElementById('confirmModal');
+    const successModal = document.getElementById('successModal');
+    const modalTotal   = document.getElementById('modalTotal');
+    const confirmBtn   = document.getElementById('confirmPay');
+    const successQr    = document.getElementById('successQr');
+    const stripeLink   = document.getElementById('stripeLink');
+
+    const open  = el => el.classList.add('open');
+    const close = el => el.classList.remove('open');
+
+    document.querySelectorAll('.open-pay-modal').forEach(btn => {
+        btn.addEventListener('click', function () {
+            currentPayUrl = this.dataset.payUrl;
+            currentToken  = this.dataset.token;
+            modalTotal.textContent = this.dataset.total + ' €';
+            open(confirmModal);
+        });
+    });
+
+    document.getElementById('closeConfirm').addEventListener('click', () => close(confirmModal));
+    document.getElementById('cancelPay').addEventListener('click', () => close(confirmModal));
+    confirmModal.addEventListener('click', e => { if (e.target === confirmModal) close(confirmModal); });
+
+    document.getElementById('closeSuccess').addEventListener('click', () => { close(successModal); location.reload(); });
+    successModal.addEventListener('click', e => { if (e.target === successModal) { close(successModal); location.reload(); } });
+
+    confirmBtn.addEventListener('click', function () {
+        this.disabled = true;
+        this.innerHTML = '<span class="spinner"></span> Traitement…';
+        fetch(currentPayUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+            body: new URLSearchParams({ _token: currentToken }).toString()
+        })
+        .then(r => r.json())
+        .then(data => {
+            close(confirmModal);
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="fa-brands fa-stripe"></i> Payer avec Stripe';
+            if (data.error) { alert('Erreur : ' + data.error); return; }
+            stripeLink.href = data.stripeUrl;
+            const file = data.qrPath ? data.qrPath.split('/').pop() : null;
+            successQr.innerHTML = file
+                ? `<img src="/uploads/erp_qr/${file}" width="220" height="220" alt="QR Stripe">`
+                : '<p style="color:#94a3b8;">QR non disponible</p>';
+            open(successModal);
+        })
+        .catch(err => {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="fa-brands fa-stripe"></i> Payer avec Stripe';
+            alert('Erreur réseau : ' + err.message);
+        });
+    });
+})();
+</script>
+{% endblock %}

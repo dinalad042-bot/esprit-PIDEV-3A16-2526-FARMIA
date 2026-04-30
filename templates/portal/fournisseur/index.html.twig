@@ -1,14 +1,14 @@
-﻿{% extends 'layouts/fournisseur.html.twig' %}
+{% extends 'layouts/fournisseur.html.twig' %}
 
 {% block title %}Espace Fournisseur - FarmAI{% endblock %}
 
 {% block body %}
 <div class="welcome-section">
     <h1 class="welcome-title">Bienvenue, {{ app.user.prenom|default('Fournisseur') }} {{ app.user.nom|default('') }} !</h1>
-    <p class="welcome-subtitle">G├⌐rez vos produits et commandes facilement <i class="fa-solid fa-box-open" style="color: var(--primary-green);"></i></p>
+    <p class="welcome-subtitle">Gérez vos produits et commandes facilement <i class="fa-solid fa-box-open" style="color: var(--primary-green);"></i></p>
 </div>
 
-{# ΓöÇΓöÇΓöÇ Stats Cards ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ #}
+{# ─── Stats Cards ─────────────────────────────────────────────────────────── #}
 <div class="stats-grid">
     <div class="stat-card green">
         <div class="stat-value">24</div>
@@ -23,7 +23,7 @@
         <div class="stat-value" style="color: var(--dark-bg);">8</div>
         <div class="stat-label" style="color: var(--dark-bg);">Commandes</div>
         <div class="stat-sublabel">En cours</div>
-        <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">├Ç traiter</div>
+        <div class="stat-footer stat-footer-line" style="color: #cbd5e1;">À traiter</div>
     </div>
 
     <div class="stat-card light-gray">
@@ -40,12 +40,12 @@
         <div class="stat-label">Ruptures</div>
         <div class="stat-sublabel">Stock faible</div>
         <div class="stat-footer stat-footer-line">
-            <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> R├⌐approvisionner
+            <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> Réapprovisionner
         </div>
     </div>
 </div>
 
-{# ΓöÇΓöÇΓöÇ Bottom Section ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ #}
+{# ─── Bottom Section ──────────────────────────────────────────────────────── #}
 <div class="bottom-grid">
     <div class="action-card">
         <div class="action-header">
@@ -54,27 +54,31 @@
         </div>
 
         <div class="btn-group">
-            <a href="#" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouveau Produit</a>
-            <a href="#" class="btn btn-outline-green"><i class="fa-solid fa-clipboard-list"></i> Voir Commandes</a>
+            <a href="{{ path('erp_dashboard') }}" class="btn btn-dark"><i class="fa-solid fa-store"></i> FarmIA Desk ERP</a>
+            <a href="{{ path('erp_vente_new') }}" class="btn btn-outline-green"><i class="fa-solid fa-receipt"></i> Nouvelle Vente</a>
+            <a href="{{ path('erp_vente_index') }}" class="btn btn-outline-green"><i class="fa-solid fa-list"></i> Mes Ventes</a>
         </div>
 
         <div class="action-list">
             <div class="list-item">
                 <div class="list-icon new">NEW</div>
-                <div class="list-text">Nouvelle commande re├ºue</div>
+                <div class="list-text">Nouvelle commande reçue</div>
             </div>
             <div class="list-item">
                 <div class="list-icon refresh"><i class="fa-solid fa-arrows-rotate"></i></div>
-                <div class="list-text">Stock mis ├á jour automatiquement</div>
+                <div class="list-text">Stock mis à jour automatiquement</div>
             </div>
         </div>
     </div>
 
     <div class="enterprise-card">
-        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> Mon Catalogue</h3>
+        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> FarmIA Desk ERP</h3>
         <p class="enterprise-text">
-            Publiez vos produits agricoles, g├⌐rez les commandes et suivez vos ventes en temps r├⌐el.
+            Gérez votre catalogue de services, enregistrez vos achats et ventes, suivez votre stock et recevez des alertes automatiques.
         </p>
+        <a href="{{ path('erp_dashboard') }}" style="display:inline-block;margin-top:.75rem;background:#22c55e;color:#fff;padding:.4rem .9rem;border-radius:8px;font-size:.85rem;font-weight:600;text-decoration:none;">
+            <i class="fa-solid fa-arrow-right"></i> Accéder à l'ERP
+        </a>
         <i class="fa-solid fa-truck-field enterprise-icon"></i>
     </div>
 </div>

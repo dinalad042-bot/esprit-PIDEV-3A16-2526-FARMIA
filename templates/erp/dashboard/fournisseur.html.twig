@@ -1,0 +1,38 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}FarmIA Desk — Espace Fournisseur{% endblock %}
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-store" style="color:#22c55e;"></i> FarmIA Desk — Ventes</h1>
+</div>
+
+<div class="stats-grid" style="margin-bottom:2rem;">
+    <div class="stat-card green">
+        <div class="stat-value"><i class="fa-solid fa-receipt"></i></div>
+        <div class="stat-label">Ventes</div>
+        <div class="stat-sublabel">Produits finis</div>
+        <div class="stat-footer stat-footer-line"><a href="{{ path('erp_vente_index') }}" style="color:#fff;">Gérer →</a></div>
+    </div>
+    <div class="stat-card dark">
+        <div class="stat-value"><i class="fa-solid fa-box-open"></i></div>
+        <div class="stat-label">Catalogue</div>
+        <div class="stat-sublabel">Tous les produits</div>
+        <div class="stat-footer stat-footer-line"><a href="{{ path('erp_produit_index') }}" style="color:#f59e0b;">Voir →</a></div>
+    </div>
+</div>
+
+<div class="bottom-grid">
+    <div class="action-card">
+        <div class="action-header"><h3 class="action-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h3></div>
+        <div class="btn-group">
+            <a href="{{ path('erp_vente_new') }}" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouvelle vente</a>
+            <a href="{{ path('erp_vente_index') }}" class="btn btn-outline-green"><i class="fa-solid fa-list"></i> Voir les ventes</a>
+            <a href="{{ path('erp_produit_index') }}" class="btn btn-outline-green"><i class="fa-solid fa-box-open"></i> Catalogue produits</a>
+        </div>
+    </div>
+    <div class="enterprise-card">
+        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> Espace Vente</h3>
+        <p class="enterprise-text">Vendez les produits finis disponibles dans le catalogue. Choisissez n'importe quel produit et enregistrez vos ventes.</p>
+        <i class="fa-solid fa-truck-field enterprise-icon"></i>
+    </div>
+</div>
+{% endblock %}

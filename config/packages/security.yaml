@@ -32,7 +32,6 @@ security:
             logout:
                 path: app_logout
                 target: splash_logout
-            access_denied_url: app_access_denied
 
     access_control:
         - { path: ^/api/signup, roles: PUBLIC_ACCESS }
@@ -44,6 +43,18 @@ security:
         - { path: ^/expert/dashboard, roles: ROLE_EXPERT }
         - { path: ^/agricole/dashboard, roles: ROLE_AGRICOLE }
         - { path: ^/fournisseur/dashboard, roles: ROLE_FOURNISSEUR }
+        # ERP: vente = fournisseur only
+        - { path: ^/erp/vente, roles: ROLE_FOURNISSEUR }
+        # ERP: achat, matiere = agricole only
+        - { path: ^/erp/achat, roles: ROLE_AGRICOLE }
+        - { path: ^/erp/matiere, roles: ROLE_AGRICOLE }
+        # ERP: produit write actions = agricole only (index readable by both via controller)
+        - { path: ^/erp/produit/new, roles: ROLE_AGRICOLE }
+        - { path: ^/erp/produit/\d+/edit, roles: ROLE_AGRICOLE }
+        - { path: ^/erp/produit/\d+/delete, roles: ROLE_AGRICOLE }
+        - { path: ^/erp/produit/\d+/produire, roles: ROLE_AGRICOLE }
+        # ERP dashboard + produit index accessible to both
+        - { path: ^/erp, roles: [ROLE_AGRICOLE, ROLE_FOURNISSEUR] }
 
 when@test:
     security:

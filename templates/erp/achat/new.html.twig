@@ -1,0 +1,120 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Nouvel Achat — FarmIA Desk{% endblock %}
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-cart-plus" style="color:#22c55e;"></i> Nouvel Achat de matières</h1>
+    <a href="{{ path('erp_achat_index') }}" class="btn-erp btn-secondary"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+</div>
+
+<div class="erp-form-card" style="max-width:900px;">
+    {{ form_start(form) }}
+    <div class="form-group">{{ form_label(form.dateAchat) }}{{ form_widget(form.dateAchat) }}{{ form_errors(form.dateAchat) }}</div>
+
+    <h3 style="margin:1.5rem 0 .5rem;font-size:1rem;color:#475569;"><i class="fa-solid fa-list"></i> Matières achetées</h3>
+    {{ form_errors(form.lignes) }}
+
+    <div id="lignes-container"
+         data-prototype="{{ form_widget(form.lignes.vars.prototype)|e('html_attr') }}"
+         data-index="{{ form.lignes|length }}">
+        {% for ligne in form.lignes %}
+        <div class="ligne-row">
+            <div>{{ form_label(ligne.matiere) }}{{ form_widget(ligne.matiere, {attr: {class: 'matiere-select'}}) }}{{ form_errors(ligne.matiere) }}</div>
+            <div>{{ form_label(ligne.quantite) }}{{ form_widget(ligne.quantite, {attr: {class: 'quantite-input'}}) }}{{ form_errors(ligne.quantite) }}</div>
+            <div>{{ form_label(ligne.prixUnitaire) }}{{ form_widget(ligne.prixUnitaire, {attr: {class: 'prix-input'}}) }}{{ form_errors(ligne.prixUnitaire) }}</div>
+            <div><div class="sous-total">—</div><button type="button" class="btn-erp btn-danger remove-ligne" style="margin-top:.3rem;"><i class="fa-solid fa-minus"></i></button></div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="add-ligne" class="btn-erp btn-secondary" style="margin-top:.5rem;"><i class="fa-solid fa-plus"></i> Ajouter une matière</button>
+    <div class="total-display" id="total-display">Total : 0,00 €</div>
+
+    <div class="convert-section">
+        <h4><i class="fa-solid fa-coins"></i> Conversion de devise</h4>
+        <div class="convert-row">
+            <select id="currency-select" class="btn-erp btn-secondary" style="padding:.45rem .75rem;">
+                <option value="TND" selected>TND</option>
+                {% for code in currencies %}{% if code != 'EUR' %}<option value="{{ code }}">{{ code }}</option>{% endif %}{% endfor %}
+            </select>
+            <button type="button" id="convert-btn" class="btn-erp btn-warning"><i class="fa-solid fa-arrow-right-arrow-left"></i> Convertir</button>
+        </div>
+        <div class="convert-result" id="convert-result"></div>
+    </div>
+
+    <div style="margin-top:1.5rem;"><button type="submit" class="btn-erp btn-primary"><i class="fa-solid fa-floppy-disk"></i> Enregistrer l'achat</button></div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+(function() {
+    const container = document.getElementById('lignes-container');
+    const totalDisplay = document.getElementById('total-display');
+    const convertResult = document.getElementById('convert-result');
+
+    function getTotal() {
+        let t = 0;
+        container.querySelectorAll('.ligne-row').forEach(row => {
+            const q = parseFloat(row.querySelector('.quantite-input')?.value) || 0;
+            const p = parseFloat(row.querySelector('.prix-input')?.value) || 0;
+            const st = q * p;
+            const el = row.querySelector('.sous-total');
+            if (el) el.textContent = st.toFixed(2) + ' €';
+            t += st;
+        });
+        return t;
+    }
+
+    function updateTotal() {
+        const t = getTotal();
+        const f = 'Total : ' + t.toFixed(2).replace('.', ',') + ' €';
+        if (totalDisplay.textContent !== f) { totalDisplay.textContent = f; convertResult.textContent = ''; }
+    }
+
+    function bindRow(row) {
+        row.querySelectorAll('.quantite-input,.prix-input').forEach(el => el.addEventListener('input', updateTotal));
+        const sel = row.querySelector('.matiere-select');
+        if (sel) sel.addEventListener('change', function() {
+            const prix = this.options[this.selectedIndex]?.getAttribute('data-prix');
+            if (prix) { const pi = row.querySelector('.prix-input'); if (pi) pi.value = parseFloat(prix).toFixed(2); }
+            updateTotal();
+        });
+        const rm = row.querySelector('.remove-ligne');
+        if (rm) rm.addEventListener('click', () => { row.remove(); updateTotal(); });
+    }
+
+    container.querySelectorAll('.ligne-row').forEach(bindRow);
+
+    document.getElementById('add-ligne').addEventListener('click', function() {
+        const proto = container.dataset.prototype;
+        const idx = parseInt(container.dataset.index);
+        const html = proto.replace(/__name__/g, idx);
+        container.dataset.index = idx + 1;
+        const tmp = document.createElement('div'); tmp.innerHTML = html;
+        const div = document.createElement('div'); div.className = 'ligne-row';
+        Array.from(tmp.children).forEach(f => { const col = document.createElement('div'); col.appendChild(f); div.appendChild(col); });
+        const ac = document.createElement('div');
+        ac.innerHTML = '<div class="sous-total">—</div><button type="button" class="btn-erp btn-danger remove-ligne" style="margin-top:.3rem;"><i class="fa-solid fa-minus"></i></button>';
+        div.appendChild(ac);
+        container.appendChild(div);
+        bindRow(div);
+        updateTotal();
+    });
+
+    document.getElementById('convert-btn').addEventListener('click', function() {
+        const total = getTotal();
+        const currency = document.getElementById('currency-select').value;
+        convertResult.textContent = 'Conversion en cours…';
+        fetch('{{ path('erp_achat_convert') }}', {
+            method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'total=' + total + '&currency=' + currency
+        }).then(r => r.json()).then(d => {
+            convertResult.textContent = d.error ? '⚠ ' + d.error : total.toFixed(2) + ' EUR = ' + d.converted + ' ' + d.currency + ' (taux: ' + d.rate + ')';
+        }).catch(() => { convertResult.textContent = '⚠ Erreur réseau.'; });
+    });
+
+    updateTotal();
+})();
+</script>
+{% endblock %}

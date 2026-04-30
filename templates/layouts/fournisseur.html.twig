@@ -32,27 +32,21 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ path('erp_dashboard') }}" class="{% if current_route starts with 'erp_' %}active{% endif %}">
+                    <i class="fa-solid fa-store"></i>
+                    <span>FarmIA Desk ERP</span>
+                </a>
+            </li>
+            <li class="nav-item" style="padding-left:1rem;">
+                <a href="{{ path('erp_vente_index') }}" class="{% if current_route starts with 'erp_vente' %}active{% endif %}">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>Ventes</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="#" onclick="openProfileModal(); return false;">
                     <i class="fa-solid fa-user"></i>
                     <span>Mon Profil</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#">
-                    <i class="fa-solid fa-box-open"></i>
-                    <span>Produits</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>Commandes</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#">
-                    <i class="fa-solid fa-book-open"></i>
-                    <span>Catalogue</span>
                 </a>
             </li>
         </ul>

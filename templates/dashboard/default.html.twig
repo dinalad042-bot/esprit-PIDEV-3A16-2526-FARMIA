@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord — FarmAI{% endblock %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord — FarmAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .card { background: #fff; border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 24px rgba(0,0,0,.08); text-align: center; max-width: 420px; width: 100%; }
+        .card h1 { font-size: 1.4rem; color: #1e293b; margin: 0 0 .5rem; }
+        .card p { color: #64748b; font-size: .95rem; margin: 0 0 1.5rem; }
+        .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .6rem 1.2rem; border-radius: 8px; font-size: .9rem; font-weight: 600; text-decoration: none; background: #22c55e; color: #fff; }
+        .btn:hover { opacity: .85; }
+        .logout { display: block; margin-top: 1rem; color: #94a3b8; font-size: .85rem; text-decoration: none; }
+        .logout:hover { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <i class="fa-solid fa-circle-user" style="font-size:3rem;color:#22c55e;margin-bottom:1rem;"></i>
+        <h1>Bienvenue, {{ user.prenom|default('Utilisateur') }} !</h1>
+        <p>Votre compte est actif mais aucun rôle spécifique n'a été assigné.<br>Contactez un administrateur pour obtenir l'accès.</p>
+        <a href="{{ path('app_home') }}" class="btn">
+            <i class="fa-solid fa-house"></i> Retour à l'accueil
+        </a>
+        <a href="{{ path('app_logout') }}" class="logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Se déconnecter
+        </a>
+    </div>
+</body>
+</html>
+{% endblock %}
