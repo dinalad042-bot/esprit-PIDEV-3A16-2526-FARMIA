@@ -19,6 +19,8 @@ class AuthService
     /**
      * Register a new user.
      * Returns the created User or throws \InvalidArgumentException on validation failure.
+     *
+     * @param array<string, mixed> $data
      */
     public function signup(array $data): User
     {

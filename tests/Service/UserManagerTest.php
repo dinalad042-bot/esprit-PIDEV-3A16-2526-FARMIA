@@ -14,6 +14,7 @@ use ReflectionClass;
 class UserManagerTest extends TestCase
 {
     private UserManager $userManager;
+    /** @var UserRepository&\PHPUnit\Framework\MockObject\MockObject */
     private $userRepositoryMock;
 
     protected function setUp(): void

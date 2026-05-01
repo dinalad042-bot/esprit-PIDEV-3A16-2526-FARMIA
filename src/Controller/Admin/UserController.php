@@ -63,7 +63,7 @@ class UserController extends AbstractController
                 ]);
             }
 
-            /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $photo */
+            /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $photo */
             $photo = $request->files->get('photo');
             if ($photo) {
                 $destination = $this->getParameter('kernel.project_dir') . '/public/uploads/avatars';
@@ -189,6 +189,9 @@ class UserController extends AbstractController
         return $this->file($temp_file, 'utilisateurs_farmia.xlsx', ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
+    /**
+     * @return User[]
+     */
     private function getFilteredUsers(Request $request, UserRepository $userRepository): array
     {
         $search = strtolower($request->query->get('search', ''));

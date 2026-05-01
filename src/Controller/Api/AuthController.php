@@ -73,6 +73,9 @@ class AuthController extends AbstractController
 
     // ─── Shared serializer ───────────────────────────────────────────────────
 
+    /**
+     * @return array<string, mixed>
+     */
     private function serializeUser(\App\Entity\User $user): array
     {
         return [

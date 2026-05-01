@@ -46,7 +46,7 @@ class CaptchaService
     /**
      * Génère une image CAPTCHA
      * 
-     * @return array ['content' => string, 'type' => 'image/png'|'image/svg+xml']
+     * @return array<string, mixed>
      */
     public function generate(string $text): array
     {

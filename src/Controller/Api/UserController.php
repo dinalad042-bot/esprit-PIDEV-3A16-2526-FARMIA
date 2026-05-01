@@ -114,6 +114,9 @@ class UserController extends AbstractController
 
     // ─── Serializer ──────────────────────────────────────────────────────────
 
+    /**
+     * @return array<string, mixed>
+     */
     private function serialize(\App\Entity\User $user): array
     {
         return [

@@ -102,7 +102,7 @@ class ProfileController extends AbstractController
         }
 
         // ── Photo upload ─────────────────────────────────────────────────────
-        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $photo */
+        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $photo */
         $photo = $request->files->get('photo');
         if ($photo) {
             $imageConstraints = new Assert\Image([

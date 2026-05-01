@@ -77,11 +77,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'reset_code_expires_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $resetCodeExpiresAt = null;
 
+    /**
+     * @var Collection<int, UserLog>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
     /**
      * Visages enregistrés pour cet utilisateur (données biométriques en BDD).
+     *
+     * @var Collection<int, UserFace>
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $userFaces;
@@ -99,6 +104,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
+    /**
+     * @return string[]
+     */
     public function getRoles(): array
     {
         $dbRole = $this->role;
@@ -297,11 +305,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    /**
+     * @return Collection<int, UserFace>
+     */
     public function getUserFaces(): Collection
     {
         return $this->userFaces;
     }
 
+    /**
+     * @return Collection<int, UserLog>
+     */
     public function getUserLogs(): Collection
     {
         return $this->userLogs;

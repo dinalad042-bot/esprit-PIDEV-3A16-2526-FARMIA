@@ -6,6 +6,9 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<User>
+ */
 class UserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -18,6 +21,9 @@ class UserRepository extends ServiceEntityRepository
         return $this->findOneBy(['email' => $email]);
     }
 
+    /**
+     * @return User[]
+     */
     public function findAllUsers(): array
     {
         return $this->findAll();
@@ -25,6 +31,8 @@ class UserRepository extends ServiceEntityRepository
 
     /**
      * Search users by name, email, or cin, and filter by role.
+     *
+     * @return User[]
      */
     public function searchAndFilter(?string $query = null, ?string $role = null): array
     {
@@ -45,6 +53,8 @@ class UserRepository extends ServiceEntityRepository
 
     /**
      * Get user distribution by role for statistics.
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function countUsersByRole(): array
     {

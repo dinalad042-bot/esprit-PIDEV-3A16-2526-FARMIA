@@ -37,7 +37,7 @@ class FaceAuthController extends AbstractController
     #[Route('/register', name: 'app_face_register', methods: ['POST'])]
     public function registerFace(Request $request): JsonResponse
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $this->getUser();
 
         if (!$user) {
@@ -168,7 +168,7 @@ class FaceAuthController extends AbstractController
     #[Route('/delete', name: 'app_face_delete', methods: ['DELETE', 'POST'])]
     public function deleteFace(): JsonResponse
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $this->getUser();
 
         if (!$user) {
@@ -196,7 +196,7 @@ class FaceAuthController extends AbstractController
     #[Route('/status', name: 'app_face_status', methods: ['GET'])]
     public function faceStatus(): JsonResponse
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $this->getUser();
 
         if (!$user) {

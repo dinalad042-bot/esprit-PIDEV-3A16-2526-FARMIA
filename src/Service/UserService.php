@@ -17,6 +17,9 @@ class UserService
 
     // ─── Read ─────────────────────────────────────────────────────────────────
 
+    /**
+     * @return User[]
+     */
     public function findAll(): array
     {
         return $this->userRepository->findAllUsers();
@@ -32,6 +35,8 @@ class UserService
     /**
      * Create a new user from a data array.
      * The password must be provided in plain text; it will be hashed here.
+     *
+     * @param array<string, mixed> $data
      */
     public function create(array $data): User
     {
@@ -57,6 +62,8 @@ class UserService
     /**
      * Update an existing user.
      * If 'password' is present in $data it will be re-hashed.
+     *
+     * @param array<string, mixed> $data
      */
     public function update(User $user, array $data): User
     {
@@ -90,6 +97,9 @@ class UserService
 
     // ─── Internal ─────────────────────────────────────────────────────────────
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function hydrate(User $user, array $data): void
     {
         if (isset($data['nom']))       $user->setNom($data['nom']);
