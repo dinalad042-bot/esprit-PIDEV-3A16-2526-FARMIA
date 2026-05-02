@@ -1,0 +1,84 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Produits finis — FarmIA Desk{% endblock %}
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-box-open" style="color:#22c55e;"></i> Produits finis</h1>
+    {% if is_granted('ROLE_AGRICOLE') %}
+    <a href="{{ path('erp_produit_new') }}" class="btn-erp btn-primary"><i class="fa-solid fa-plus"></i> Nouveau produit</a>
+    {% endif %}
+</div>
+
+<table class="erp-table">
+    <thead>
+        <tr><th>#</th><th>Produit</th><th>Type</th><th>Prix vente</th><th>Stock</th><th>Recette / Info</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for p in produits %}
+    <tr>
+        <td>{{ p.idProduit }}</td>
+        <td>
+            <strong>{{ p.nom }}</strong>
+            {% if p.description %}<br><small style="color:#94a3b8;">{{ p.description|slice(0,60) }}</small>{% endif %}
+        </td>
+        <td>
+            {% if p.isSimple %}
+                <span class="badge-ok"><i class="fa-solid fa-tag"></i> Simple</span>
+            {% else %}
+                <span style="background:#ede9fe;color:#6d28d9;padding:.2rem .6rem;border-radius:999px;font-size:.75rem;font-weight:600;">
+                    <i class="fa-solid fa-flask"></i> Fabriqué
+                </span>
+            {% endif %}
+        </td>
+        <td>{{ p.prixVente|number_format(2,',',' ') }} €</td>
+        <td>
+            {% if p.stock > 0 %}
+                <span class="badge-ok">{{ p.stock|number_format(2) }}</span>
+            {% else %}
+                <span class="badge-critique">{{ p.stock|number_format(2) }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if p.isSimple %}
+                <span style="font-size:.8rem;color:#64748b;">Vendu directement (pas de recette)</span>
+            {% else %}
+                <div style="font-size:.8rem;color:#475569;">
+                    <strong style="color:#6d28d9;">Recette → produit {{ p.quantiteProduite|number_format(0) }} unité(s) par lot</strong><br>
+                    {% for ing in p.recette %}
+                    <span style="background:#f0fdf4;color:#166534;border-radius:4px;padding:.1rem .4rem;display:inline-block;margin:.1rem;">
+                        {{ ing.quantite }} {{ ing.matiere.unite }} {{ ing.matiere.nom }}
+                        <span style="color:#94a3b8;">(stock: {{ ing.matiere.stock }})</span>
+                    </span>
+                    {% else %}
+                    <span style="color:#f59e0b;">⚠ Aucun ingrédient défini</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </td>
+        <td style="display:flex;gap:.4rem;flex-wrap:wrap;">
+            {% if is_granted('ROLE_AGRICOLE') %}
+                {% if not p.isSimple %}
+                <form method="post" action="{{ path('erp_produit_produire', {id: p.idProduit}) }}" style="display:flex;gap:.3rem;align-items:center;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('produire_' ~ p.idProduit) }}">
+                    <input type="number" name="batches" value="1" min="1" style="width:50px;padding:.3rem .4rem;border:1px solid #e2e8f0;border-radius:6px;font-size:.8rem;" title="Nombre de lots à produire">
+                    <button type="submit" class="btn-erp" style="background:#6d28d9;color:#fff;padding:.35rem .6rem;font-size:.75rem;"
+                            title="Consomme les matières et ajoute {{ p.quantiteProduite }} unité(s) au stock par lot">
+                        <i class="fa-solid fa-industry"></i> Produire
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{{ path('erp_produit_edit', {id: p.idProduit}) }}" class="btn-erp btn-secondary"><i class="fa-solid fa-pen"></i></a>
+                <form method="post" action="{{ path('erp_produit_delete', {id: p.idProduit}) }}" onsubmit="return confirm('Supprimer ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('del_produit_' ~ p.idProduit) }}">
+                    <button type="submit" class="btn-erp btn-danger"><i class="fa-solid fa-trash"></i></button>
+                </form>
+            {% else %}
+                <span style="font-size:.8rem;color:#94a3b8;font-style:italic;">Lecture seule</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:2rem;">Aucun produit enregistré.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

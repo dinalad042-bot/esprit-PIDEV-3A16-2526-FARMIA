@@ -1,0 +1,51 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Matières premières — FarmIA Desk{% endblock %}
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-cubes" style="color:#22c55e;"></i> Matières premières</h1>
+    <a href="{{ path('erp_matiere_new') }}" class="btn-erp btn-primary"><i class="fa-solid fa-plus"></i> Nouvelle matière</a>
+</div>
+
+{% if critiques|length > 0 %}
+<div class="stock-warning">
+    <strong><i class="fa-solid fa-triangle-exclamation"></i> {{ critiques|length }} matière(s) en stock critique</strong>
+    <table style="margin-top:.5rem;">
+        <tr><th>Matière</th><th>Stock</th><th>Seuil</th><th>Unité</th></tr>
+        {% for m in critiques %}
+        <tr><td>{{ m.nom }}</td><td><span class="badge-critique">{{ m.stock }}</span></td><td>{{ m.seuilCritique }}</td><td>{{ m.unite }}</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<table class="erp-table">
+    <thead><tr><th>#</th><th>Nom</th><th>Unité</th><th>Stock</th><th>Seuil critique</th><th>Prix unitaire</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for m in matieres %}
+    <tr>
+        <td>{{ m.idMatiere }}</td>
+        <td><strong>{{ m.nom }}</strong>{% if m.description %}<br><small style="color:#94a3b8;">{{ m.description|slice(0,60) }}</small>{% endif %}</td>
+        <td>{{ m.unite }}</td>
+        <td>
+            {% if m.seuilCritique > 0 and m.isStockCritique %}
+                <span class="badge-critique">{{ m.stock }}</span>
+            {% else %}
+                <span class="badge-ok">{{ m.stock }}</span>
+            {% endif %}
+        </td>
+        <td>{{ m.seuilCritique }}</td>
+        <td>{{ m.prixUnitaire|number_format(2,',',' ') }} €</td>
+        <td style="display:flex;gap:.4rem;">
+            <a href="{{ path('erp_matiere_edit', {id: m.idMatiere}) }}" class="btn-erp btn-secondary"><i class="fa-solid fa-pen"></i></a>
+            <form method="post" action="{{ path('erp_matiere_delete', {id: m.idMatiere}) }}" onsubmit="return confirm('Supprimer ?')">
+                <input type="hidden" name="_token" value="{{ csrf_token('del_matiere_' ~ m.idMatiere) }}">
+                <button type="submit" class="btn-erp btn-danger"><i class="fa-solid fa-trash"></i></button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:2rem;">Aucune matière enregistrée.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
