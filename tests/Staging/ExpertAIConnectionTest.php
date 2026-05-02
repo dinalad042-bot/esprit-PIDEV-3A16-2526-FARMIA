@@ -40,12 +40,6 @@ class ExpertAIConnectionTest extends BaseWebTestCase
     {
         $this->markTestSkipped('Integration test requires real API or complex mocking; tested manually');
     }
-        // Verify AI result structure
-        $aiData = json_decode($analyse->getAiDiagnosisResult(), true);
-        $this->assertIsArray($aiData);
-        $this->assertEquals('Early Blight', $aiData['condition']);
-        $this->assertTrue($aiData['needsExpert']);
-    }
     /**
      * Helper: Create analysis with image for AI testing
      */

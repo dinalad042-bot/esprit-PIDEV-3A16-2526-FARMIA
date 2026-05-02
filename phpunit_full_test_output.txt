@@ -1,0 +1,230 @@
+use App\Entity\User; 
+PHPUnit 9.6.34 by Sebastian Bergmann and contributors.
+
+User Integration (App\Tests\Entity\UserIntegration)
+ Γ£ö User faces collection exists
+ Γ£ö Has face auth returns false when no faces
+ Γ£ö Get active face returns null when empty
+ Γ£ö Analyses collection exists
+ Γ£ö Fermes collection exists
+ Γ£ö Add ferme sets user on ferme
+ Γ£ö Remove ferme clears user reference
+ Γ£ö Get roles always includes role user
+ Γ£ö Constructor initializes all collections
+
+User Latitude Longitude Property Access (App\Tests\Entity\UserLatitudeLongitudePropertyAccess)
+ Γ£ö Property accessor can read latitude
+ Γ£ö Property accessor can write latitude
+ Γ£ö Property accessor can read longitude
+ Γ£ö Property accessor can write longitude
+ Γ£ö Property accessor with random coordinates
+ Γ£ö Property accessor with multiple user instances
+ Γ£ö Property accessor with null values
+
+User Preservation Property (App\Tests\Entity\UserPreservationProperty)
+ Γ£ö User creation without location data succeeds
+ Γ£ö User properties with various values
+ Γ£ö User authentication properties work
+ Γ£ö User authentication with various credentials
+ Γ£ö User relationships load correctly
+ Γ£ö User relationships with multiple items
+ Γ£ö User property updates work
+ Γ£ö User property updates with various values
+ Γ£ö User timestamps work
+ Γ£ö User image url works
+ Γ£ö User facial authentication methods
+ Γ£ö User fluent interface works
+ Γ£ö User ferme relationship bidirectionality
+ Γ£ö User constructor initializes all collections
+ Γ£ö User properties remain unchanged after operations
+
+Analyse Controller (App\Tests\Functional\Controller\AnalyseController)
+ Γ£ö Index page loads
+ Γ£ö New form loads
+ Γ£ö Can create analyse
+ Γ£ö Show page loads
+ Γ£ö Edit page loads
+ Γ£ö Can update analyse
+ Γ£ö Can delete analyse
+ Γ£ö Unauthenticated redirect
+
+Animal Controller (App\Tests\Functional\Controller\AnimalController)
+ Γ£ö Index page loads
+ Γ£ö Can create animal with valid data
+ Γ£ö Create animal with invalid data shows errors
+ Γ£ö Edit page loads
+ Γ£ö Can update animal
+ Γ£ö Can delete animal
+ Γ£ö Pdf generation
+ Γ£ö Unauthenticated user is redirected
+
+Expert Analyse Controller (App\Tests\Functional\Controller\ExpertAnalyseController)
+ Γ£ö Expert dashboard loads
+ Γ£ö Expert analyse list loads
+ Γ£ö Pending analyses page loads
+ Γ£ö Analyse show page loads
+ Γ£ö Edit analyse page loads
+ Γ£ö Can delete analyse
+ Γ£ö Can update analyse status
+ Γ£ö Take request assigns expert
+ Γ£ö Non expert cannot access expert routes
+ Γ£ö Unauthenticated user is redirected
+
+Expert Conseil Controller (App\Tests\Functional\Controller\ExpertConseilController)
+ Γ£ö Expert conseil list loads
+ Γ£ö Conseil show page loads
+ Γ£ö Create conseil page loads
+ Γ£ö Edit conseil page loads
+ Γ£ö Can delete conseil
+ Γ£ö Non expert cannot access expert conseil routes
+
+Ferme Controller (App\Tests\Functional\Controller\FermeController)
+ Γ£ö Index page loads
+ Γ£ö Can create ferme with valid data
+ Γ£ö Create ferme with invalid data shows errors
+ Γ£ö Edit page loads with ferme data
+ Γ£ö Can update ferme
+ Γ£ö Can delete ferme with csrf token
+ Γ£ö Pdf generation returns pdf content
+ Γ£ö Search filters results
+ Γ£ö Unauthenticated user is redirected
+
+Security (App\Tests\Functional\Security)
+ Γ£ö Login page is accessible
+ Γ£ö Login with valid credentials redirects
+ Γ£ö Login with invalid credentials shows error
+ Γ£ö Logout redirects
+ Γ£ö Protected routes require authentication
+ Γ£ö Admin routes require admin role
+ Γ£ö Admin can access admin routes
+ Γ£ö Csrf token present on login form
+
+Template Rendering (App\Tests\Functional\TemplateRendering)
+ Γ£ö Homepage loads
+ Γ£ö Login page loads
+ Γ£ö Ferme index page renders
+ Γ£ö Animal index page renders
+ Γ£ö Plante index page renders
+ Γ£ö Analyse index page renders
+ Γ£ö Conseil index page renders
+ Γ£ö Admin dashboard renders
+ Γ£ö Base layout renders
+
+Animal Repository (App\Tests\Repository\AnimalRepository)
+ Γ£ö Can persist animal
+ Γ£ö Can find animal by id
+ Γ£ö Find returns null for non existent id
+ Γ£ö Find all returns array
+ Γ£ö Can update animal
+ Γ£ö Can delete animal
+ Γ£ö Animal with ferme relationship
+
+Ferme Repository (App\Tests\Repository\FermeRepository)
+ Γ£ö Can persist ferme
+ Γ£ö Can find ferme by id
+ Γ£ö Find returns null for non existent id
+ Γ£ö Find all returns array
+ Γ£ö Find all returns empty array when no fermes
+ Γ£ö Can update ferme
+ Γ£ö Can delete ferme
+ Γ£ö Ferme with user relationship
+
+Groq Service (App\Tests\Service\GroqService)
+ Γå⌐ Diagnose plant disease returns success result
+ Γå⌐ Diagnose plant disease returns healthy result
+ Γ£ö Diagnose plant disease handles api error
+ Γ£ö Diagnose plant disease handles invalid json response
+ Γ£ö Diagnose plant disease handles empty choices
+
+Expert AIConnection (App\Tests\Staging\ExpertAIConnection)
+ Γå⌐ A i diagnosis complete handshake
+
+Expert Button Connection (App\Tests\Staging\ExpertButtonConnection)
+ Γ£ö Expert routes exist
+ Γ£ö Expert analyses list renders
+ Γ£ö Security handshake
+
+Expert Module Handshake (App\Tests\Staging\ExpertModuleHandshake)
+ Γ£ö Expert analyses list handshake
+ Γ£ÿ A i diagnosis handshake
+   Γöé
+   Γöé Failed asserting that the Crawler matches selector ".alert-success:contains("Diagnostic IA effectu├⌐")".
+   Γöé
+   Γöé C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA\vendor\symfony\framework-bundle\Test\DomCrawlerAssertionsTrait.php:29
+   Γöé C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA\tests\Staging\ExpertModuleHandshakeTest.php:86
+   Γöé C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA\vendor\phpunit\phpunit\phpunit:107
+   Γöé
+
+ Γ£ö Security access control handshake
+
+Analyse (App\Tests\Unit\Entity\Analyse)
+ Γ£ö Analyse creation
+
+Animal (App\Tests\Unit\Entity\Animal)
+ Γ£ö Getters and setters
+ Γ£ö Id animal getter
+ Γ£ö Ferme relationship
+ Γ£ö Date naissance accepts date time
+ Γ£ö Validation constraints
+
+Conseil (App\Tests\Unit\Entity\Conseil)
+ Γ£ö Conseil creation
+
+Ferme (App\Tests\Unit\Entity\Ferme)
+ Γ£ö Constructor initializes collections and timestamps
+ Γ£ö Getters and setters
+ Γ£ö Id ferme alias returns same as get id
+ Γ£ö User bidirectional relationship
+ Γ£ö Add animal sets ferme on animal
+ Γ£ö Add plante sets ferme on plante
+ Γ£ö To string returns nom ferme and lieu
+
+Plante (App\Tests\Unit\Entity\Plante)
+ Γ£ö Plante creation
+
+User Face (App\Tests\Unit\Entity\UserFace)
+ Γ£ö User face creation
+
+User Log (App\Tests\Unit\Entity\UserLog)
+ Γ£ö Action type
+ Γ£ö Timestamp
+ Γ£ö Affected user
+ Γ£ö Performed by user
+ Γ£ö Description
+ Γ£ö Fluent interface
+ Γ£ö Legacy aliases
+
+Ferme Type (App\Tests\Unit\Form\FermeType)
+ Γ£ö Submit valid data
+ Γ£ö Form fields exist
+ Γ£ö Configure options
+
+Weather Service (App\Tests\Unit\Service\WeatherService)
+ Γ£ö Get weather for location returns array
+ Γ£ö Get weather for location handles error
+ Γ£ö Get agri advice returns string
+ Γ£ö Get agri advice handles failure
+
+Time: 00:26.562, Memory: 88.00 MB
+
+Summary of non-successful tests:
+
+Groq Service (App\Tests\Service\GroqService)
+ Γå⌐ Diagnose plant disease returns success result
+ Γå⌐ Diagnose plant disease returns healthy result
+
+Expert AIConnection (App\Tests\Staging\ExpertAIConnection)
+ Γå⌐ A i diagnosis complete handshake
+
+Expert Module Handshake (App\Tests\Staging\ExpertModuleHandshake)
+ Γ£ÿ A i diagnosis handshake
+   Γöé
+   Γöé Failed asserting that the Crawler matches selector ".alert-success:contains("Diagnostic IA effectu├⌐")".
+   Γöé
+   Γöé C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA\vendor\symfony\framework-bundle\Test\DomCrawlerAssertionsTrait.php:29
+   Γöé C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA\tests\Staging\ExpertModuleHandshakeTest.php:86
+   Γöé C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA\vendor\phpunit\phpunit\phpunit:107
+   Γöé
+
+FAILURES!
+Tests: 146, Assertions: 435, Failures: 1, Skipped: 3.

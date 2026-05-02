@@ -1,5 +1,7 @@
 :root {
     --primary-color: #388e3c;
+    --primary-green: #4caf50;
+    --dark-bg: #2c3e50;
     --primary-gradient: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
     --bg-light: #f4f6f8;
     --sidebar-bg: #222d32;
@@ -274,6 +276,26 @@ body {
 }
 .btn-outline-dark:hover {
     background: #f8f9fa;
+}
+
+.btn-dark {
+    background-color: var(--dark-bg);
+    color: white;
+}
+.btn-dark:hover {
+    background-color: #1a1a2e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline-green {
+    border: 1px solid var(--primary-green);
+    color: var(--primary-green);
+    background: transparent;
+}
+.btn-outline-green:hover {
+    background-color: rgba(76, 175, 80, 0.1);
+    transform: translateY(-1px);
 }
 
 /* Badges */
