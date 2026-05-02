@@ -11,10 +11,12 @@ use Stripe\Stripe;
 class PaymentService
 {
     public function __construct(
-        private string $stripeSecretKey,
-        private string $qrOutputDir
+        private string $stripeSecretKey = 'sk_test_placeholder',
+        private string $qrOutputDir = ''
     ) {
-        Stripe::setApiKey($this->stripeSecretKey);
+        if ($this->stripeSecretKey) {
+            Stripe::setApiKey($this->stripeSecretKey);
+        }
     }
 
     /**
