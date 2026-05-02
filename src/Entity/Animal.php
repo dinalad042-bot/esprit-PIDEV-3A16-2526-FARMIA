@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AnimalRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -34,6 +36,15 @@ class Animal
     #[Assert\NotNull(message: "Veuillez affecter l'animal à une ferme.")]
     private ?Ferme $ferme = null;
 
+    // --- RELATION: Animal → SuiviSante (EMEN's health tracking) ---
+    #[ORM\OneToMany(mappedBy: 'animal', targetEntity: SuiviSante::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $suiviSantes;
+
+    public function __construct()
+    {
+        $this->suiviSantes = new ArrayCollection();
+    }
+
     public function getIdAnimal(): ?int { return $this->id_animal; }
 
     public function getEspece(): ?string { return $this->espece; }
@@ -56,5 +67,32 @@ class Animal
     public function getNom(): ?string
     {
         return $this->espece;
+    }
+
+    /**
+     * @return Collection<int, SuiviSante>
+     */
+    public function getSuiviSantes(): Collection
+    {
+        return $this->suiviSantes;
+    }
+
+    public function addSuiviSante(SuiviSante $suiviSante): static
+    {
+        if (!$this->suiviSantes->contains($suiviSante)) {
+            $this->suiviSantes->add($suiviSante);
+            $suiviSante->setAnimal($this);
+        }
+        return $this;
+    }
+
+    public function removeSuiviSante(SuiviSante $suiviSante): static
+    {
+        if ($this->suiviSantes->removeElement($suiviSante)) {
+            if ($suiviSante->getAnimal() === $this) {
+                $suiviSante->setAnimal(null);
+            }
+        }
+        return $this;
     }
 }
