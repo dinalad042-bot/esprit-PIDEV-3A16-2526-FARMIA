@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -45,14 +46,14 @@ class RegistrationFormType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotBlank(['message' => 'Le CIN est obligatoire.']),
-                    new Length(['exactly' => 8, 'exactMessage' => 'Le CIN doit contenir exactement 8 caractères.']),
+                    new Length(['min' => 8, 'max' => 8, 'exactMessage' => 'Le CIN doit contenir exactement 8 caractères.']),
                 ],
             ])
             ->add('telephone', TextType::class, [
                 'required' => true,
                 'constraints' => [
                     new NotBlank(['message' => 'Le téléphone est obligatoire.']),
-                    new Length(['exactly' => 8, 'exactMessage' => 'Le téléphone doit contenir exactement 8 caractères.']),
+                    new Length(['min' => 8, 'max' => 8, 'exactMessage' => 'Le téléphone doit contenir exactement 8 caractères.']),
                 ],
             ])
             ->add('adresse', TextType::class, [
@@ -60,6 +61,12 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'L\'adresse est obligatoire.']),
                 ],
+            ])
+            ->add('latitude', HiddenType::class, [
+                'required' => false,
+            ])
+            ->add('longitude', HiddenType::class, [
+                'required' => false,
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,

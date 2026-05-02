@@ -14,18 +14,8 @@ class JsonDecodeExtension extends AbstractExtension
         ];
     }
 
-    public function jsonDecode(?string $json): mixed
+    public function jsonDecode(string $json, bool $assoc = true): mixed
     {
-        if (null === $json || '' === $json) {
-            return null;
-        }
-
-        $decoded = json_decode($json, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return null;
-        }
-
-        return $decoded;
+        return json_decode($json, $assoc);
     }
 }

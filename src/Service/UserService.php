@@ -99,6 +99,8 @@ class UserService
         if (isset($data['adresse']))   $user->setAdresse($data['adresse']);
         if (isset($data['cin']))       $user->setCin($data['cin']);
         if (isset($data['image_url'])) $user->setImageUrl($data['image_url']);
+        if (isset($data['latitude']))  $user->setLatitude((float) $data['latitude']);
+        if (isset($data['longitude'])) $user->setLongitude((float) $data['longitude']);
 
         // The DB stores raw role names (ADMIN, EXPERT, etc.) without the ROLE_ prefix
         if (isset($data['role'])) {

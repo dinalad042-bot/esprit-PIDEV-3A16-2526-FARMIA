@@ -36,3 +36,7 @@ services:
         arguments:
             $apiKey: '%env(string:GROQ_API_KEY)%'
             $model: '%env(string:GROQ_MODEL)%'
+
+    App\Service\WeatherService:
+        arguments:
+            $apiKey: '%env(string:OPENWEATHER_API_KEY)%'

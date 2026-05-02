@@ -41,6 +41,12 @@ class Analyse
     #[ORM\Column(name: 'image_url', type: 'string', length: 255, nullable: true)]
     private ?string $imageUrl = null;
 
+    #[ORM\Column(name: 'weather_data', type: 'json', nullable: true)]
+    private ?array $weatherData = null;
+
+    #[ORM\Column(name: 'weather_fetched_at', type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $weatherFetchedAt = null;
+
     #[ORM\Column(name: 'statut', type: 'string', length: 20, nullable: false)]
     private string $statut = 'en_attente';
 
@@ -159,6 +165,13 @@ class Analyse
     // AI Diagnosis Methods
     public function getAiDiagnosisResult(): ?string { return $this->aiDiagnosisResult; }
     public function setAiDiagnosisResult(?string $result): static { $this->aiDiagnosisResult = $result; return $this; }
+
+    // Weather Data Methods
+    public function getWeatherData(): ?array { return $this->weatherData; }
+    public function setWeatherData(?array $data): static { $this->weatherData = $data; return $this; }
+
+    public function getWeatherFetchedAt(): ?\DateTimeInterface { return $this->weatherFetchedAt; }
+    public function setWeatherFetchedAt(?\DateTimeInterface $date): static { $this->weatherFetchedAt = $date; return $this; }
 
     public function getAiDiagnosisDate(): ?\DateTimeInterface { return $this->aiDiagnosisDate; }
     public function setAiDiagnosisDate(?\DateTimeInterface $date): static { $this->aiDiagnosisDate = $date; return $this; }

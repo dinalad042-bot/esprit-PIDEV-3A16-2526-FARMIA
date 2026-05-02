@@ -1,4 +1,4 @@
-cd c:\Users\sliti\Videos\web-2026\farmia && php -S localhost:8000 router.php
+cd C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA && php -S localhost:8000 router.php
 
 php -S localhost:8000 -t public public/router.php
 

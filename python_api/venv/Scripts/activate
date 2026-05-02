@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Aymen Ben Salem\farmia\python_api\venv"
+VIRTUAL_ENV="C:\Users\sliti\Desktop\dev\esprit-PIDEV-3A16-2526-FARMIA\python_api\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

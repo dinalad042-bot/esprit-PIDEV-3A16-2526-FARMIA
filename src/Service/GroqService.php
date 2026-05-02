@@ -12,7 +12,7 @@ class GroqService
     public function __construct(
         private HttpClientInterface $httpClient,
         private string $apiKey,
-        private string $model = 'meta-llama/llama-4-scout-17b-16e-instruct'
+        private string $model = 'llama-3.2-11b-vision-preview'
     ) {}
 
     // ─── Text Diagnostic ──────────────────────────────────────────────
@@ -201,16 +201,7 @@ PROMPT;
                     'messages' => [
                         [
                             'role'    => 'user',
-                            'content' => [
-                                [
-                                    'type' => 'text',
-                                    'text' => $prompt,
-                                ],
-                                [
-                                    'type'      => 'image_url',
-                                    'image_url' => ['url' => $imageUrl],
-                                ],
-                            ],
+                            'content' => $prompt . "\n\nAnalyse cette image: " . $imageUrl,
                         ],
                     ],
                     'temperature' => 0.3,
@@ -229,14 +220,21 @@ PROMPT;
             $parsed = json_decode($content, true);
 
             if (!$parsed) {
-                return $this->errorResult('Réponse vision IA invalide', $content);
+                return $this->errorResult('Réponse vision IA invalide: ' . $content);
             }
 
             $parsed['rawResponse'] = $content;
             return DiagnosisResult::fromArray($parsed);
 
         } catch (\Throwable $e) {
-            return $this->errorResult('Erreur Vision API: ' . $e->getMessage());
+            $errorDetails = $e->getMessage();
+            if (method_exists($e, 'getResponse')) {
+                $response = $e->getResponse();
+                if ($response) {
+                    $errorDetails .= ' | Response: ' . $response->getContent(false);
+                }
+            }
+            return $this->errorResult('Erreur Vision API: ' . $errorDetails);
         }
     }
 
@@ -295,7 +293,7 @@ PROMPT;
         return DiagnosisResult::fromArray([
             'condition'          => 'Erreur de diagnostic',
             'confidence'         => 'LOW',
-            'symptoms'           => $message,
+            'symptoms'           => [$message],
             'treatment'          => 'Veuillez réessayer ou consulter un expert.',
             'prevention'         => '',
             'urgency'            => 'Surveiller',

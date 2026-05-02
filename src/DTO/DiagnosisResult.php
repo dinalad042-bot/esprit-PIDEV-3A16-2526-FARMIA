@@ -6,7 +6,7 @@ class DiagnosisResult
 {
     public string $condition   = '';
     public string $confidence  = 'LOW';
-    public string $symptoms    = '';
+    public array $symptoms     = [];
     public string $treatment   = '';
     public string $prevention  = '';
     public string $urgency     = '';
@@ -18,7 +18,7 @@ class DiagnosisResult
         $r = new self();
         $r->condition   = $data['condition']        ?? 'Inconnu';
         $r->confidence  = $data['confidence']       ?? 'LOW';
-        $r->symptoms    = $data['symptoms']         ?? '';
+        $r->symptoms     = is_array($data['symptoms'] ?? []) ? $data['symptoms'] : [$data['symptoms']];
         $r->treatment   = $data['treatment']        ?? '';
         $r->prevention  = $data['prevention']       ?? '';
         $r->urgency     = $data['urgency']          ?? '';

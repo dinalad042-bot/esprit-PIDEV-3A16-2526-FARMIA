@@ -4,7 +4,7 @@ namespace App\Controller\Web;
 
 use App\Entity\Analyse;
 use App\Service\GroqService;
-use App\Service\NotificationService;
+use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,8 +19,8 @@ class ExpertAIController extends AbstractController
 {
     public function __construct(
         private GroqService $groqService,
+        private WeatherService $weatherService,
         private EntityManagerInterface $em,
-        private NotificationService $notificationService,
     ) {}
 
     #[Route('/analyse/{id}/diagnose', name: 'expert_analyse_diagnose', methods: ['POST'])]
@@ -38,11 +38,8 @@ class ExpertAIController extends AbstractController
         }
 
         try {
-            // Fetch cross-module context (related plantes/animaux from the farm)
-            $contextData = $this->buildFarmContext($analyse);
-            
-            // Run AI vision diagnostic with context
-            $diagnosisResult = $this->groqService->generateVisionDiagnostic($analyse->getImageUrl(), $contextData);
+            // Run AI vision diagnostic
+            $diagnosisResult = $this->groqService->generateVisionDiagnostic($analyse->getImageUrl());
 
             // Store results in analyse entity
             $analyse->setAiDiagnosisResult(json_encode([
@@ -57,12 +54,15 @@ class ExpertAIController extends AbstractController
 
             $analyse->setAiConfidenceScore($diagnosisResult->confidence);
             $analyse->setAiDiagnosisDate(new \DateTime());
-            $analyse->setDiagnosisMode('VISION');
+
+            // Fetch weather data for farm location if available
+            if ($analyse->getFerme()?->getLieu()) {
+                $weather = $this->weatherService->getWeatherForLocation($analyse->getFerme()->getLieu());
+                $analyse->setWeatherData($weather);
+                $analyse->setWeatherFetchedAt(new \DateTime());
+            }
 
             $this->em->flush();
-
-            // Notify farmer
-            $this->notificationService->notifyFarmerOfDiagnosis($analyse, 'VISION');
 
             $this->addFlash('success', 'Diagnostic IA effectué avec succès. Confiance: ' . $diagnosisResult->confidence);
 
@@ -107,9 +107,14 @@ class ExpertAIController extends AbstractController
         }
 
         try {
-            // Fetch cross-module context (related plantes/animaux from the farm)
-            $contextData = $this->buildFarmContext($analyse);
-            $diagnosisResult = $this->groqService->generateVisionDiagnostic($analyse->getImageUrl(), $contextData);
+            // Fetch weather FIRST before vision analysis
+            if ($analyse->getFerme()?->getLieu()) {
+                $weather = $this->weatherService->getWeatherForLocation($analyse->getFerme()->getLieu());
+                $analyse->setWeatherData($weather);
+                $analyse->setWeatherFetchedAt(new \DateTime());
+            }
+            
+            $diagnosisResult = $this->groqService->generateVisionDiagnostic($analyse->getImageUrl());
 
             // Store results
             $analyse->setAiDiagnosisResult(json_encode([
@@ -124,12 +129,8 @@ class ExpertAIController extends AbstractController
 
             $analyse->setAiConfidenceScore($diagnosisResult->confidence);
             $analyse->setAiDiagnosisDate(new \DateTime());
-            $analyse->setDiagnosisMode('VISION');
 
             $this->em->flush();
-
-            // Notify farmer
-            $this->notificationService->notifyFarmerOfDiagnosis($analyse, 'VISION');
 
             return new JsonResponse([
                 'success' => true,
@@ -144,128 +145,5 @@ class ExpertAIController extends AbstractController
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    // ─── Text-Based Diagnosis ─────────────────────────────────────────────
-
-    #[Route('/analyse/{id}/diagnose-text', name: 'expert_analyse_diagnose_text', methods: ['GET', 'POST'])]
-    public function diagnoseText(Request $request, Analyse $analyse): Response
-    {
-        // Security check: ensure the expert is the technicien for this analysis
-        if ($analyse->getTechnicien() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à diagnostiquer cette analyse.');
-        }
-
-        $observation = '';
-        $aiResult = null;
-
-        if ($request->isMethod('POST')) {
-            $observation = $request->request->get('observation', '');
-            
-            if (empty($observation)) {
-                $this->addFlash('error', 'Veuillez saisir une description des symptômes.');
-                return $this->render('portal/expert/diagnose_text.html.twig', [
-                    'analyse' => $analyse,
-                    'observation' => $observation,
-                    'aiResult' => null,
-                ]);
-            }
-
-            try {
-                // Fetch cross-module context (related plantes/animaux from the farm)
-                $contextData = $this->buildFarmContext($analyse);
-                
-                // Run AI text diagnostic with context
-                $diagnosisResult = $this->groqService->generateTextDiagnostic($observation, $contextData);
-
-                // Store results in analyse entity
-                $analyse->setAiDiagnosisResult(json_encode([
-                    'condition' => $diagnosisResult->condition,
-                    'symptoms' => $diagnosisResult->symptoms,
-                    'treatment' => $diagnosisResult->treatment,
-                    'prevention' => $diagnosisResult->prevention,
-                    'urgency' => $diagnosisResult->urgency,
-                    'needsExpert' => $diagnosisResult->needsExpert,
-                    'rawResponse' => $diagnosisResult->rawResponse,
-                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-
-                $analyse->setAiConfidenceScore($diagnosisResult->confidence);
-                $analyse->setAiDiagnosisDate(new \DateTime());
-                $analyse->setDiagnosisMode('TEXT');
-
-                $this->em->flush();
-
-                // Notify farmer
-                $this->notificationService->notifyFarmerOfDiagnosis($analyse, 'TEXT');
-
-                $this->addFlash('success', 'Diagnostic IA (texte) effectué avec succès. Confiance: ' . $diagnosisResult->confidence);
-
-                // Decode for template display
-                $aiResult = json_decode($analyse->getAiDiagnosisResult(), true);
-
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur lors du diagnostic IA: ' . $e->getMessage());
-            }
-        }
-
-        return $this->render('portal/expert/diagnose_text.html.twig', [
-            'analyse' => $analyse,
-            'observation' => $observation,
-            'aiResult' => $aiResult,
-        ]);
-    }
-
-    // ─── Cross-Module Context Helper ──────────────────────────────────────
-
-    /**
-     * Build context data from related farm entities (Plantes & Animaux)
-     */
-    private function buildFarmContext(Analyse $analyse): array
-    {
-        $context = [
-            'ferme' => null,
-            'plantes' => [],
-            'animaux' => [],
-            'analyseCible' => [
-                'type' => null,
-                'nom' => null,
-            ],
-        ];
-
-        $ferme = $analyse->getFerme();
-        if ($ferme) {
-            $context['ferme'] = [
-                'nom' => $ferme->getNomFerme(),
-                'lieu' => $ferme->getLieu(),
-            ];
-
-            // Fetch related plantes
-            foreach ($ferme->getPlantes() as $plante) {
-                $context['plantes'][] = [
-                    'nom' => $plante->getNomEspece(),
-                    'type' => $plante->getCycleVie(),
-                    'datePlantation' => null,
-                ];
-            }
-
-            // Fetch related animaux
-            foreach ($ferme->getAnimals() as $animal) {
-                $context['animaux'][] = [
-                    'espece' => $animal->getEspece(),
-                    'etat' => $animal->getEtatSante(),
-                ];
-            }
-        }
-
-        // Identify what's being analyzed
-        if ($analyse->getPlanteCible()) {
-            $context['analyseCible']['type'] = 'plante';
-            $context['analyseCible']['nom'] = $analyse->getPlanteCible()->getNomEspece();
-        } elseif ($analyse->getAnimalCible()) {
-            $context['analyseCible']['type'] = 'animal';
-            $context['analyseCible']['nom'] = $analyse->getAnimalCible()->getEspece();
-        }
-
-        return $context;
     }
 }

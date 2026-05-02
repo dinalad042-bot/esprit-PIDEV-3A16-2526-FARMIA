@@ -161,9 +161,44 @@
         </div>
     </div>
 
+    {# Weather Panel #}
+    {% set weatherData = analyse.getWeatherData() %}
+    {% if weatherData is not null and weatherData.success %}
+    <div style="margin-top:1.5rem; background:linear-gradient(135deg,#2193b0 0%,#6dd5ed 100%); border-radius:12px; padding:1.5rem; color:#fff;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="margin:0; font-size:1.1rem;">
+                <i class="fa-solid fa-cloud-sun" style="margin-right:8px;"></i> Conditions Météo
+            </h3>
+            <span style="background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:12px; font-size:0.85rem;">
+                {{ analyse.weatherFetchedAt|date('d/m/Y H:i') }}
+            </span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+            <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; text-align:center;">
+                <div style="font-size:2rem; font-weight:700;">{{ analyse.weatherData.temperature }}°C</div>
+                <div style="opacity:0.8; font-size:0.85rem;">Température</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; text-align:center;">
+                <div style="font-size:2rem; font-weight:700;">{{ analyse.weatherData.humidity }}%</div>
+                <div style="opacity:0.8; font-size:0.85rem;">Humidité</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; text-align:center;">
+                <div style="font-size:1.2rem; font-weight:600;">{{ analyse.weatherData.description }}</div>
+                <div style="opacity:0.8; font-size:0.85rem;">{{ analyse.weatherData.location }}</div>
+            </div>
+        </div>
+        {% set weatherAdvice = weatherService.getAgriAdvice(analyse.weatherData) %}
+        {% if weatherAdvice is not empty %}
+        <div style="margin-top:1rem; background:rgba(255,255,255,0.15); border-radius:8px; padding:1rem;">
+            {{ weatherAdvice|nl2br }}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
     {# AI Diagnosis Section #}
     {% if analyse.hasAiDiagnosis %}
-    {% set aiResult = analyse.aiDiagnosisResult|json_decode %}
+    {% set aiResult = analyse.aiDiagnosisResult is not null ? analyse.aiDiagnosisResult|raw|json_decode : {} %}
     <div style="margin-top:1.5rem; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border-radius:12px; padding:1.5rem; color:#fff;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
             <h3 style="margin:0; font-size:1.1rem;">
@@ -187,11 +222,23 @@
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
             <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem;">
                 <div style="font-size:0.8rem; opacity:0.8; margin-bottom:0.25rem;"><i class="fa-solid fa-heart-pulse"></i> Symptômes</div>
-                <div style="font-size:0.9rem;">{{ aiResult.symptoms|default('-')|slice(0,100) }}{% if aiResult.symptoms|length > 100 %}...{% endif %}</div>
+                <div style="font-size:0.9rem;">
+                    {% if aiResult.symptoms is iterable %}
+                        {{ aiResult.symptoms|join(', ')|slice(0,100) }}{% if aiResult.symptoms|join(', ')|length > 100 %}...{% endif %}
+                    {% else %}
+                        {{ aiResult.symptoms|default('-')|slice(0,100) }}{% if aiResult.symptoms|default('-')|length > 100 %}...{% endif %}
+                    {% endif %}
+                </div>
             </div>
             <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem;">
                 <div style="font-size:0.8rem; opacity:0.8; margin-bottom:0.25rem;"><i class="fa-solid fa-pills"></i> Traitement</div>
-                <div style="font-size:0.9rem;">{{ aiResult.treatment|default('-')|slice(0,100) }}{% if aiResult.treatment|length > 100 %}...{% endif %}</div>
+                <div style="font-size:0.9rem;">
+                    {% if aiResult.treatment is iterable %}
+                        {{ aiResult.treatment|join(', ')|slice(0,100) }}{% if aiResult.treatment|join(', ')|length > 100 %}...{% endif %}
+                    {% else %}
+                        {{ aiResult.treatment|default('-')|slice(0,100) }}{% if aiResult.treatment|default('-')|length > 100 %}...{% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
         

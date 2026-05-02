@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\\Unit\\Entity;
+namespace App\Tests\Unit\Entity;
 
 use PHPUnit\\Framework\\TestCase;
 use App\\Entity\\Animal;

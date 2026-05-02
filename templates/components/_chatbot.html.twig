@@ -12,53 +12,69 @@
             <div class="chatbot-header-info">
                 <i class="fa-solid fa-leaf"></i>
                 <span>FarmAI Assistant</span>
+                <span class="chatbot-badge">IA</span>
             </div>
-            <button id="farmai-chatbot-close" class="chatbot-close-btn" aria-label="Fermer l'assistant">&times;</button>
+            <div class="chatbot-header-actions">
+                <button id="farmai-chatbot-clear" class="chatbot-header-action-btn" aria-label="Effacer l'historique" title="Nouvelle conversation">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+                <button id="farmai-chatbot-close" class="chatbot-close-btn" aria-label="Fermer l'assistant">&times;</button>
+            </div>
         </div>
 
         <!-- Messages Area -->
         <div id="farmai-chatbot-messages" class="chatbot-messages">
             <div class="chat-message bot-message">
+                <div class="message-avatar"><i class="fa-solid fa-leaf"></i></div>
                 <div class="message-content">
-                    Bonjour {{ app.user.prenom|default('Cher utilisateur') }} ! Je suis l'assistant FarmAI intelligent. Comment puis-je vous aider aujourd'hui ?
+                    Bonjour {{ app.user.prenom|default('Cher utilisateur') }} ! 👋 Je suis l'assistant <strong>FarmAI</strong> propulsé par intelligence artificielle. Comment puis-je vous aider aujourd'hui ?
                 </div>
             </div>
         </div>
 
         <!-- Input Area -->
         <div class="chatbot-input-area">
-            <input type="text" id="farmai-chatbot-input" placeholder="Posez votre question..." aria-label="Question" autocomplete="off">
+            <input type="text" id="farmai-chatbot-input" placeholder="Posez votre question..." aria-label="Question" autocomplete="off" maxlength="2000">
             <button id="farmai-chatbot-send" aria-label="Envoyer"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
 
 <style>
-/* Chatbot Variables and Scoped Styles */
+/* ══════════════════════════════════════════════════════════════════════════════
+   FarmAI Chatbot Widget — Premium Design
+   ══════════════════════════════════════════════════════════════════════════════ */
+
 #farmai-chatbot-widget {
     --chatbot-primary: #2e7d32;
-    --chatbot-primary-dark: #005005;
+    --chatbot-primary-dark: #1b5e20;
+    --chatbot-primary-light: #4caf50;
+    --chatbot-accent: #66bb6a;
     --chatbot-light: #e8f5e9;
     --chatbot-bg: #ffffff;
     --chatbot-text: #333333;
+    --chatbot-text-light: #666666;
     --chatbot-border: #e0e0e0;
-    --chatbot-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    
+    --chatbot-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    --chatbot-radius: 16px;
+
     position: fixed;
     bottom: 30px;
     right: 30px;
     z-index: 9999;
-    font-family: inherit;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
+/* ── Floating Button ───────────────────────────────────────────────────────── */
+
 .chatbot-floating-btn {
-    width: 60px;
-    height: 60px;
+    width: 62px;
+    height: 62px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--chatbot-primary), var(--chatbot-primary-dark));
+    background: linear-gradient(135deg, var(--chatbot-primary-light), var(--chatbot-primary-dark));
     color: white;
     border: none;
-    box-shadow: var(--chatbot-shadow);
+    box-shadow: 0 6px 24px rgba(46,125,50,0.35);
     font-size: 1.5rem;
     cursor: pointer;
     display: flex;
@@ -69,42 +85,82 @@
 }
 
 .chatbot-floating-btn:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    transform: translateY(-4px) scale(1.07);
+    box-shadow: 0 10px 30px rgba(46, 125, 50, 0.45);
 }
+
+/* ── Chat Window ───────────────────────────────────────────────────────────── */
 
 .chatbot-window {
     position: absolute;
     bottom: 80px;
     right: 0;
-    width: 350px;
-    height: 500px;
+    width: 380px;
+    height: 520px;
     max-height: 80vh;
     background-color: var(--chatbot-bg);
-    border-radius: 12px;
+    border-radius: var(--chatbot-radius);
     box-shadow: var(--chatbot-shadow);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid var(--chatbot-border);
-    animation: slideUp 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.08);
+    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* ── Header ────────────────────────────────────────────────────────────────── */
+
 .chatbot-header {
-    background: linear-gradient(135deg, var(--chatbot-primary), var(--chatbot-primary-dark));
+    background: linear-gradient(135deg, var(--chatbot-primary-light), var(--chatbot-primary-dark));
     color: white;
-    padding: 15px 20px;
+    padding: 14px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    flex-shrink: 0;
 }
 
 .chatbot-header-info {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.chatbot-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(255,255,255,0.25);
+    padding: 2px 7px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.chatbot-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chatbot-header-action-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.chatbot-header-action-btn:hover {
+    background: rgba(255,255,255,0.3);
 }
 
 .chatbot-close-btn {
@@ -115,74 +171,117 @@
     cursor: pointer;
     line-height: 1;
     transition: opacity 0.2s;
+    padding: 0 2px;
 }
 
 .chatbot-close-btn:hover {
     opacity: 0.8;
 }
 
+/* ── Messages Area ─────────────────────────────────────────────────────────── */
+
 .chatbot-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
-    background-color: #f9f9f9;
+    padding: 18px;
+    background-color: #fafbfc;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
 }
+
+.chatbot-messages::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chatbot-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.12);
+    border-radius: 4px;
+}
+
+/* ── Chat Messages ─────────────────────────────────────────────────────────── */
 
 .chat-message {
     display: flex;
-    max-width: 85%;
+    max-width: 88%;
     animation: fadeIn 0.3s ease;
+    gap: 8px;
 }
 
 .chat-message.user-message {
     align-self: flex-end;
+    flex-direction: row-reverse;
 }
 
 .chat-message.bot-message {
     align-self: flex-start;
 }
 
+.message-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--chatbot-light);
+    color: var(--chatbot-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.user-message .message-avatar {
+    background: var(--chatbot-primary);
+    color: white;
+}
+
 .message-content {
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    line-height: 1.4;
+    padding: 11px 15px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    line-height: 1.5;
     word-wrap: break-word;
 }
 
 .user-message .message-content {
-    background-color: var(--chatbot-primary);
+    background: linear-gradient(135deg, var(--chatbot-primary-light), var(--chatbot-primary));
     color: white;
-    border-bottom-right-radius: 2px;
+    border-bottom-right-radius: 4px;
 }
 
 .bot-message .message-content {
     background-color: white;
     color: var(--chatbot-text);
     border: 1px solid var(--chatbot-border);
-    border-bottom-left-radius: 2px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
+
+/* ── Typing Indicator ──────────────────────────────────────────────────────── */
 
 .chatbot-typing-indicator {
     display: flex;
-    gap: 4px;
-    padding: 8px 12px;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 14px;
     background: white;
     border: 1px solid var(--chatbot-border);
-    border-radius: 12px;
+    border-radius: 14px;
     width: fit-content;
     align-self: flex-start;
-    border-bottom-left-radius: 2px;
+    border-bottom-left-radius: 4px;
+    margin-left: 36px;
 }
 
 .typing-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--chatbot-primary);
+    width: 7px;
+    height: 7px;
+    background-color: var(--chatbot-accent);
     border-radius: 50%;
     animation: typingBounce 1.4s infinite ease-in-out both;
 }
@@ -190,32 +289,38 @@
 .typing-dot:nth-child(1) { animation-delay: -0.32s; }
 .typing-dot:nth-child(2) { animation-delay: -0.16s; }
 
+/* ── Input Area ────────────────────────────────────────────────────────────── */
+
 .chatbot-input-area {
-    padding: 15px;
+    padding: 14px 16px;
     background-color: white;
     border-top: 1px solid var(--chatbot-border);
     display: flex;
     gap: 10px;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .chatbot-input-area input {
     flex: 1;
-    padding: 10px 15px;
+    padding: 10px 16px;
     border: 1px solid var(--chatbot-border);
-    border-radius: 20px;
+    border-radius: 24px;
     outline: none;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    font-family: inherit;
     transition: border-color 0.2s, box-shadow 0.2s;
+    background: #fafbfc;
 }
 
 .chatbot-input-area input:focus {
     border-color: var(--chatbot-primary);
-    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    background: white;
 }
 
 .chatbot-input-area button {
-    background-color: var(--chatbot-primary);
+    background: linear-gradient(135deg, var(--chatbot-primary-light), var(--chatbot-primary));
     color: white;
     border: none;
     width: 40px;
@@ -225,31 +330,37 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 0.9rem;
 }
 
 .chatbot-input-area button:hover:not(:disabled) {
-    background-color: var(--chatbot-primary-dark);
+    transform: scale(1.08);
+    box-shadow: 0 3px 12px rgba(46,125,50,0.25);
 }
 
 .chatbot-input-area button:disabled {
-    background-color: #a5d6a7;
+    background: #c8e6c9;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
+
+/* ── Animations ────────────────────────────────────────────────────────────── */
 
 @keyframes bounceIn {
     0% { transform: scale(0); opacity: 0; }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.12); }
     100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -257,6 +368,8 @@
     0%, 80%, 100% { transform: scale(0); }
     40% { transform: scale(1); }
 }
+
+/* ── Mobile Responsive ─────────────────────────────────────────────────────── */
 
 @media (max-width: 480px) {
     .chatbot-window {
@@ -270,7 +383,7 @@
         z-index: 10000;
         animation: slideUp 0.3s ease;
     }
-    
+
     #farmai-chatbot-widget {
         bottom: 20px;
         right: 20px;
@@ -283,11 +396,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatbotBtn = document.getElementById('farmai-chatbot-btn');
     const chatbotWindow = document.getElementById('farmai-chatbot-window');
     const closeBtn = document.getElementById('farmai-chatbot-close');
+    const clearBtn = document.getElementById('farmai-chatbot-clear');
     const messagesContainer = document.getElementById('farmai-chatbot-messages');
     const inputField = document.getElementById('farmai-chatbot-input');
     const sendBtn = document.getElementById('farmai-chatbot-send');
 
-    // Toggle window
+    // ── Toggle window ───────────────────────────────────────────────────────
     chatbotBtn.addEventListener('click', function() {
         if (chatbotWindow.style.display === 'none') {
             chatbotWindow.style.display = 'flex';
@@ -301,12 +415,32 @@ document.addEventListener('DOMContentLoaded', function() {
         chatbotWindow.style.display = 'none';
     });
 
-    // Handle sending message
+    // ── Clear history ───────────────────────────────────────────────────────
+    clearBtn.addEventListener('click', function() {
+        fetch('{{ path("app_chatbot_clear") }}', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function() {
+            // Clear UI messages and show welcome again
+            messagesContainer.innerHTML = '';
+            addMessage('Conversation réinitialisée ! 🔄 Comment puis-je vous aider ?', 'bot-message');
+        })
+        .catch(function() {
+            addMessage('Erreur lors de la réinitialisation.', 'bot-message');
+        });
+    });
+
+    // ── Send message ────────────────────────────────────────────────────────
     function sendMessage() {
         const text = inputField.value.trim();
         if (!text) return;
 
-        // Add user message
+        // Add user message to UI
         addMessage(text, 'user-message');
         inputField.value = '';
         inputField.disabled = true;
@@ -316,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const typingId = 'typing-' + Date.now();
         addTypingIndicator(typingId);
 
-        // API Call
+        // API Call to Groq backend
         fetch('{{ path("app_chatbot_message") }}', {
             method: 'POST',
             credentials: 'same-origin',
@@ -326,24 +460,26 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({ message: text })
         })
-        .then(response => {
+        .then(function(response) {
             if (!response.ok) {
-                if(response.status === 403 || response.status === 401) {
+                if (response.status === 403 || response.status === 401) {
                     throw new Error('Non autorisé. Veuillez vous connecter.');
                 }
-                throw new Error('Erreur de communication avec le serveur.');
+                return response.json().then(function(data) {
+                    throw new Error(data.error || 'Erreur de communication avec le serveur.');
+                });
             }
             return response.json();
         })
-        .then(data => {
+        .then(function(data) {
             removeElement(typingId);
             addMessage(data.response || 'Désolé, aucune réponse reçue.', 'bot-message');
         })
-        .catch(error => {
+        .catch(function(error) {
             removeElement(typingId);
             addMessage('Erreur : ' + error.message, 'bot-message');
         })
-        .finally(() => {
+        .finally(function() {
             inputField.disabled = false;
             sendBtn.disabled = false;
             inputField.focus();
@@ -351,30 +487,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     sendBtn.addEventListener('click', sendMessage);
-    
+
     inputField.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             sendMessage();
         }
     });
 
-    // Helper functions
+    // ── Helper functions ────────────────────────────────────────────────────
     function addMessage(text, className) {
         const div = document.createElement('div');
         div.className = 'chat-message ' + className;
-        
-        // Use textContent to prevent XSS but allow basic multiline by splitting on \n
+
+        // Avatar
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        const avatarIcon = document.createElement('i');
+        avatarIcon.className = className === 'bot-message' ? 'fa-solid fa-leaf' : 'fa-solid fa-user';
+        avatarDiv.appendChild(avatarIcon);
+
+        // Content
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
-        
-        const lines = text.split('\n');
-        lines.forEach((line, index) => {
-            contentDiv.appendChild(document.createTextNode(line));
-            if (index < lines.length - 1) {
-                contentDiv.appendChild(document.createElement('br'));
-            }
-        });
-        
+
+        // Render with basic formatting (bold, line breaks)
+        const formatted = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+        contentDiv.innerHTML = formatted;
+
+        div.appendChild(avatarDiv);
         div.appendChild(contentDiv);
         messagesContainer.appendChild(div);
         scrollToBottom();
@@ -384,13 +526,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const div = document.createElement('div');
         div.className = 'chatbot-typing-indicator';
         div.id = id;
-        
+
         for (let i = 0; i < 3; i++) {
             const dot = document.createElement('div');
             dot.className = 'typing-dot';
             div.appendChild(dot);
         }
-        
+
         messagesContainer.appendChild(div);
         scrollToBottom();
     }
