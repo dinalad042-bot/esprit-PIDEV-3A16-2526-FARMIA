@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -354,6 +355,72 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $ferme->setUser(null);
             }
         }
+        return $this;
+    }
+
+    public function addUserLog(UserLog $userLog): static
+    {
+        if (!$this->userLogs->contains($userLog)) {
+            $this->userLogs->add($userLog);
+            $userLog->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserLog(UserLog $userLog): static
+    {
+        if ($this->userLogs->removeElement($userLog)) {
+            // set the owning side to null (unless already changed)
+            if ($userLog->getUser() === $this) {
+                $userLog->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addUserFace(UserFace $userFace): static
+    {
+        if (!$this->userFaces->contains($userFace)) {
+            $this->userFaces->add($userFace);
+            $userFace->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserFace(UserFace $userFace): static
+    {
+        if ($this->userFaces->removeElement($userFace)) {
+            // set the owning side to null (unless already changed)
+            if ($userFace->getUser() === $this) {
+                $userFace->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addAnalysis(Analyse $analysis): static
+    {
+        if (!$this->analyses->contains($analysis)) {
+            $this->analyses->add($analysis);
+            $analysis->setTechnicien($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnalysis(Analyse $analysis): static
+    {
+        if ($this->analyses->removeElement($analysis)) {
+            // set the owning side to null (unless already changed)
+            if ($analysis->getTechnicien() === $this) {
+                $analysis->setTechnicien(null);
+            }
+        }
+
         return $this;
     }
 }

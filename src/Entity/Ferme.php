@@ -115,4 +115,28 @@ class Ferme
         }
         return $this;
     }
+
+    public function removePlante(Plante $plante): static
+    {
+        if ($this->plantes->removeElement($plante)) {
+            // set the owning side to null (unless already changed)
+            if ($plante->getFerme() === $this) {
+                $plante->setFerme(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeAnimal(Animal $animal): static
+    {
+        if ($this->animals->removeElement($animal)) {
+            // set the owning side to null (unless already changed)
+            if ($animal->getFerme() === $this) {
+                $animal->setFerme(null);
+            }
+        }
+
+        return $this;
+    }
 }

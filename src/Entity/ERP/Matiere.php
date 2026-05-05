@@ -5,6 +5,7 @@ namespace App\Entity\ERP;
 use App\Repository\ERP\MatiereRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -71,4 +72,26 @@ class Matiere
     public function setSeuilCritique(float $s): static { $this->seuilCritique = $s; return $this; }
 
     public function getRecetteIngredients(): Collection { return $this->recetteIngredients; }
+
+    public function addRecetteIngredient(RecetteIngredient $recetteIngredient): static
+    {
+        if (!$this->recetteIngredients->contains($recetteIngredient)) {
+            $this->recetteIngredients->add($recetteIngredient);
+            $recetteIngredient->setMatiere($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecetteIngredient(RecetteIngredient $recetteIngredient): static
+    {
+        if ($this->recetteIngredients->removeElement($recetteIngredient)) {
+            // set the owning side to null (unless already changed)
+            if ($recetteIngredient->getMatiere() === $this) {
+                $recetteIngredient->setMatiere(null);
+            }
+        }
+
+        return $this;
+    }
 }
