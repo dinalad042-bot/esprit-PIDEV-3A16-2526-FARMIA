@@ -68,14 +68,18 @@ class AnimalRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findByFerme(int $fermeId): array
-    {
-        return $this->createQueryBuilder('a')
-            ->join('a.ferme', 'f')
-            ->andWhere('f.id = :fermeId')
-            ->setParameter('fermeId', $fermeId)
-            ->orderBy('a.espece', 'ASC')
-            ->getQuery()
-            ->getResult();
+    public function countBySpecies(): array
+{
+    $results = $this->createQueryBuilder('a')
+        ->select('a.species, COUNT(a.id) as count')
+        ->groupBy('a.species')
+        ->getQuery()
+        ->getResult();
+
+    $data = [];
+    foreach ($results as $res) {
+        $data[$res['species']] = $res['count'];
     }
+    return $data;
+}
 }

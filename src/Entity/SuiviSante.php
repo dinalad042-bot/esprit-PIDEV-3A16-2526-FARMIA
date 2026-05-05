@@ -14,7 +14,7 @@ class SuiviSante
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Animal::class, inversedBy: 'suiviSantes')]
+    #[ORM\ManyToOne(targetEntity: Animal::class)]
     #[ORM\JoinColumn(name: "id_animal", referencedColumnName: "id_animal", nullable: false, onDelete: "CASCADE")]
     private ?Animal $animal = null;
 

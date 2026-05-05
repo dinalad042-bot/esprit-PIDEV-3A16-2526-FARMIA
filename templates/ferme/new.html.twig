@@ -1,57 +1,11 @@
-{% extends 'layouts/agricole.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle Ferme - FarmAI{% endblock %}
+{% block title %}New Ferme{% endblock %}
 
 {% block body %}
-<div style="padding: 30px; max-width: 600px; margin: 0 auto;">
-    <div style="margin-bottom: 20px;">
-        <a href="{{ path('dashboard_agricole') }}" style="color: #2d7a36; text-decoration: none; font-weight: 600;">
-            <i class="fa-solid fa-arrow-left"></i> Retour au tableau de bord
-        </a>
-    </div>
+    <h1>Create new Ferme</h1>
 
-    <div class="card" style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-        <h1 style="color: #1e293b; font-size: 1.5rem; font-weight: 800; margin-bottom: 10px;">
-            <i class="fa-solid fa-plus-circle" style="color: #2d7a36;"></i> Créer une nouvelle ferme
-        </h1>
-        <p style="color: #64748b; margin-bottom: 30px;">Remplissez les informations ci-dessous pour ajouter votre exploitation.</p>
+    {{ include('ferme/_form.html.twig') }}
 
-        <form action="{{ path('app_ferme_index') }}" method="POST" novalidate>
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Nom de la ferme *</label>
-                <input type="text" name="nom_ferme" required placeholder="Ex: Domaine de l'Olivier" 
-                       style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline-color: #2d7a36; font-size: 1rem;">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Localisation (Ville) *</label>
-                <input type="text" name="lieu" required placeholder="Ex: Bizerte, Tunisie" 
-                       style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline-color: #2d7a36; font-size: 1rem;">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #475569;">Surface (m²) *</label>
-                <input type="number" step="0.1" name="surface" required placeholder="Ex: 5000" 
-                       style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline-color: #2d7a36; font-size: 1rem;">
-            </div>
-
-            <div style="display: flex; gap: 15px; margin-bottom: 30px;">
-                <div style="flex: 1;">
-                    <label style="font-weight: 600; color: #475569; font-size: 0.9rem; display: block; margin-bottom: 8px;">Latitude (optionnel)</label>
-                    <input type="number" step="any" name="latitude" placeholder="Ex: 37.2744" 
-                           style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                </div>
-                <div style="flex: 1;">
-                    <label style="font-weight: 600; color: #475569; font-size: 0.9rem; display: block; margin-bottom: 8px;">Longitude (optionnel)</label>
-                    <input type="number" step="any" name="longitude" placeholder="Ex: 9.8739" 
-                           style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
-                </div>
-            </div>
-
-            <button type="submit" style="width: 100%; background: #2d7a36; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1rem;">
-                <i class="fa-solid fa-check"></i> Créer la ferme
-            </button>
-        </form>
-    </div>
-</div>
+    <a href="{{ path('app_ferme_index') }}">back to list</a>
 {% endblock %}

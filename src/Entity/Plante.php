@@ -28,7 +28,6 @@ class Plante
     #[Assert\NotBlank(message: "Le cycle de vie est obligatoire.")]
     private ?string $cycle_vie = null;
 
-    // --- CORRECTION CRUCIALE : Transformation du int en Relation ---
     #[ORM\ManyToOne(targetEntity: Ferme::class, inversedBy: 'plantes')]
     #[ORM\JoinColumn(name: "id_ferme", referencedColumnName: "id_ferme", nullable: false)]
     private ?Ferme $ferme = null;
@@ -38,8 +37,8 @@ class Plante
     #[Assert\Positive(message: "La quantité doit être un nombre supérieur à 0.")]
     private ?int $quantite = null;
 
-    // --- RELATION: Plante → Arrosage (EMEN's watering tracking) ---
-    #[ORM\OneToMany(mappedBy: 'plante', targetEntity: Arrosage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    // --- AJOUT DE LA RELATION AVEC ARROSAGE ---
+    #[ORM\OneToMany(mappedBy: 'plante', targetEntity: Arrosage::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $arrosages;
 
     public function __construct()
@@ -74,7 +73,6 @@ class Plante
         return $this; 
     }
 
-    // --- GETTER/SETTER MIS À JOUR POUR L'OBJET FERME ---
     public function getFerme(): ?Ferme 
     { 
         return $this->ferme; 
@@ -94,18 +92,12 @@ class Plante
     public function setQuantite(?int $quantite): static 
     { 
         $this->quantite = $quantite; 
-        return $this;
+        return $this; 
     }
 
-    public function getNom(): ?string
-    {
-        return $this->nom_espece;
-    }
-
-    /**
-     * @return Collection<int, Arrosage>
-     */
-    public function getArrosages(): Collection
+    // --- GETTER POUR LES ARROSAGES ---
+    /** @return Collection<int, Arrosage> */
+    public function getArrosages(): Collection 
     {
         return $this->arrosages;
     }
@@ -122,6 +114,7 @@ class Plante
     public function removeArrosage(Arrosage $arrosage): static
     {
         if ($this->arrosages->removeElement($arrosage)) {
+            // set the owning side to null (unless already changed)
             if ($arrosage->getPlante() === $this) {
                 $arrosage->setPlante(null);
             }

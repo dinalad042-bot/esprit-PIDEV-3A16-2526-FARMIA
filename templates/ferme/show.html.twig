@@ -13,39 +13,7 @@
             </tr>
             <tr>
                 <th>Nom</th>
-                <td>{{ ferme.nomFerme }}</td>
-            </tr>
-            <tr>
-                <th>Lieu</th>
-                <td>{{ ferme.lieu }}</td>
-            </tr>
-            <tr>
-                <th>Surface</th>
-                <td>{{ ferme.surface }}</td>
-            </tr>
-            <tr>
-                <th>Latitude</th>
-                <td>{{ ferme.latitude }}</td>
-            </tr>
-            <tr>
-                <th>Longitude</th>
-                <td>{{ ferme.longitude }}</td>
-            </tr>
-            <tr>
-                <th>Propriétaire</th>
-                <td>{{ ferme.user ? ferme.user.nom ~ ' ' ~ ferme.user.prenom : 'Non assigné' }}</td>
-            </tr>
-            <tr>
-                <th>Nombre d'animaux</th>
-                <td>{{ ferme.animals|length }}</td>
-            </tr>
-            <tr>
-                <th>Nombre de plantes</th>
-                <td>{{ ferme.plantes|length }}</td>
-            </tr>
-            <tr>
-                <th>Nombre d'analyses</th>
-                <td>{{ ferme.analyses|length }}</td>
+                <td>{{ ferme.nom }}</td>
             </tr>
         </tbody>
     </table>
@@ -56,4 +24,3 @@
 
     {{ include('ferme/_delete_form.html.twig') }}
 {% endblock %}
-
