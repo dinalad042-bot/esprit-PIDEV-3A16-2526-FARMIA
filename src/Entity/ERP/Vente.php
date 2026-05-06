@@ -21,8 +21,9 @@ class Vente
     #[ORM\Column(name: 'date_vente', type: 'date')]
     private \DateTimeInterface $dateVente;
 
-    #[ORM\Column(name: 'total', type: 'float', options: ['default' => 0])]
-    private float $total = 0.0;
+    // CORRECTION : Passage de float à decimal pour l'intégrité financière
+#[ORM\Column(name: 'total', type: 'decimal', precision: 10, scale: 2)]
+private string $total = '0.00';
 
     #[ORM\OneToMany(
         mappedBy: 'vente',
@@ -56,8 +57,9 @@ class Vente
     public function getDateVente(): \DateTimeInterface { return $this->dateVente; }
     public function setDateVente(\DateTimeInterface $d): static { $this->dateVente = $d; return $this; }
 
-    public function getTotal(): float { return $this->total; }
-    public function setTotal(float $total): static { $this->total = $total; return $this; }
+    // CORRECTION : Utilisation de string pour le getter et le setter
+    public function getTotal(): ?float { return $this->total; }
+public function setTotal(?float $total): self { $this->total = $total; return $this; }
 
     public function getLignes(): Collection { return $this->lignes; }
 }

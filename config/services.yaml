@@ -1,7 +1,7 @@
 parameters:
     app.weather_api_key: '%env(OPENWEATHER_API_KEY)%'
     app.groq_api_key: '%env(GROQ_API_KEY)%'
-    timezone: 'Africa/Lagos'
+    timezone: 'UTC'
 
 services:
     _defaults:

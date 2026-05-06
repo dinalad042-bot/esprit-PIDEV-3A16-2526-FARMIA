@@ -85,8 +85,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Visages enregistrés pour cet utilisateur (données biométriques en BDD).
      * PRESERVED FROM MAIN - Facial Authentication
      */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private Collection $userFaces;
+#[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist'], orphanRemoval: true)]
+private Collection $userFaces;
 
     /**
      * ANALYSES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH

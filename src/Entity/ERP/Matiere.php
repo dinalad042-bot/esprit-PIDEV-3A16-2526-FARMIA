@@ -32,14 +32,16 @@ class Matiere
     #[ORM\Column(name: 'stock', type: 'float', options: ['default' => 0])]
     private float $stock = 0.0;
 
-    #[ORM\Column(name: 'prix_unitaire', type: 'float', options: ['default' => 0])]
-    private float $prixUnitaire = 0.0;
+    // CORRECTION : Passage en decimal pour l'intégrité des prix
+    #[ORM\Column(name: 'prix_unitaire', type: 'decimal', precision: 10, scale: 2, options: ['default' => '0.00'])]
+    private string $prixUnitaire = '0.00';
 
     #[ORM\Column(name: 'seuil_critique', type: 'float', options: ['default' => 0])]
     private float $seuilCritique = 0.0;
 
-    #[ORM\OneToMany(mappedBy: 'matiere', targetEntity: RecetteIngredient::class, cascade: ['remove'])]
-    private Collection $recetteIngredients;
+    // CORRECTION : Ajout de orphanRemoval pour éviter les données fantômes
+#[ORM\OneToMany(mappedBy: 'matiere', targetEntity: RecetteIngredient::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+private Collection $recetteIngredients;
 
     public function __construct()
     {
@@ -65,8 +67,9 @@ class Matiere
     public function getStock(): float { return $this->stock; }
     public function setStock(float $stock): static { $this->stock = $stock; return $this; }
 
-    public function getPrixUnitaire(): float { return $this->prixUnitaire; }
-    public function setPrixUnitaire(float $p): static { $this->prixUnitaire = $p; return $this; }
+    // CORRECTION : Getter et Setter en string pour le prix
+    public function getPrixUnitaire(): string { return $this->prixUnitaire; }
+    public function setPrixUnitaire(string $p): static { $this->prixUnitaire = $p; return $this; }
 
     public function getSeuilCritique(): float { return $this->seuilCritique; }
     public function setSeuilCritique(float $s): static { $this->seuilCritique = $s; return $this; }
@@ -86,7 +89,7 @@ class Matiere
     public function removeRecetteIngredient(RecetteIngredient $recetteIngredient): static
     {
         if ($this->recetteIngredients->removeElement($recetteIngredient)) {
-            // set the owning side to null (unless already changed)
+            // L'orphanRemoval s'occupera de supprimer l'objet de la base
             if ($recetteIngredient->getMatiere() === $this) {
                 $recetteIngredient->setMatiere(null);
             }

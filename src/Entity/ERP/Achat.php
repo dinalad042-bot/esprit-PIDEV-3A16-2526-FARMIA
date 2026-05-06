@@ -22,8 +22,9 @@ class Achat
     #[ORM\Column(name: 'date_achat', type: 'date')]
     private \DateTimeInterface $dateAchat;
 
-    #[ORM\Column(name: 'total', type: 'float', options: ['default' => 0])]
-    private float $total = 0.0;
+    // MODIFICATION ICI : passage de float à decimal
+#[ORM\Column(name: 'total', type: 'decimal', precision: 10, scale: 2)]
+private string $total = '0.00';
 
     #[ORM\Column(name: 'paid', type: 'boolean', options: ['default' => false])]
     private bool $paid = false;
@@ -60,8 +61,9 @@ class Achat
     public function getDateAchat(): \DateTimeInterface { return $this->dateAchat; }
     public function setDateAchat(\DateTimeInterface $d): static { $this->dateAchat = $d; return $this; }
 
-    public function getTotal(): float { return $this->total; }
-    public function setTotal(float $total): static { $this->total = $total; return $this; }
+    // MODIFICATION ICI : Les getters/setters utilisent désormais string pour la précision
+public function getTotal(): string { return $this->total; }
+public function setTotal(string $total): self { $this->total = $total; return $this; }
 
     public function isPaid(): bool { return $this->paid; }
     public function setPaid(bool $paid): static { $this->paid = $paid; return $this; }

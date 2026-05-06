@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SuiviSanteRepository::class)]
-#[ORM\HasLifecycleCallbacks] // Permet d'automatiser la date avant l'enregistrement
+#[ORM\HasLifecycleCallbacks] 
 class SuiviSante
 {
     #[ORM\Id]
@@ -18,6 +18,13 @@ class SuiviSante
     #[ORM\ManyToOne(targetEntity: Animal::class)]
     #[ORM\JoinColumn(name: "animal_id", referencedColumnName: "id_animal", nullable: false, onDelete: "CASCADE")]
     private ?Animal $animal = null;
+
+    /**
+     * CORRECTION : Ajout de la relation avec le suffixe _id pour l'intégrité
+     */
+#[ORM\ManyToOne(targetEntity: User::class)]
+#[ORM\JoinColumn(name: "performed_by_id", referencedColumnName: "id_user", nullable: true)]
+private ?User $performedBy = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateConsultation = null;
@@ -33,30 +40,24 @@ class SuiviSante
 
     public function __construct()
     {
-        // Initialisation par défaut pour éviter les erreurs PHP avant le flush
-        $this->dateConsultation = new \DateTime();
+        // CORRECTION : Forçage du fuseau UTC pour aligner PHP et MySQL
+        $this->dateConsultation = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
-     * Cette méthode remplit la date automatiquement juste avant l'insertion en BDD
+     * Remplit la date automatiquement juste avant l'insertion en BDD en UTC
      */
     #[ORM\PrePersist]
     public function updateTimestampOnPersist(): void
     {
         if ($this->dateConsultation === null) {
-            $this->dateConsultation = new \DateTime();
+            $this->dateConsultation = new \DateTime('now', new \DateTimeZone('UTC'));
         }
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getAnimal(): ?Animal
-    {
-        return $this->animal;
-    }
+    public function getAnimal(): ?Animal { return $this->animal; }
 
     public function setAnimal(?Animal $animal): self
     {
@@ -64,25 +65,26 @@ class SuiviSante
         return $this;
     }
 
-    public function getDateConsultation(): ?\DateTimeInterface
+    /**
+     * Getter et Setter pour performedBy (Correction Integrity)
+     */
+    public function getPerformedBy(): ?User { return $this->performedBy; }
+
+    public function setPerformedBy(?User $performedBy): self
     {
-        return $this->dateConsultation;
+        $this->performedBy = $performedBy;
+        return $this;
     }
 
-    /**
-     * Changé en 'protected' pour satisfaire les règles d'intégrité de Doctrine.
-     * La date doit être gérée par le constructeur ou les LifecycleCallbacks.
-     */
+    public function getDateConsultation(): ?\DateTimeInterface { return $this->dateConsultation; }
+
     public function setDateConsultation(\DateTimeInterface $dateConsultation): self
     {
         $this->dateConsultation = $dateConsultation;
         return $this;
     }
 
-    public function getDiagnostic(): ?string
-    {
-        return $this->diagnostic;
-    }
+    public function getDiagnostic(): ?string { return $this->diagnostic; }
 
     public function setDiagnostic(string $diagnostic): self
     {
@@ -90,10 +92,7 @@ class SuiviSante
         return $this;
     }
 
-    public function getEtatAuMoment(): ?string
-    {
-        return $this->etatAuMoment;
-    }
+    public function getEtatAuMoment(): ?string { return $this->etatAuMoment; }
 
     public function setEtatAuMoment(?string $etatAuMoment): self
     {
@@ -101,10 +100,7 @@ class SuiviSante
         return $this;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
+    public function getType(): ?string { return $this->type; }
 
     public function setType(?string $type): self
     {
