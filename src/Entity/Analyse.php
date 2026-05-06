@@ -29,13 +29,14 @@ class Analyse
         minMessage: 'Le résultat technique doit contenir au moins {{ limit }} caractères.'
     )]
     private ?string $resultatTechnique = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'analyses')]
-    #[ORM\JoinColumn(name: 'id_technicien', referencedColumnName: 'id_user', nullable: true, onDelete: 'SET NULL')]
+#[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'analyses')]
+    // Changement : id_technicien devient id_technicien_id
+    #[ORM\JoinColumn(name: 'id_technicien_id', referencedColumnName: 'id_user', nullable: true, onDelete: 'SET NULL')]
     private ?User $technicien = null;
 
     #[ORM\ManyToOne(targetEntity: Ferme::class, inversedBy: 'analyses')]
-    #[ORM\JoinColumn(name: 'id_ferme', referencedColumnName: 'id_ferme', nullable: false, onDelete: 'CASCADE')]
+    // Changement : id_ferme devient id_ferme_id
+    #[ORM\JoinColumn(name: 'id_ferme_id', referencedColumnName: 'id_ferme', nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull(message: 'Veuillez sélectionner une ferme.')]
     private ?Ferme $ferme = null;
 

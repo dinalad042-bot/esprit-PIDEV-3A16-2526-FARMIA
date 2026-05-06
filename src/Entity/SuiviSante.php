@@ -23,7 +23,7 @@ class SuiviSante
      * CORRECTION : Ajout de la relation avec le suffixe _id pour l'intégrité
      */
 #[ORM\ManyToOne(targetEntity: User::class)]
-#[ORM\JoinColumn(name: "performed_by_id", referencedColumnName: "id_user", nullable: true)]
+#[ORM\JoinColumn(name: 'performed_by_id', referencedColumnName: 'id_user')]
 private ?User $performedBy = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
