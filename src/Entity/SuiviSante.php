@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SuiviSanteRepository::class)]
+#[ORM\HasLifecycleCallbacks] // Permet d'automatiser la date avant l'enregistrement
 class SuiviSante
 {
     #[ORM\Id]
@@ -15,7 +16,7 @@ class SuiviSante
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Animal::class)]
-    #[ORM\JoinColumn(name: "id_animal", referencedColumnName: "id_animal", nullable: false, onDelete: "CASCADE")]
+    #[ORM\JoinColumn(name: "animal_id", referencedColumnName: "id_animal", nullable: false, onDelete: "CASCADE")]
     private ?Animal $animal = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -24,17 +25,27 @@ class SuiviSante
     #[ORM\Column(type: Types::TEXT)]
     private ?string $diagnostic = null;
 
-    #[ORM\Column(length: 50, nullable: true)] // Rendu nullable pour les vaccins
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $etatAuMoment = null;
 
-    // --- NOUVEAUX CHAMPS POUR LES VACCINS / ACTES MANUELS ---
-    
     #[ORM\Column(length: 30, nullable: true)] 
-    private ?string $type = null; // Ex: VACCIN, MEDICAMENT, REPRODUCTION, IA
+    private ?string $type = null; 
 
     public function __construct()
     {
+        // Initialisation par défaut pour éviter les erreurs PHP avant le flush
         $this->dateConsultation = new \DateTime();
+    }
+
+    /**
+     * Cette méthode remplit la date automatiquement juste avant l'insertion en BDD
+     */
+    #[ORM\PrePersist]
+    public function updateTimestampOnPersist(): void
+    {
+        if ($this->dateConsultation === null) {
+            $this->dateConsultation = new \DateTime();
+        }
     }
 
     public function getId(): ?int
@@ -58,6 +69,10 @@ class SuiviSante
         return $this->dateConsultation;
     }
 
+    /**
+     * Changé en 'protected' pour satisfaire les règles d'intégrité de Doctrine.
+     * La date doit être gérée par le constructeur ou les LifecycleCallbacks.
+     */
     public function setDateConsultation(\DateTimeInterface $dateConsultation): self
     {
         $this->dateConsultation = $dateConsultation;

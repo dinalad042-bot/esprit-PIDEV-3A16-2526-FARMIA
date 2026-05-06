@@ -19,22 +19,23 @@ use Dompdf\Options;
 #[Route('/ferme')]
 class FermeController extends AbstractController
 {
-    /**
-     * PAGE PRINCIPALE : Affiche la liste ET gère l'ajout (POST)
-     */
     #[Route('/', name: 'app_ferme_index', methods: ['GET', 'POST'])]
     public function index(FermeRepository $fermeRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
         $search = $request->query->get('search', '');
-        $sort = $request->query->get('sort', 'idFerme');
+        $sort = $request->query->get('sort', 'id_ferme');
         $direction = $request->query->get('direction', 'ASC');
 
-        // --- PARTIE AJOUT (POST) ---
+        // Sécurisation du tri pour éviter les injections ou erreurs SQL
+        $allowedSorts = ['id_ferme', 'nom_ferme', 'lieu', 'surface'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'id_ferme';
+        }
+
         if ($request->isMethod('POST')) {
             $ferme = new Ferme();
-            $this->mapData($ferme, $request); // Utilise la fonction de mapping existante
+            $this->mapData($ferme, $request);
             
-            // Validation
             $violations = $validator->validate($ferme);
             if (count($violations) > 0) {
                 return $this->renderWithErrors($violations, $fermeRepository, null, $request);
@@ -47,11 +48,13 @@ class FermeController extends AbstractController
             return $this->redirectToRoute('app_ferme_index');
         }
 
-        // --- PARTIE AFFICHAGE (GET) ---
-        // Utilisation de findBySearchAndSort si elle existe dans ton repo, sinon findAll()
-        $fermes = method_exists($fermeRepository, 'findBySearchAndSort') 
-            ? $fermeRepository->findBySearchAndSort($search, $sort, $direction)
-            : $fermeRepository->findAll();
+        // PERFORMANCE : Application systématique d'une limite
+        $limit = 20;
+        if (!empty($search) && method_exists($fermeRepository, 'findBySearchAndSort')) {
+            $fermes = $fermeRepository->findBySearchAndSort($search, $sort, $direction);
+        } else {
+            $fermes = $fermeRepository->findBy([], [$sort => $direction], $limit);
+        }
 
         return $this->render('ferme/index.html.twig', [
             'fermes' => $fermes,
@@ -59,13 +62,10 @@ class FermeController extends AbstractController
             'currentSort' => $sort,
             'currentDirection' => $direction,
             'errors' => [],
-            'ferme_edit' => null // Mode ajout par défaut
+            'ferme_edit' => null
         ]);
     }
 
-    /**
-     * Génération du catalogue PDF
-     */
     #[Route('/pdf', name: 'app_ferme_pdf', methods: ['GET'])]
     public function generatePdf(FermeRepository $repo): Response
     {
@@ -75,8 +75,9 @@ class FermeController extends AbstractController
         
         $dompdf = new Dompdf($pdfOptions);
 
+        // PERFORMANCE : Limite de sécurité pour la génération PDF
         $html = $this->renderView('ferme/pdf.html.twig', [
-            'fermes' => $repo->findAll()
+            'fermes' => $repo->findBy([], ['nom_ferme' => 'ASC'], 50)
         ]);
 
         $dompdf->loadHtml($html);
@@ -89,29 +90,22 @@ class FermeController extends AbstractController
         ]);
     }
 
-    /**
-     * Mode édition : recharge la page index avec les données de la ferme choisie
-     */
     #[Route('/{id_ferme}/edit', name: 'app_ferme_edit', methods: ['GET'])]
     public function edit(Ferme $ferme, Request $request, FermeRepository $repo): Response
     {
-        $search = $request->query->get('search', '');
-        $sort = $request->query->get('sort', 'idFerme');
+        $sort = $request->query->get('sort', 'id_ferme');
         $direction = $request->query->get('direction', 'ASC');
 
         return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findAll(), // Ou findBySearchAndSort
+            'fermes' => $repo->findBy([], [$sort => $direction], 20), // LIMITE PERFORMANCE
             'ferme_edit' => $ferme,
             'errors' => [],
-            'searchTerm' => $search,
+            'searchTerm' => $request->query->get('search', ''),
             'currentSort' => $sort,
             'currentDirection' => $direction
         ]);
     }
 
-    /**
-     * Mise à jour effective en base
-     */
     #[Route('/{id_ferme}/update', name: 'app_ferme_update', methods: ['POST'])]
     public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
     {
@@ -128,9 +122,6 @@ class FermeController extends AbstractController
         return $this->redirectToRoute('app_ferme_index');
     }
 
-    /**
-     * Suppression d'une ferme
-     */
     #[Route('/delete/{id_ferme}', name: 'app_ferme_delete', methods: ['POST'])]
     public function delete(Request $request, Ferme $ferme, EntityManagerInterface $em): Response
     {
@@ -143,9 +134,6 @@ class FermeController extends AbstractController
         return $this->redirectToRoute('app_ferme_index');
     }
 
-    /**
-     * Mapping manuel des données (Évite d'utiliser FermeType pour rester sur l'index)
-     */
     private function mapData(Ferme $ferme, Request $request): void
     {
         $ferme->setNomFerme($request->request->get('nom_ferme'));
@@ -160,15 +148,11 @@ class FermeController extends AbstractController
         $ferme->setLatitude($lat !== null && $lat !== '' ? (float)$lat : null);
         $ferme->setLongitude($lng !== null && $lng !== '' ? (float)$lng : null);
         
-        // On lie l'utilisateur connecté
         if ($this->getUser()) {
             $ferme->setUser($this->getUser());
         }
     }
 
-    /**
-     * Centralisation de l'affichage en cas d'erreurs
-     */
     private function renderWithErrors($violations, FermeRepository $repo, ?Ferme $ferme_edit, Request $request): Response
     {
         $errors = [];
@@ -177,42 +161,45 @@ class FermeController extends AbstractController
         }
 
         return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findAll(),
+            'fermes' => $repo->findBy([], ['id_ferme' => 'DESC'], 20), // LIMITE PERFORMANCE
             'ferme_edit' => $ferme_edit,
             'errors' => $errors,
             'searchTerm' => $request->query->get('search'),
-            'currentSort' => $request->query->get('sort', 'idFerme'),
+            'currentSort' => $request->query->get('sort', 'id_ferme'),
             'currentDirection' => $request->query->get('direction', 'ASC')
         ]);
     }
-    #[Route('/ferme/{id}/weather', name: 'app_ferme_weather')]
-public function weather(int $id, FermeRepository $repo, WeatherService $weatherService): Response
-{
-    $ferme = $repo->find($id);
-    
-    // On récupère la météo en utilisant le lieu (ville) de la ferme
-    $weatherData = $weatherService->getWeather($ferme->getLieu());
 
-    return $this->render('ferme/weather.html.twig', [
-        'ferme' => $ferme,
-        'weather' => $weatherData
-    ]);
-}
-#[Route('/{id_ferme}/prediction', name: 'app_ferme_prediction', methods: ['GET'])]
-public function prediction(int $id_ferme, FermeRepository $repo, FarmPredictor $predictor): Response
-{
-    $ferme = $repo->find($id_ferme);
-    
-    if (!$ferme) {
-        throw $this->createNotFoundException('Ferme non trouvée');
+    #[Route('/ferme/{id}/weather', name: 'app_ferme_weather')]
+    public function weather(int $id, FermeRepository $repo, WeatherService $weatherService): Response
+    {
+        $ferme = $repo->find($id);
+        if (!$ferme) {
+            throw $this->createNotFoundException('Ferme introuvable');
+        }
+        
+        $weatherData = $weatherService->getWeather($ferme->getLieu());
+
+        return $this->render('ferme/weather.html.twig', [
+            'ferme' => $ferme,
+            'weather' => $weatherData
+        ]);
     }
 
-    // Appel au service que nous avons créé précédemment
-    $planExpert = $predictor->generateFullPlan($ferme);
+    #[Route('/{id_ferme}/prediction', name: 'app_ferme_prediction', methods: ['GET'])]
+    public function prediction(int $id_ferme, FermeRepository $repo, FarmPredictor $predictor): Response
+    {
+        $ferme = $repo->find($id_ferme);
+        
+        if (!$ferme) {
+            throw $this->createNotFoundException('Ferme non trouvée');
+        }
 
-    return $this->render('ferme/prediction.html.twig', [
-        'ferme' => $ferme,
-        'plan' => $planExpert
-    ]);
-}
+        $planExpert = $predictor->generateFullPlan($ferme);
+
+        return $this->render('ferme/prediction.html.twig', [
+            'ferme' => $ferme,
+            'plan' => $planExpert
+        ]);
+    }
 }

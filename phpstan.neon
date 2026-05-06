@@ -1,0 +1,7 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    ignoreErrors:
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::findByRole\(\)#'
+        - '#Call to an undefined method Doctrine\\ORM\\EntityRepository<App\\Entity\\User>::findByRole\(\)#'

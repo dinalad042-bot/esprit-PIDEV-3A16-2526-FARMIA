@@ -7,11 +7,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ArrosageRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Arrosage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "id_arrosage")] // Pour rester cohérent avec ton id_plante
+    #[ORM\Column(name: "id_arrosage")]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -20,6 +21,19 @@ class Arrosage
     #[ORM\ManyToOne(targetEntity: Plante::class, inversedBy: 'arrosages')]
     #[ORM\JoinColumn(name: "id_plante", referencedColumnName: "id_plante", nullable: false)]
     private ?Plante $plante = null;
+
+    public function __construct()
+    {
+        $this->dateArrosage = new \DateTime();
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        if ($this->dateArrosage === null) {
+            $this->dateArrosage = new \DateTime();
+        }
+    }
 
     public function getId(): ?int
     {
@@ -31,7 +45,7 @@ class Arrosage
         return $this->dateArrosage;
     }
 
-    public function setDateArrosage(\DateTimeInterface $dateArrosage): static
+    protected function setDateArrosage(\DateTimeInterface $dateArrosage): static
     {
         $this->dateArrosage = $dateArrosage;
         return $this;

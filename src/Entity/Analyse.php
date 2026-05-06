@@ -106,7 +106,12 @@ class Analyse
     public function getId(): ?int { return $this->id; }
 
     public function getDateAnalyse(): ?\DateTimeInterface { return $this->dateAnalyse; }
-    public function setDateAnalyse(?\DateTimeInterface $d): static { $this->dateAnalyse = $d; return $this; }
+
+    protected function setDateAnalyse(?\DateTimeInterface $d): static 
+    { 
+        $this->dateAnalyse = $d; 
+        return $this; 
+    }
 
     public function getResultatTechnique(): ?string { return $this->resultatTechnique; }
     public function setResultatTechnique(?string $r): static { $this->resultatTechnique = $r; return $this; }
@@ -172,10 +177,10 @@ class Analyse
     public function setWeatherData(?array $data): static { $this->weatherData = $data; return $this; }
 
     public function getWeatherFetchedAt(): ?\DateTimeInterface { return $this->weatherFetchedAt; }
-    public function setWeatherFetchedAt(?\DateTimeInterface $date): static { $this->weatherFetchedAt = $date; return $this; }
+    protected function setWeatherFetchedAt(?\DateTimeInterface $date): static { $this->weatherFetchedAt = $date; return $this; }
 
     public function getAiDiagnosisDate(): ?\DateTimeInterface { return $this->aiDiagnosisDate; }
-    public function setAiDiagnosisDate(?\DateTimeInterface $date): static { $this->aiDiagnosisDate = $date; return $this; }
+    protected function setAiDiagnosisDate(?\DateTimeInterface $date): static { $this->aiDiagnosisDate = $date; return $this; }
 
     public function getAiConfidenceScore(): ?string { return $this->aiConfidenceScore; }
     public function setAiConfidenceScore(?string $score): static { $this->aiConfidenceScore = $score; return $this; }
