@@ -89,12 +89,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, UserFace>
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist'], orphanRemoval: true)]
-private Collection $userFaces;
+    private Collection $userFaces;
+
+    /**
+     * Fermes appartenant à cet utilisateur (agriculteur).
+     *
+     * @var Collection<int, Ferme>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class, cascade: ['persist'])]
+    private Collection $fermes;
 
     public function __construct()
     {
         $this->userLogs  = new ArrayCollection();
         $this->userFaces = new ArrayCollection();
+        $this->fermes    = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -319,5 +328,32 @@ private Collection $userFaces;
     public function getUserLogs(): Collection
     {
         return $this->userLogs;
+    }
+
+    /**
+     * @return Collection<int, Ferme>
+     */
+    public function getFermes(): Collection
+    {
+        return $this->fermes;
+    }
+
+    public function addFerme(Ferme $ferme): static
+    {
+        if (!$this->fermes->contains($ferme)) {
+            $this->fermes->add($ferme);
+            $ferme->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeFerme(Ferme $ferme): static
+    {
+        if ($this->fermes->removeElement($ferme)) {
+            if ($ferme->getUser() === $this) {
+                $ferme->setUser(null);
+            }
+        }
+        return $this;
     }
 }
