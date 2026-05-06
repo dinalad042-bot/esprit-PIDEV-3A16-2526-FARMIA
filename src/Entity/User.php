@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -78,36 +77,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'reset_code_expires_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $resetCodeExpiresAt = null;
 
+    /**
+     * @var Collection<int, UserLog>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserLog::class, cascade: ['persist'])]
     private Collection $userLogs;
 
     /**
      * Visages enregistrés pour cet utilisateur (données biométriques en BDD).
-     * PRESERVED FROM MAIN - Facial Authentication
+     *
+     * @var Collection<int, UserFace>
      */
-#[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist'], orphanRemoval: true)]
-private Collection $userFaces;
-
-    /**
-     * ANALYSES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH
-     * Analyses réalisées par ce technicien
-     */
-    #[ORM\OneToMany(mappedBy: 'technicien', targetEntity: Analyse::class)]
-    private Collection $analyses;
-
-    /**
-     * FERMES - ADDED FROM ALAEDDIN-EXPERTISE-BRANCH
-     * Fermes gérées par cet utilisateur
-     */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ferme::class, cascade: ['persist'])]
-    private Collection $fermes;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserFace::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $userFaces;
 
     public function __construct()
     {
         $this->userLogs  = new ArrayCollection();
-        $this->userFaces = new ArrayCollection();        // PRESERVED: Facial auth
-        $this->analyses = new ArrayCollection();       // ADDED: Analyses module
-        $this->fermes   = new ArrayCollection();       // ADDED: Ferme module
+        $this->userFaces = new ArrayCollection();
     }
 
     // ─── UserInterface ────────────────────────────────────────────────────────
@@ -117,6 +104,9 @@ private Collection $userFaces;
         return (string) $this->email;
     }
 
+    /**
+     * @return string[]
+     */
     public function getRoles(): array
     {
         $dbRole = $this->role;
@@ -124,9 +114,8 @@ private Collection $userFaces;
         if ($dbRole && !str_starts_with($dbRole, 'ROLE_')) {
             $dbRole = 'ROLE_' . $dbRole;
         }
-        // MODIFIED: Ensure ROLE_USER is always present (from Alaeddin)
-        $r = $dbRole ?: 'ROLE_USER';
-        return array_unique([$r, 'ROLE_USER']);
+        
+        return $dbRole ? [$dbRole] : [];
     }
 
     public function eraseCredentials(): void
@@ -291,7 +280,7 @@ private Collection $userFaces;
     }
 
     /**
-     * PRESERVED FROM MAIN: Facial authentication methods
+     * Indique si l'utilisateur a un visage actif enregistré en base.
      */
     public function hasFaceAuth(): bool
     {
@@ -303,6 +292,9 @@ private Collection $userFaces;
         return false;
     }
 
+    /**
+     * Retourne le visage actif de l'utilisateur, ou null.
+     */
     public function getActiveFace(): ?\App\Entity\UserFace
     {
         foreach ($this->userFaces as $face) {
@@ -313,114 +305,19 @@ private Collection $userFaces;
         return null;
     }
 
+    /**
+     * @return Collection<int, UserFace>
+     */
     public function getUserFaces(): Collection
     {
         return $this->userFaces;
     }
 
+    /**
+     * @return Collection<int, UserLog>
+     */
     public function getUserLogs(): Collection
     {
         return $this->userLogs;
-    }
-
-    /**
-     * ADDED FROM ALAEDDIN: Analyses management
-     */
-    public function getAnalyses(): Collection
-    {
-        return $this->analyses;
-    }
-
-    /**
-     * ADDED FROM ALAEDDIN: Ferme management
-     */
-    public function getFermes(): Collection
-    {
-        return $this->fermes;
-    }
-
-    public function addFerme(Ferme $ferme): static
-    {
-        if (!$this->fermes->contains($ferme)) {
-            $this->fermes->add($ferme);
-            $ferme->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeFerme(Ferme $ferme): static
-    {
-        if ($this->fermes->removeElement($ferme)) {
-            if ($ferme->getUser() === $this) {
-                $ferme->setUser(null);
-            }
-        }
-        return $this;
-    }
-
-    public function addUserLog(UserLog $userLog): static
-    {
-        if (!$this->userLogs->contains($userLog)) {
-            $this->userLogs->add($userLog);
-            $userLog->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserLog(UserLog $userLog): static
-    {
-        if ($this->userLogs->removeElement($userLog)) {
-            // set the owning side to null (unless already changed)
-            if ($userLog->getUser() === $this) {
-                $userLog->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function addUserFace(UserFace $userFace): static
-    {
-        if (!$this->userFaces->contains($userFace)) {
-            $this->userFaces->add($userFace);
-            $userFace->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserFace(UserFace $userFace): static
-    {
-        if ($this->userFaces->removeElement($userFace)) {
-            // set the owning side to null (unless already changed)
-            if ($userFace->getUser() === $this) {
-                $userFace->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function addAnalysis(Analyse $analysis): static
-    {
-        if (!$this->analyses->contains($analysis)) {
-            $this->analyses->add($analysis);
-            $analysis->setTechnicien($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAnalysis(Analyse $analysis): static
-    {
-        if ($this->analyses->removeElement($analysis)) {
-            // set the owning side to null (unless already changed)
-            if ($analysis->getTechnicien() === $this) {
-                $analysis->setTechnicien(null);
-            }
-        }
-
-        return $this;
     }
 }

@@ -75,6 +75,10 @@ class GroqChatService
 
     // ─── Private Helpers ────────────────────────────────────────────────────────
 
+    /**
+     * @param array<int, array<string, string>> $history
+     * @return array<int, array<string, string>>
+     */
     private function buildMessages(array $history, string $userMessage): array
     {
         $systemPrompt = <<<PROMPT
@@ -111,6 +115,8 @@ PROMPT;
 
     /**
      * Call the Groq API with automatic retry on transient server errors.
+     *
+     * @param array<int, array<string, string>> $messages
      */
     private function callApiWithRetry(array $messages): string
     {
@@ -143,14 +149,13 @@ PROMPT;
             }
         }
 
-        return $lastException
-            ? $this->getFriendlyErrorFromException($lastException)
-            : "Le service d'assistance est momentanément indisponible. Veuillez réessayer plus tard.";
+        return $this->getFriendlyErrorFromException($lastException);
     }
 
     /**
      * Execute a single API call to Groq.
      *
+     * @param array<int, array<string, string>> $messages
      * @throws \RuntimeException on any failure (with status code in the message)
      */
     private function callApi(array $messages): string
@@ -230,6 +235,9 @@ PROMPT;
 
     // ─── Session History ────────────────────────────────────────────────────────
 
+    /**
+     * @return array<int, array<string, string>>
+     */
     private function getHistory(): array
     {
         $session = $this->requestStack->getSession();

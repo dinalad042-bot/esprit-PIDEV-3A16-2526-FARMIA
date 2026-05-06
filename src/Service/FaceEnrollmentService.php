@@ -27,6 +27,7 @@ class FaceEnrollmentService
         private readonly LoggerInterface            $logger,
         private readonly PythonFaceRecognitionService $pythonService,
         private readonly string $pythonApiUrl = 'http://127.0.0.1:5000',
+        /** @phpstan-ignore-next-line */
         private readonly string $datasetBasePath = '',
     ) {}
 
@@ -160,6 +161,8 @@ class FaceEnrollmentService
      * Supprime définitivement les données faciales d'un utilisateur.
      * - Supprime l'entité UserFace en BDD
      * - Appelle l'API Python pour supprimer les images du dataset
+     *
+     * @return array<string, mixed>
      */
     public function deleteFace(User $user): array
     {

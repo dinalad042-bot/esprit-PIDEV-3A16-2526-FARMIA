@@ -40,7 +40,9 @@ class LoginFailureHandler implements AuthenticationFailureHandlerInterface
             $this->userLogService->log($user, 'LOGIN', 'FAILED');
         }
 
-        $request->getSession()->getFlashBag()->add('error', $message);
+        /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
+        $session = $request->getSession();
+        $session->getFlashBag()->add('error', $message);
         
         return new RedirectResponse($this->router->generate('app_login'));
     }

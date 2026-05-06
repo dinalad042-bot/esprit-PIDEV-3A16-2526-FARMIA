@@ -26,6 +26,8 @@ class ChatRequestDTO
     /**
      * Factory method to create a DTO from a raw request array.
      * Returns null if the message field is missing or empty.
+     *
+     * @param array<string, mixed> $data
      */
     public static function fromArray(array $data): ?self
     {

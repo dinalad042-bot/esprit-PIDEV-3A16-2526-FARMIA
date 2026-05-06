@@ -1,0 +1,13 @@
+parameters:
+    level: 6
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+    ignoreErrors:
+        -
+            message: '#Property App\\Entity\\[a-zA-Z]+::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+            paths:
+                - src/Entity/*

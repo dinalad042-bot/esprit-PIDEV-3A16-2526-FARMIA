@@ -29,6 +29,7 @@ class PythonFaceRecognitionService
 
     /**
      * Vérifie si l'API Python est en ligne.
+     * @phpstan-impure
      */
     public function isHealthy(): bool
     {

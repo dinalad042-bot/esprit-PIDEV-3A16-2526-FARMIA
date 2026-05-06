@@ -41,6 +41,8 @@ class UserLogService
 
     /**
      * Retrieve all logs for a given user.
+     *
+     * @return UserLog[]
      */
     public function getLogsForUser(int $userId): array
     {
