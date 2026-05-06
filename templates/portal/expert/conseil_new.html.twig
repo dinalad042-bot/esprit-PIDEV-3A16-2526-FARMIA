@@ -21,11 +21,14 @@
     <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:2rem;">
         {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'modern-form'}}) }}
 
+        {% if form.analyse is defined %}
         <div class="form-group" style="margin-bottom:1.5rem;">
             {{ form_label(form.analyse) }}
             {{ form_errors(form.analyse) }}
             {{ form_widget(form.analyse) }}
         </div>
+        {% endif %}
+        
         <div class="form-group" style="margin-bottom:1.5rem;">
             {{ form_label(form.prioriteRaw) }}
             {{ form_errors(form.prioriteRaw) }}

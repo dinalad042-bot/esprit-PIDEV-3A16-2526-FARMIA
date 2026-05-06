@@ -9,6 +9,7 @@ use App\Form\ConseilType;
 use App\Repository\AnalyseRepository;
 use App\Repository\FermeRepository;
 use App\Service\ReportService;
+use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,7 @@ class ExpertAnalyseController extends AbstractController
         private EntityManagerInterface $em,
         private ReportService $reportService,
         private FermeRepository $fermeRepo,
+        private WeatherService $weatherService,
     ) {}
 
     #[Route('/analyses', name: 'expert_analyses_list')]
@@ -91,6 +93,14 @@ class ExpertAnalyseController extends AbstractController
         // Security check: ensure the expert is the technicien for this analysis
         if ($analyse->getTechnicien() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à voir cette analyse.');
+        }
+
+        // Fetch weather data if not already fetched
+        if (!$analyse->getWeatherData() && $analyse->getFerme()?->getLieu()) {
+            $weather = $this->weatherService->getWeather($analyse->getFerme()->getLieu());
+            $analyse->setWeatherData($weather);
+            $analyse->setWeatherFetchedAt(new \DateTime());
+            $this->em->flush();
         }
 
         return $this->render('portal/expert/analyse_show.html.twig', [

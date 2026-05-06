@@ -64,6 +64,12 @@ class Ferme
 
     public function getIdFerme(): ?int { return $this->id_ferme; }
 
+    /**
+     * Alias for getIdFerme() to maintain consistency with standard Symfony entity pattern.
+     * Allows code to call getId() on Ferme just like other entities.
+     */
+    public function getId(): ?int { return $this->id_ferme; }
+
     public function getNomFerme(): ?string { return $this->nom_ferme; }
     public function setNomFerme(?string $nom_ferme): static { $this->nom_ferme = $nom_ferme; return $this; }
 

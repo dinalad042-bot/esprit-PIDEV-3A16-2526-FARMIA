@@ -57,7 +57,7 @@ class ExpertAIController extends AbstractController
 
             // Fetch weather data for farm location if available
             if ($analyse->getFerme()?->getLieu()) {
-                $weather = $this->weatherService->getWeatherForLocation($analyse->getFerme()->getLieu());
+                $weather = $this->weatherService->getWeather($analyse->getFerme()->getLieu());
                 $analyse->setWeatherData($weather);
                 $analyse->setWeatherFetchedAt(new \DateTime());
             }
@@ -109,7 +109,7 @@ class ExpertAIController extends AbstractController
         try {
             // Fetch weather FIRST before vision analysis
             if ($analyse->getFerme()?->getLieu()) {
-                $weather = $this->weatherService->getWeatherForLocation($analyse->getFerme()->getLieu());
+                $weather = $this->weatherService->getWeather($analyse->getFerme()->getLieu());
                 $analyse->setWeatherData($weather);
                 $analyse->setWeatherFetchedAt(new \DateTime());
             }
@@ -145,5 +145,82 @@ class ExpertAIController extends AbstractController
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    #[Route('/analyse/{id}/diagnose-text', name: 'expert_analyse_diagnose_text', methods: ['GET', 'POST'])]
+    public function diagnoseText(Analyse $analyse, Request $request): Response
+    {
+        // Security check: ensure the expert is the technicien for this analysis
+        if ($analyse->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à diagnostiquer cette analyse.');
+        }
+
+        $observation = '';
+        $aiResult = null;
+
+        if ($request->isMethod('POST')) {
+            $observation = $request->request->get('observation', '');
+
+            if (!$observation) {
+                $this->addFlash('error', 'Veuillez entrer une description des symptômes.');
+                return $this->redirectToRoute('expert_analyse_diagnose_text', ['id' => $analyse->getId()]);
+            }
+
+            try {
+                // Build context data for the AI
+                $contextData = [
+                    'farm' => $analyse->getFerme()?->getNomFerme(),
+                    'location' => $analyse->getFerme()?->getLieu(),
+                    'target_plant' => $analyse->getPlanteCible()?->getNomEspece(),
+                    'target_animal' => $analyse->getAnimalCible()?->getEspece(),
+                ];
+
+                // Run AI text diagnostic
+                $diagnosisResult = $this->groqService->generateTextDiagnostic($observation, $contextData);
+
+                // Store results in analyse entity
+                $analyse->setAiDiagnosisResult(json_encode([
+                    'condition' => $diagnosisResult->condition,
+                    'symptoms' => $diagnosisResult->symptoms,
+                    'treatment' => $diagnosisResult->treatment,
+                    'prevention' => $diagnosisResult->prevention,
+                    'urgency' => $diagnosisResult->urgency,
+                    'needsExpert' => $diagnosisResult->needsExpert,
+                    'rawResponse' => $diagnosisResult->rawResponse,
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+                $analyse->setAiConfidenceScore($diagnosisResult->confidence);
+                $analyse->setAiDiagnosisDate(new \DateTime());
+                $analyse->setDiagnosisMode('text');
+
+                // Fetch weather data for farm location if available
+                if ($analyse->getFerme()?->getLieu()) {
+                    $weather = $this->weatherService->getWeather($analyse->getFerme()->getLieu());
+                    $analyse->setWeatherData($weather);
+                    $analyse->setWeatherFetchedAt(new \DateTime());
+                }
+
+                $this->em->flush();
+
+                $this->addFlash('success', 'Diagnostic IA effectué avec succès. Confiance: ' . $diagnosisResult->confidence);
+
+                // Decode result for display
+                $aiResult = json_decode($analyse->getAiDiagnosisResult(), true);
+
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors du diagnostic IA: ' . $e->getMessage());
+            }
+        } else {
+            // GET request - check if there's already a result
+            if ($analyse->hasAiDiagnosis()) {
+                $aiResult = json_decode($analyse->getAiDiagnosisResult(), true);
+            }
+        }
+
+        return $this->render('portal/expert/diagnose_text.html.twig', [
+            'analyse' => $analyse,
+            'observation' => $observation,
+            'aiResult' => $aiResult,
+        ]);
     }
 }

@@ -37,6 +37,12 @@ class Animal
 
     public function getIdAnimal(): ?int { return $this->id_animal; }
 
+    /**
+     * Alias for getIdAnimal() to maintain consistency with standard Symfony entity pattern.
+     * Allows code to call getId() on Animal just like other entities.
+     */
+    public function getId(): ?int { return $this->id_animal; }
+
     public function getEspece(): ?string { return $this->espece; }
     public function setEspece(?string $espece): static { $this->espece = $espece; return $this; }
 

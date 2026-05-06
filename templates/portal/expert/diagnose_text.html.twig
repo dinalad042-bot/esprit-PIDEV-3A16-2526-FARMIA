@@ -145,7 +145,11 @@
                 <i class="fa-solid fa-heart-pulse" style="color:#e74c3c; margin-right:8px;"></i> Symptômes identifiés
             </h4>
             <div style="color:#444; line-height:1.7;">
-                {{ aiResult.symptoms|default('Aucun symptôme spécifique mentionné.')|nl2br }}
+                {% if aiResult.symptoms is iterable %}
+                    {{ aiResult.symptoms|join('\n')|nl2br }}
+                {% else %}
+                    {{ aiResult.symptoms|default('Aucun symptôme spécifique mentionné.')|nl2br }}
+                {% endif %}
             </div>
         </div>
 

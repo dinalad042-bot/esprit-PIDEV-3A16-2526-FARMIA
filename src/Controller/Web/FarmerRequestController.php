@@ -29,16 +29,30 @@ class FarmerRequestController extends AbstractController
     public function newRequest(Request $request): Response
     {
         $user = $this->getUser();
-        $ferme = $user->getFermes()->first();
+        $fermes = $user->getFermes();
 
-        if (!$ferme) {
+        if ($fermes->isEmpty()) {
             $this->addFlash('warning', 'Vous devez d\'abord créer une ferme avant de faire une demande d\'analyse.');
             return $this->redirectToRoute('app_ferme_new');
         }
 
-        // Get animals and plants from the farmer's farm
-        $animals = $this->animalRepo->findByFerme($ferme->getId());
-        $plantes = $this->planteRepo->findByFerme($ferme->getId());
+        // Handle farm selection from POST or use first farm as default
+        $fermeId = $request->request->get('ferme');
+        $ferme = null;
+
+        if ($fermeId) {
+            // Find the selected farm and validate it belongs to user
+            $ferme = $fermes->filter(fn($f) => $f->getIdFerme() == $fermeId)->first();
+        }
+
+        // If no valid farm selected, use first farm
+        if (!$ferme) {
+            $ferme = $fermes->first();
+        }
+
+        // Get animals and plants from the selected farm
+        $animals = $this->animalRepo->findByFerme($ferme->getIdFerme());
+        $plantes = $this->planteRepo->findByFerme($ferme->getIdFerme());
 
         if ($request->isMethod('POST')) {
             $description = $request->request->get('description');
@@ -95,6 +109,7 @@ class FarmerRequestController extends AbstractController
             'animals' => $animals,
             'plantes' => $plantes,
             'ferme' => $ferme,
+            'fermes' => $fermes,
         ]);
     }
 

@@ -163,7 +163,29 @@
 
     {# Weather Panel #}
     {% set weatherData = analyse.getWeatherData() %}
-    {% if weatherData is not null and weatherData.success %}
+    
+    {# Check if weather data has an error #}
+    {% if weatherData is not null and (weatherData.error is defined or (weatherData.success is defined and not weatherData.success)) %}
+    <div style="margin-top:1.5rem; background:#fff3cd; border-radius:12px; padding:1.5rem; border-left:4px solid #ffc107;">
+        <div style="display:flex; align-items:flex-start; gap:1rem;">
+            <i class="fa-solid fa-triangle-exclamation" style="color:#ff9800; font-size:1.5rem; margin-top:2px;"></i>
+            <div>
+                <h4 style="margin:0 0 0.5rem; color:#1a1a2e; font-size:1rem;">
+                    <i class="fa-solid fa-cloud-sun" style="margin-right:8px;"></i> Données météo indisponibles
+                </h4>
+                <p style="margin:0; color:#666; font-size:0.9rem; line-height:1.5;">
+                    {{ weatherData.error|default('Impossible de récupérer les données météo.') }}
+                </p>
+                <p style="margin:0.5rem 0 0; color:#888; font-size:0.85rem;">
+                    <i class="fa-solid fa-info-circle"></i> 
+                    Vérifiez que la localisation de la ferme est correcte (ex: "Tunis" au lieu de "oto").
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    {# Show weather data if available and no error #}
+    {% elseif weatherData is not null and (weatherData.success is defined ? weatherData.success : (weatherData.main is defined)) %}
     <div style="margin-top:1.5rem; background:linear-gradient(135deg,#2193b0 0%,#6dd5ed 100%); border-radius:12px; padding:1.5rem; color:#fff;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
             <h3 style="margin:0; font-size:1.1rem;">
@@ -175,22 +197,59 @@
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
             <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; text-align:center;">
-                <div style="font-size:2rem; font-weight:700;">{{ analyse.weatherData.temperature }}°C</div>
+                <div style="font-size:2rem; font-weight:700;">
+                    {% if weatherData.temperature is defined %}
+                        {{ weatherData.temperature }}°C
+                    {% elseif weatherData.main is defined %}
+                        {{ weatherData.main.temp }}°C
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
                 <div style="opacity:0.8; font-size:0.85rem;">Température</div>
             </div>
             <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; text-align:center;">
-                <div style="font-size:2rem; font-weight:700;">{{ analyse.weatherData.humidity }}%</div>
+                <div style="font-size:2rem; font-weight:700;">
+                    {% if weatherData.humidity is defined %}
+                        {{ weatherData.humidity }}%
+                    {% elseif weatherData.main is defined %}
+                        {{ weatherData.main.humidity }}%
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
                 <div style="opacity:0.8; font-size:0.85rem;">Humidité</div>
             </div>
             <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; text-align:center;">
-                <div style="font-size:1.2rem; font-weight:600;">{{ analyse.weatherData.description }}</div>
-                <div style="opacity:0.8; font-size:0.85rem;">{{ analyse.weatherData.location }}</div>
+                <div style="font-size:1.2rem; font-weight:600;">
+                    {% if weatherData.description is defined %}
+                        {{ weatherData.description }}
+                    {% elseif weatherData.weather is defined %}
+                        {{ weatherData.weather[0].description }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </div>
+                <div style="opacity:0.8; font-size:0.85rem;">
+                    {% if weatherData.location is defined %}
+                        {{ weatherData.location }}
+                    {% elseif weatherData.name is defined %}
+                        {{ weatherData.name }}
+                    {% else %}
+                        Localisation
+                    {% endif %}
+                </div>
             </div>
         </div>
-        {% set weatherAdvice = weatherService.getAgriAdvice(analyse.weatherData) %}
-        {% if weatherAdvice is not empty %}
+        {% if weatherData.description is defined or weatherData.weather is defined %}
         <div style="margin-top:1rem; background:rgba(255,255,255,0.15); border-radius:8px; padding:1rem;">
-            {{ weatherAdvice|nl2br }}
+            <div style="font-size:0.9rem; opacity:0.9;">
+                {% if weatherData.description is defined %}
+                    {{ weatherData.description|capitalize }}
+                {% elseif weatherData.weather is defined %}
+                    {{ weatherData.weather[0].description|capitalize }}
+                {% endif %}
+            </div>
         </div>
         {% endif %}
     </div>
