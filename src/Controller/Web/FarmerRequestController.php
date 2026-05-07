@@ -33,7 +33,7 @@ class FarmerRequestController extends AbstractController
 
         if ($fermes->isEmpty()) {
             $this->addFlash('warning', 'Vous devez d\'abord créer une ferme avant de faire une demande d\'analyse.');
-            return $this->redirectToRoute('app_ferme_new');
+            return $this->redirectToRoute('app_ferme_index');
         }
 
         // Handle farm selection from POST or use first farm as default

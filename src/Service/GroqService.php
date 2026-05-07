@@ -8,11 +8,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GroqService
 {
     private const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+    private const VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 
     public function __construct(
         private HttpClientInterface $httpClient,
         private string $apiKey,
-        private string $model = 'llama-3.2-11b-vision-preview'
+        private string $model = 'meta-llama/llama-4-scout-17b-16e-instruct'
     ) {}
 
     // ─── Text Diagnostic ──────────────────────────────────────────────
@@ -172,38 +173,74 @@ PROMPT;
         }
 
         $prompt = <<<PROMPT
-Tu es un expert agronome. Analyse cette image de plante ou de culture agricole.
-Identifie toute maladie, carence, ou problème visible.
+Tu es un expert agronome et vétérinaire agricole. Analyse cette image et identifie ce qui est représenté.
+
+Étape 1: DÉTECTE CE QUI EST DANS L'IMAGE
+- Plante/culture (légume, fruits, céréales, etc.)
+- Animal (bétail, volaille, etc.)
+
+Étape 2: ANALYSE ADAPTÉE
+
+Si c'est une PLANTES/COLLECTION:
+- Analyse les maladies foliaires, carences nutritionnelles, problèmes de racines
+- Évalue les symptômes sur les feuilles, tiges, fruits
+- Recommande traitements phytosanitaires, améliorations culturelles
+
+Si c'est un ANIMAL:
+- Évalue l'état de santé général, apparence physique
+- Identifie les problèmes de peau, de la fleece, de la salive, etc.
+- Recommande soins vétérinaires, traitements, pronostics
+- Précise si consultation vétérinaire urgent nécessaire
+
 {$contextSection}
-Réponds UNIQUEMENT en JSON valide avec cette structure:
+
+Réponds UNIQUEMENT en JSON valide avec cette structure exacte:
 {
-  "condition": "condition détectée",
+  "subject_type": "plant|animal",
+  "condition": "condition détectée ou "Santé normale"",
   "confidence": "HIGH|MEDIUM|LOW",
-  "symptoms": "symptômes visuels observés",
+  "symptoms": "symptômes observés détaillés",
   "treatment": "traitement recommandé",
-  "prevention": "prévention",
+  "prevention": "mesures préventives",
   "urgency": "Immédiat|Dans la semaine|Surveiller",
   "needsExpertConsult": true|false,
   "rawResponse": ""
 }
 
-Utilise le contexte de la ferme pour affiner ton diagnostic (maladies courantes dans la région, interactions avec d'autres cultures/animaux, etc.).
+Contrôle de qualité: Vérifie que le JSON est bien formé et que tous les champs sont présents.
 PROMPT;
 
         try {
+            // Resolve image URL to a format suitable for Groq vision API
+            $imageUrl = $this->resolveImageUrl($imageUrl);
+
+            // Build vision message with proper image_url format for Groq
+            $messages = [
+                [
+                    'role' => 'user',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => $prompt,
+                        ],
+                        [
+                            'type' => 'image_url',
+                            'image_url' => [
+                                'url' => $imageUrl,
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
             $response = $this->httpClient->request('POST', self::API_URL, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type'  => 'application/json',
                 ],
                 'json' => [
-                    'model'    => $this->model,
-                    'messages' => [
-                        [
-                            'role'    => 'user',
-                            'content' => $prompt . "\n\nAnalyse cette image: " . $imageUrl,
-                        ],
-                    ],
+                    'model'    => self::VISION_MODEL,
+                    'messages' => $messages,
                     'temperature' => 0.3,
                     'max_tokens'  => 1024,
                 ],
@@ -299,6 +336,58 @@ PROMPT;
             'urgency'            => 'Surveiller',
             'needsExpertConsult' => true,
             'rawResponse'        => $raw,
+            'success'            => false,
+            'errorMessage'       => 'Failed to get AI diagnosis',
         ]);
+    }
+
+    /**
+     * Diagnose plant disease from an image (wrapper for generateVisionDiagnostic).
+     * This method is used by tests and provides a simpler interface.
+     *
+     * @param string $imageUrl URL or path to the image
+     * @return DiagnosisResult
+     */
+    public function diagnosePlantDisease(string $imageUrl): DiagnosisResult
+    {
+        return $this->generateVisionDiagnostic($imageUrl);
+    }
+
+    /**
+     * Resolve image URL to a format suitable for Groq vision API.
+     * - Returns as-is if already a full URL (http/https) or base64 data URI
+     * - Converts local file paths to base64 data URIs
+     */
+    private function resolveImageUrl(string $imageUrl): string
+    {
+        // Already a full URL
+        if (str_starts_with($imageUrl, 'http://') || str_starts_with($imageUrl, 'https://')) {
+            return $imageUrl;
+        }
+
+        // Already a base64 data URI
+        if (str_starts_with($imageUrl, 'data:image/')) {
+            return $imageUrl;
+        }
+
+        // Local file path - convert to base64
+        // Remove leading slash and prepend to project root
+        $localPath = __DIR__ . '/../../public' . $imageUrl;
+        
+        if (!file_exists($localPath)) {
+            // Try alternative path resolution
+            $projectRoot = __DIR__ . '/..';
+            $localPath = $projectRoot . '/public' . $imageUrl;
+        }
+
+        if (file_exists($localPath) && is_file($localPath)) {
+            $mimeType = mime_content_type($localPath) ?: 'image/jpeg';
+            $imageContent = file_get_contents($localPath);
+            $base64Image = base64_encode($imageContent);
+            return 'data:' . $mimeType . ';base64,' . $base64Image;
+        }
+
+        // Return original if we can't resolve it
+        return $imageUrl;
     }
 }

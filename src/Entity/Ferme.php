@@ -54,10 +54,14 @@ class Ferme
     #[ORM\OneToMany(mappedBy: 'ferme', targetEntity: Animal::class)]
     private Collection $animals;
 
+    #[ORM\OneToMany(mappedBy: 'ferme', targetEntity: Analyse::class)]
+    private Collection $analyses;
+
     public function __construct()
     {
         $this->plantes = new ArrayCollection();
         $this->animals = new ArrayCollection();
+        $this->analyses = new ArrayCollection();
     }
 
     // --- GETTERS ET SETTERS ---
@@ -143,6 +147,33 @@ class Ferme
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Analyse>
+     */
+    public function getAnalyses(): Collection
+    {
+        return $this->analyses;
+    }
+
+    public function addAnalyse(Analyse $analyse): static
+    {
+        if (!$this->analyses->contains($analyse)) {
+            $this->analyses->add($analyse);
+            $analyse->setFerme($this);
+        }
+        return $this;
+    }
+
+    public function removeAnalyse(Analyse $analyse): static
+    {
+        if ($this->analyses->removeElement($analyse)) {
+            if ($analyse->getFerme() === $this) {
+                $analyse->setFerme(null);
+            }
+        }
         return $this;
     }
 }

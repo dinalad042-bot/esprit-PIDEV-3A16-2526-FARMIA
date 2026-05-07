@@ -51,7 +51,6 @@
   app_conseil_edit           GET|POST      ANY      ANY    /conseil/{id}/edit                      
   app_conseil_delete         POST          ANY      ANY    /conseil/{id}/delete                    
   app_exploitation_menu      ANY           ANY      ANY    /exploitation                           
-  app_ferme_new              GET           ANY      ANY    /ferme/new                              
   app_ferme_index            GET|POST      ANY      ANY    /ferme/                                 
   app_ferme_pdf              GET           ANY      ANY    /ferme/pdf                              
   app_ferme_edit             GET           ANY      ANY    /ferme/{id_ferme}/edit                  
