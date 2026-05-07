@@ -15,6 +15,7 @@ class Conseil
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_conseil', type: 'integer')]
+    /** @phpstan-ignore-next-line property.unusedType */
     private ?int $id = null;
 
     #[ORM\Column(name: 'description_conseil', type: 'text')]
@@ -35,7 +36,7 @@ class Conseil
     #[Assert\NotNull(message: 'La priorité est obligatoire.')]
     private ?string $prioriteRaw = 'MOYENNE';
 
-    #[ORM\ManyToOne(targetEntity: Analyse::class, inversedBy: 'conseils')]
+    #[ORM\ManyToOne(targetEntity: Analyse::class)]
     #[ORM\JoinColumn(name: 'id_analyse', referencedColumnName: 'id_analyse', nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull(message: "L'analyse associée est obligatoire.")]
     private ?Analyse $analyse = null;

@@ -173,7 +173,7 @@ class WeatherService
      */
     public function getAgriAdvice(array $weather): string
     {
-        if (!$weather['success'] ?? false) {
+        if (!($weather['success'] ?? false)) {
             return 'Données météo non disponibles.';
         }
 

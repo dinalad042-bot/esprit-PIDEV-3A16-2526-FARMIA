@@ -22,81 +22,138 @@
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Demandeur</th>
-                <th>Ferme</th>
-                <th>Expert</th>
-                <th>Statut</th>
-                <th>Conseils</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+{# Stats Grid #}
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <div style="background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #43a047;">
+        <div style="font-size: 2rem; font-weight: 700; color: #43a047;">{{ analyses|length }}</div>
+        <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">Total analyses</div>
+    </div>
+    <div style="background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #ffc107;">
+        <div style="font-size: 2rem; font-weight: 700; color: #ffc107;">
+            {{ analyses|filter(a => a.statut == 'en_attente')|length }}
+        </div>
+        <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">En attente</div>
+    </div>
+    <div style="background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #17a2b8;">
+        <div style="font-size: 2rem; font-weight: 700; color: #17a2b8;">
+            {{ analyses|filter(a => a.statut == 'en_cours')|length }}
+        </div>
+        <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">En cours</div>
+    </div>
+    <div style="background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #28a745;">
+        <div style="font-size: 2rem; font-weight: 700; color: #28a745;">
+            {{ analyses|filter(a => a.statut == 'terminee')|length }}
+        </div>
+        <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">Terminées</div>
+    </div>
+</div>
+
+{# Cards Grid #}
+{% if analyses|length == 0 %}
+    <div style="text-align: center; padding: 4rem; background: #fff; border-radius: 12px; color: #aaa;">
+        <i class="fa-solid fa-flask" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+        <p style="font-size: 1.1rem;">Aucune analyse trouvée.</p>
+        <a href="{{ path('admin_analyses_new') }}" class="btn btn-dark" style="margin-top: 1rem;">
+            Créer une nouvelle analyse
+        </a>
+    </div>
+{% else %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
         {% for analyse in analyses %}
-            <tr>
-                <td>#{{ analyse.id }}</td>
-                <td>{{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y H:i') : '-' }}</td>
-                <td>
-                    {% if analyse.demandeur %}
-                        {{ analyse.demandeur.prenom }} {{ analyse.demandeur.nom }}
-                    {% else %}
-                        <span class="text-muted">-</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if analyse.ferme %}
-                        {{ analyse.ferme.nomFerme }}
-                    {% else %}
-                        <span class="text-muted">-</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if analyse.technicien %}
-                        {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
-                    {% else %}
-                        <span class="badge badge-warning">Non assigné</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% set statusClass = {
-                        'en_attente': 'badge-warning',
-                        'en_cours': 'badge-info',
-                        'terminee': 'badge-success',
-                        'annulee': 'badge-danger'
+        <div style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;"
+             onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.12)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'">
+
+            {# Header with gradient #}
+            <div style="background: linear-gradient(135deg, #43a047, #2d7a36); padding: 1.5rem; color: #fff;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                    <span style="font-weight: 700; font-size: 1.1rem;">#{{ analyse.id }}</span>
+                    {% set statusColor = {
+                        'en_attente': '#ffc107',
+                        'en_cours': '#17a2b8',
+                        'terminee': '#28a745',
+                        'annulee': '#dc3545'
                     } %}
-                    {% set statusLabel = {
-                        'en_attente': 'En attente',
-                        'en_cours': 'En cours',
-                        'terminee': 'Terminée',
-                        'annulee': 'Annulée'
-                    } %}
-                    <span class="badge {{ statusClass[analyse.statut] ?? 'badge-secondary' }}">
+                    <span style="background: {{ statusColor[analyse.statut] ?? '#6c757d' }}; color: #fff; padding: 4px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 600;">
+                        {% set statusLabel = {
+                            'en_attente': 'En attente',
+                            'en_cours': 'En cours',
+                            'terminee': 'Terminée',
+                            'annulee': 'Annulée'
+                        } %}
                         {{ statusLabel[analyse.statut] ?? analyse.statut }}
                     </span>
-                </td>
-                <td>
-                    <span class="badge badge-info">{{ analyse.nbConseils }}</span>
-                </td>
-                <td>
-                    <a href="{{ path('admin_analyses_show', {'id': analyse.id}) }}" class="btn btn-sm btn-info" title="Voir">
-                        <i class="fa-solid fa-eye"></i>
+                </div>
+                <div style="font-size: 0.9rem; opacity: 0.9;">
+                    <i class="fa-solid fa-calendar"></i> {{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y H:i') : '-' }}
+                </div>
+            </div>
+
+            {# Content #}
+            <div style="padding: 1.25rem;">
+                {# Demandeur #}
+                <div style="margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600;">DEMANDEUR</span>
+                    <div style="color: #333; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {% if analyse.demandeur %}
+                            <span style="background: #e8f5e9; color: #2d7a36; padding: 4px 8px; border-radius: 4px;">
+                                {{ analyse.demandeur.prenom }} {{ analyse.demandeur.nom }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# Ferme #}
+                <div style="margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600;">FERME</span>
+                    <div style="color: #333; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {% if analyse.ferme %}
+                            <i class="fa-solid fa-map-marker-alt" style="color: #43a047; margin-right: 4px;"></i>
+                            {{ analyse.ferme.nomFerme }}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# Expert #}
+                <div style="margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600;">EXPERT</span>
+                    <div style="color: #333; font-size: 0.9rem; margin-top: 0.25rem;">
+                        {% if analyse.technicien %}
+                            <span style="background: #fff3e0; color: #e65100; padding: 4px 8px; border-radius: 4px;">
+                                {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
+                            </span>
+                        {% else %}
+                            <span class="badge badge-warning" style="font-size: 0.8rem;">Non assigné</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# Conseils #}
+                <div style="margin-bottom: 1rem; padding-top: 0.75rem; border-top: 1px solid #f0f0f0;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600;">CONSEILS</span>
+                    <div style="color: #333; font-size: 0.9rem; margin-top: 0.25rem;">
+                        <span class="badge badge-info" style="font-size: 0.85rem;">{{ analyse.nbConseils }} conseil(s)</span>
+                    </div>
+                </div>
+
+                {# Actions #}
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{{ path('admin_analyses_show', {'id': analyse.id}) }}" 
+                       style="flex: 1; text-align: center; background: #43a047; color: #fff; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                        <i class="fa-solid fa-eye"></i> Voir
                     </a>
-                    <a href="{{ path('admin_analyses_edit', {'id': analyse.id}) }}" class="btn btn-sm btn-primary" title="Modifier">
-                        <i class="fa-solid fa-pen"></i>
+                    <a href="{{ path('admin_analyses_edit', {'id': analyse.id}) }}" 
+                       style="flex: 1; text-align: center; background: #17a2b8; color: #fff; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                        <i class="fa-solid fa-pen"></i> Éditer
                     </a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8" class="text-center text-muted">Aucune analyse trouvée</td>
-            </tr>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-        </tbody>
-    </table>
-</div>
+    </div>
+{% endif %}
 {% endblock %}

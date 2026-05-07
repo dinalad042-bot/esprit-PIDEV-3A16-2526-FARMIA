@@ -41,12 +41,14 @@
                     <span>Utilisateurs</span>
                 </a>
             </li>
+            {% if not is_granted('ROLE_ADMIN') %}
             <li class="nav-item">
                 <a href="{{ path('admin_statistics') }}" class="{% if current_route == 'admin_statistics' %}active{% endif %}">
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Statistiques</span>
                 </a>
             </li>
+            {% endif %}
             <li class="nav-item">
                 <a href="{{ path('admin_audit_logs') }}" class="{% if current_route == 'admin_audit_logs' %}active{% endif %}">
                     <i class="fa-solid fa-file-signature"></i>

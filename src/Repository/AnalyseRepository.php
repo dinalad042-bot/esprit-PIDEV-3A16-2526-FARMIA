@@ -13,9 +13,21 @@ class AnalyseRepository extends ServiceEntityRepository
         parent::__construct($registry, Analyse::class);
     }
 
+    public function findAllWithRelations(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.dateAnalyse', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findByTechnicienId(int $id): array
     {
         return $this->createQueryBuilder('a')
+            ->leftJoin('a.conseils', 'c')
+            ->addSelect('c')
+            ->leftJoin('a.ferme', 'f')
+            ->addSelect('f')
             ->andWhere('a.technicien = :id')
             ->setParameter('id', $id)
             ->orderBy('a.dateAnalyse', 'DESC')
@@ -104,6 +116,14 @@ class AnalyseRepository extends ServiceEntityRepository
     public function findPendingRequests(): array
     {
         return $this->createQueryBuilder('a')
+            ->leftJoin('a.demandeur', 'd')
+            ->addSelect('d')
+            ->leftJoin('a.ferme', 'f')
+            ->addSelect('f')
+            ->leftJoin('a.animalCible', 'animal')
+            ->addSelect('animal')
+            ->leftJoin('a.planteCible', 'plante')
+            ->addSelect('plante')
             ->andWhere('a.statut = :statut')
             ->setParameter('statut', 'en_attente')
             ->orderBy('a.dateAnalyse', 'DESC')

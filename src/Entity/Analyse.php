@@ -18,6 +18,7 @@ class Analyse
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_analyse', type: 'integer')]
+    /** @phpstan-ignore-next-line property.unusedType */
     private ?int $id = null;
 
     #[ORM\Column(name: 'date_analyse', type: 'datetime', nullable: true)]
@@ -29,7 +30,7 @@ class Analyse
         minMessage: 'Le résultat technique doit contenir au moins {{ limit }} caractères.'
     )]
     private ?string $resultatTechnique = null;
-#[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'analyses')]
+#[ORM\ManyToOne(targetEntity: User::class)]
     // Changement : id_technicien devient id_technicien_id
     #[ORM\JoinColumn(name: 'id_technicien_id', referencedColumnName: 'id_user', nullable: true, onDelete: 'SET NULL')]
     private ?User $technicien = null;
@@ -72,7 +73,8 @@ class Analyse
         mappedBy: 'analyse',
         targetEntity: Conseil::class,
         cascade: ['persist', 'remove'],
-        orphanRemoval: true
+        orphanRemoval: true,
+        fetch: 'EXTRA_LAZY'
     )]
     private Collection $conseils;
 
@@ -108,7 +110,7 @@ class Analyse
 
     public function getDateAnalyse(): ?\DateTimeInterface { return $this->dateAnalyse; }
 
-    protected function setDateAnalyse(?\DateTimeInterface $d): static 
+    public function setDateAnalyse(?\DateTimeInterface $d): static 
     { 
         $this->dateAnalyse = $d; 
         return $this; 
@@ -178,10 +180,10 @@ class Analyse
     public function setWeatherData(?array $data): static { $this->weatherData = $data; return $this; }
 
     public function getWeatherFetchedAt(): ?\DateTimeInterface { return $this->weatherFetchedAt; }
-    protected function setWeatherFetchedAt(?\DateTimeInterface $date): static { $this->weatherFetchedAt = $date; return $this; }
+    public function setWeatherFetchedAt(?\DateTimeInterface $date): static { $this->weatherFetchedAt = $date; return $this; }
 
     public function getAiDiagnosisDate(): ?\DateTimeInterface { return $this->aiDiagnosisDate; }
-    protected function setAiDiagnosisDate(?\DateTimeInterface $date): static { $this->aiDiagnosisDate = $date; return $this; }
+    public function setAiDiagnosisDate(?\DateTimeInterface $date): static { $this->aiDiagnosisDate = $date; return $this; }
 
     public function getAiConfidenceScore(): ?string { return $this->aiConfidenceScore; }
     public function setAiConfidenceScore(?string $score): static { $this->aiConfidenceScore = $score; return $this; }

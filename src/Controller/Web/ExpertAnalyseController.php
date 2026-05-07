@@ -128,7 +128,10 @@ class ExpertAnalyseController extends AbstractController
         }
 
         // Assign the expert to this analysis
-        $analyse->setTechnicien($this->getUser());
+        $user = $this->getUser();
+        if ($user instanceof \App\Entity\User) {
+            $analyse->setTechnicien($user);
+        }
         $analyse->setStatut('en_cours');
 
         $this->analyseRepo->save($analyse, true);
@@ -141,8 +144,11 @@ class ExpertAnalyseController extends AbstractController
     public function new(Request $request): Response
     {
         $analyse = new Analyse();
-        $analyse->setTechnicien($this->getUser());
-        $analyse->setDemandeur($this->getUser());
+        $user = $this->getUser();
+        if ($user instanceof \App\Entity\User) {
+            $analyse->setTechnicien($user);
+            $analyse->setDemandeur($user);
+        }
         
         $form = $this->createForm(AnalyseType::class, $analyse);
         $form->handleRequest($request);

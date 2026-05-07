@@ -3,181 +3,253 @@
 {% block title %}Détails Analyse #{{ analyse.id }} - FarmAI Admin{% endblock %}
 
 {% block body %}
-<div class="welcome-section">
-    <h1 class="welcome-title">Analyse #{{ analyse.id }}</h1>
-    <p class="welcome-subtitle">Détails complets de la demande d'analyse</p>
-</div>
-
-<div class="row">
-    <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fa-solid fa-flask"></i> Informations Générales</h5>
-                <div>
-                    {% set statusClass = {
-                        'en_attente': 'badge-warning',
-                        'en_cours': 'badge-info',
-                        'terminee': 'badge-success',
-                        'annulee': 'badge-danger'
-                    } %}
-                    <span class="badge {{ statusClass[analyse.statut] ?? 'badge-secondary' }} fs-6">
-                        {{ analyse.statut|replace({'_': ' '})|title }}
-                    </span>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Date:</strong> {{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y H:i') : '-' }}</p>
-                        <p><strong>Demandeur:</strong> 
-                            {% if analyse.demandeur %}
-                                {{ analyse.demandeur.prenom }} {{ analyse.demandeur.nom }} ({{ analyse.demandeur.email }})
-                            {% else %}
-                                <span class="text-muted">Non défini</span>
-                            {% endif %}
-                        </p>
-                        <p><strong>Ferme:</strong> 
-                            {% if analyse.ferme %}
-                                {{ analyse.ferme.nomFerme }} - {{ analyse.ferme.lieu }}
-                            {% else %}
-                                <span class="text-muted">Non définie</span>
-                            {% endif %}
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Expert:</strong> 
-                            {% if analyse.technicien %}
-                                {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
-                            {% else %}
-                                <span class="text-warning">Non assigné</span>
-                            {% endif %}
-                        </p>
-                        <p><strong>Animal:</strong> 
-                            {% if analyse.animalCible %}
-                                {{ analyse.animalCible.espece }}
-                            {% else %}
-                                <span class="text-muted">Aucun</span>
-                            {% endif %}
-                        </p>
-                        <p><strong>Plante:</strong> 
-                            {% if analyse.planteCible %}
-                                {{ analyse.planteCible.nomEspece }}
-                            {% else %}
-                                <span class="text-muted">Aucune</span>
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
-                
-                <hr>
-                
-                <h6><strong>Description de la demande:</strong></h6>
-                <p class="bg-light p-3 rounded">
-                    {{ analyse.descriptionDemande ?: '<span class="text-muted">Aucune description</span>'|raw }}
-                </p>
-                
-                <h6><strong>Résultat technique:</strong></h6>
-                <p class="bg-light p-3 rounded">
-                    {{ analyse.resultatTechnique ?: '<span class="text-muted">En attente de résultat</span>'|raw }}
-                </p>
-                
-                {% if analyse.imageUrl %}
-                <h6><strong>Image:</strong></h6>
-                <img src="{{ analyse.imageUrl }}" alt="Analyse" class="img-fluid rounded" style="max-height: 300px;">
-                {% endif %}
-                
-                {% if analyse.hasAiDiagnosis %}
-                <hr>
-                <div class="alert alert-info">
-                    <h6><i class="fa-solid fa-robot"></i> <strong>Diagnostic IA</strong></h6>
-                    <p><strong>Date:</strong> {{ analyse.aiDiagnosisDate ? analyse.aiDiagnosisDate|date('d/m/Y H:i') : '-' }}</p>
-                    <p><strong>Confiance:</strong> {{ analyse.aiConfidenceScore ?: 'N/A' }}</p>
-                    <p class="mb-0"><strong>Résultat:</strong></p>
-                    <p class="mt-2">{{ analyse.aiDiagnosisResult }}</p>
-                </div>
-                {% endif %}
-            </div>
+<div style="max-width: 900px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 style="font-size: 2rem; font-weight: 700; color: #1a1a2e; margin: 0;">Analyse #{{ analyse.id }}</h1>
+            <p style="color: #888; margin: 0.5rem 0 0; font-size: 0.95rem;">Détails complets de la demande d'analyse</p>
         </div>
+        {% set statusClass = {
+            'en_attente': '#ffc107',
+            'en_cours': '#17a2b8',
+            'terminee': '#28a745',
+            'annulee': '#dc3545'
+        } %}
+        <span style="background: {{ statusClass[analyse.statut] ?? '#6c757d' }}; color: #fff; padding: 8px 16px; border-radius: 10px; font-weight: 600;">
+            {% set statusLabel = {
+                'en_attente': 'En attente',
+                'en_cours': 'En cours',
+                'terminee': 'Terminée',
+                'annulee': 'Annulée'
+            } %}
+            {{ statusLabel[analyse.statut] ?? analyse.statut }}
+        </span>
+    </div>
+
+    {# Informations Générales #}
+    <div style="background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-flask" style="color: #43a047;"></i> Informations Générales
+        </h3>
         
-        <!-- Conseils -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fa-solid fa-lightbulb"></i> Conseils ({{ analyse.nbConseils }})</h5>
-                <a href="{{ path('admin_conseils_new', {'analyseId': analyse.id}) }}" class="btn btn-sm btn-success">
-                    <i class="fa-solid fa-plus"></i> Ajouter un conseil
-                </a>
-            </div>
-            <div class="card-body">
-                {% if analyse.conseils|length > 0 %}
-                    <div class="list-group">
-                    {% for conseil in analyse.conseils %}
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">Conseil #{{ conseil.id }}</h6>
-                                <span class="badge 
-                                    {% if conseil.priorite.value == 'HAUTE' %}badge-danger
-                                    {% elseif conseil.priorite.value == 'MOYENNE' %}badge-warning
-                                    {% else %}badge-success{% endif %}">
-                                    {{ conseil.priorite.value }}
-                                </span>
-                            </div>
-                            <p class="mb-1">{{ conseil.descriptionConseil }}</p>
-                            <div class="mt-2">
-                                <a href="{{ path('admin_conseils_edit', {'id': conseil.id}) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
-                                <form method="post" action="{{ path('admin_conseils_delete', {'id': conseil.id}) }}" style="display: inline-block;" onsubmit="return confirm('Confirmer la suppression ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ conseil.id) }}">
-                                    <button class="btn btn-sm btn-outline-danger">Supprimer</button>
-                                </form>
-                            </div>
-                        </div>
-                    {% endfor %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.5rem;">
+            <div>
+                <div style="margin-bottom: 1.5rem;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Date</span>
+                    <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                        {{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y H:i') : '-' }}
                     </div>
-                {% else %}
-                    <p class="text-muted text-center">Aucun conseil associé</p>
-                {% endif %}
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Demandeur</span>
+                    <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                        {% if analyse.demandeur %}
+                            <span style="background: #e8f5e9; color: #2d7a36; padding: 4px 8px; border-radius: 4px;">
+                                {{ analyse.demandeur.prenom }} {{ analyse.demandeur.nom }}
+                            </span>
+                            <div style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">{{ analyse.demandeur.email }}</div>
+                        {% else %}
+                            <span class="text-muted">Non défini</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Ferme</span>
+                    <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                        {% if analyse.ferme %}
+                            <i class="fa-solid fa-map-marker-alt" style="color: #43a047; margin-right: 4px;"></i>
+                            {{ analyse.ferme.nomFerme }} - {{ analyse.ferme.lieu }}
+                        {% else %}
+                            <span class="text-muted">Non définie</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div style="margin-bottom: 1.5rem;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Expert</span>
+                    <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                        {% if analyse.technicien %}
+                            <span style="background: #fff3e0; color: #e65100; padding: 4px 8px; border-radius: 4px;">
+                                {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
+                            </span>
+                        {% else %}
+                            <span class="badge badge-warning">Non assigné</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Animal</span>
+                    <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                        {% if analyse.animalCible %}
+                            {{ analyse.animalCible.espece }}
+                        {% else %}
+                            <span class="text-muted">Aucun</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Plante</span>
+                    <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                        {% if analyse.planteCible %}
+                            {{ analyse.planteCible.nomEspece }}
+                        {% else %}
+                            <span class="text-muted">Aucune</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
-        <!-- Actions -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fa-solid fa-cog"></i> Actions</h5>
+    {# Description de la demande #}
+    <div style="background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 1rem;">Description de la demande</h3>
+        <p style="color: #555; line-height: 1.6; margin: 0;">
+            {{ analyse.descriptionDemande ?: '<span class="text-muted">Aucune description</span>'|raw }}
+        </p>
+    </div>
+    
+    {# Résultat technique #}
+    <div style="background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 1rem;">Résultat technique</h3>
+        <p style="color: #555; line-height: 1.6; margin: 0;">
+            {{ analyse.resultatTechnique ?: '<span class="text-muted">En attente de résultat</span>'|raw }}
+        </p>
+    </div>
+    
+    {# Image #}
+    {% if analyse.imageUrl %}
+    <div style="background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 1rem;">Image</h3>
+        <img src="{{ analyse.imageUrl }}" alt="Analyse" style="max-width: 100%; height: auto; border-radius: 8px; max-height: 300px;">
+    </div>
+    {% endif %}
+    
+    {# Diagnostic IA #}
+    {% if analyse.hasAiDiagnosis %}
+    <div style="background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: #1565c0; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-robot"></i> Diagnostic IA
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+            <div>
+                <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Date</span>
+                <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                    {{ analyse.aiDiagnosisDate ? analyse.aiDiagnosisDate|date('d/m/Y H:i') : '-' }}
+                </div>
             </div>
-            <div class="card-body">
-                <form method="post" action="{{ path('admin_analyses_status', {'id': analyse.id}) }}" class="mb-3">
-                    <div class="form-group">
-                        <label>Changer le statut:</label>
-                        <select name="status" class="form-control" onchange="this.form.submit()">
-                            <option value="en_attente" {% if analyse.statut == 'en_attente' %}selected{% endif %}>En attente</option>
-                            <option value="en_cours" {% if analyse.statut == 'en_cours' %}selected{% endif %}>En cours</option>
-                            <option value="terminee" {% if analyse.statut == 'terminee' %}selected{% endif %}>Terminée</option>
-                            <option value="annulee" {% if analyse.statut == 'annulee' %}selected{% endif %}>Annulée</option>
-                        </select>
-                    </div>
-                </form>
-                
-                <hr>
-                
-                <a href="{{ path('admin_analyses_edit', {'id': analyse.id}) }}" class="btn btn-primary w-100 mb-2">
-                    <i class="fa-solid fa-pen"></i> Modifier l'analyse
-                </a>
-                
-                <form method="post" action="{{ path('admin_analyses_delete', {'id': analyse.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette analyse ?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ analyse.id) }}">
-                    <button class="btn btn-danger w-100">
-                        <i class="fa-solid fa-trash"></i> Supprimer l'analyse
-                    </button>
-                </form>
+            <div>
+                <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Confiance</span>
+                <div style="color: #333; font-size: 0.95rem; margin-top: 0.25rem;">
+                    {% if analyse.aiConfidenceScore == 'HIGH' %}
+                        <span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px;">HAUTE</span>
+                    {% elseif analyse.aiConfidenceScore == 'MEDIUM' %}
+                        <span style="background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px;">MOYENNE</span>
+                    {% else %}
+                        <span style="background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 4px;">FAIBLE</span>
+                    {% endif %}
+                </div>
             </div>
         </div>
+        
+        <div>
+            <span style="font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase;">Résultat</span>
+            <p style="color: #555; line-height: 1.6; margin: 0.5rem 0 0;">
+                {{ analyse.aiDiagnosisResult }}
+            </p>
+        </div>
     </div>
-</div>
-
-<div class="mt-4">
-    <a href="{{ path('admin_analyses_index') }}" class="btn btn-outline-secondary">
-        <i class="fa-solid fa-arrow-left"></i> Retour à la liste
-    </a>
+    {% endif %}
+    
+    {# Conseils #}
+    <div style="background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-lightbulb" style="color: #ffc107;"></i> Conseils ({{ analyse.nbConseils }})
+            </h3>
+            <a href="{{ path('admin_conseils_new', {'analyseId': analyse.id}) }}" style="background: #43a047; color: #fff; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                <i class="fa-solid fa-plus"></i> Ajouter un conseil
+            </a>
+        </div>
+        
+        {% if analyse.conseils|length > 0 %}
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for conseil in analyse.conseils %}
+                <div style="background: #f8f9fa; border-left: 4px solid #ffc107; border-radius: 8px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; color: #1a1a2e;">Conseil #{{ conseil.id }}</span>
+                        <span style="background: 
+                            {% if conseil.priorite.value == 'HAUTE' %}#dc3545
+                            {% elseif conseil.priorite.value == 'MOYENNE' %}#ffc107
+                            {% else %}#28a745{% endif %}; 
+                            color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">
+                            {{ conseil.priorite.value }}
+                        </span>
+                    </div>
+                    <p style="color: #555; line-height: 1.6; margin: 0.5rem 0;">
+                        {{ conseil.descriptionConseil }}
+                    </p>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <a href="{{ path('admin_conseils_edit', {'id': conseil.id}) }}" style="background: #17a2b8; color: #fff; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem;">
+                            <i class="fa-solid fa-pen"></i> Modifier
+                        </a>
+                        <form method="post" action="{{ path('admin_conseils_delete', {'id': conseil.id}) }}" style="display: inline-block;" onsubmit="return confirm('Confirmer la suppression ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ conseil.id) }}">
+                            <button style="background: #dc3545; color: #fff; padding: 6px 12px; border-radius: 6px; border: none; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fa-solid fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #888; text-align: center; margin: 0;">Aucun conseil associé</p>
+        {% endif %}
+    </div>
+    
+    {# Actions #}
+    <div style="background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-cog"></i> Actions
+        </h3>
+        
+        <form method="post" action="{{ path('admin_analyses_status', {'id': analyse.id}) }}" style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem;">Changer le statut</label>
+            <select name="status" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem;" onchange="this.form.submit()">
+                <option value="en_attente" {% if analyse.statut == 'en_attente' %}selected{% endif %}>En attente</option>
+                <option value="en_cours" {% if analyse.statut == 'en_cours' %}selected{% endif %}>En cours</option>
+                <option value="terminee" {% if analyse.statut == 'terminee' %}selected{% endif %}>Terminée</option>
+                <option value="annulee" {% if analyse.statut == 'annulee' %}selected{% endif %}>Annulée</option>
+            </select>
+        </form>
+        
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ path('admin_analyses_edit', {'id': analyse.id}) }}" style="flex: 1; background: #43a047; color: #fff; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 600;">
+                <i class="fa-solid fa-pen"></i> Modifier l'analyse
+            </a>
+            
+            <form method="post" action="{{ path('admin_analyses_delete', {'id': analyse.id}) }}" style="flex: 1;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette analyse ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ analyse.id) }}">
+                <button style="width: 100%; background: #dc3545; color: #fff; padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-trash"></i> Supprimer l'analyse
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    {# Back Button #}
+    <div style="margin-bottom: 2rem;">
+        <a href="{{ path('admin_analyses_index') }}" style="color: #43a047; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
 </div>
 {% endblock %}

@@ -1,12 +1,12 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
+        use_savepoints: false
 
         # IMPORTANT: Configuration de la timezone pour synchroniser MySQL avec PHP
         options:
             1002: "SET time_zone = '+00:00'" # UTC timezone for MySQL
         profiling_collect_backtrace: '%kernel.debug%'
-        use_savepoints: true
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

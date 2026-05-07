@@ -30,7 +30,8 @@ class ExpertConseilController extends AbstractController
         $priorite = $request->query->get('priorite', '');
 
         // Fetch conseils related to analyses where the expert is the technicien
-        $conseils = $this->conseilRepo->findByExpert($user->getId(), $search, $priorite);
+        $userId = $user instanceof \App\Entity\User ? $user->getId() : null;
+        $conseils = $userId ? $this->conseilRepo->findByExpert($userId, $search, $priorite) : [];
 
         return $this->render('portal/expert/conseils.html.twig', [
             'conseils' => $conseils,

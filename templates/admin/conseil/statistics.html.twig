@@ -66,11 +66,11 @@
             </div>
             <div class="card-body">
                 {% if stats.recent|length > 0 %}
-                    <div class="list-group">
+                    <div class="conseils-recent-grid">
                     {% for conseil in stats.recent %}
-                        <a href="{{ path('admin_analyses_show', {'id': conseil.analyse.id}) }}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">Conseil #{{ conseil.id }}</h6>
+                        <a href="{{ path('admin_analyses_show', {'id': conseil.analyse.id}) }}" class="conseil-card">
+                            <div class="conseil-card__header">
+                                <span class="conseil-card__id">Conseil #{{ conseil.id }}</span>
                                 <span class="badge 
                                     {% if conseil.priorite.value == 'HAUTE' %}badge-danger
                                     {% elseif conseil.priorite.value == 'MOYENNE' %}badge-warning
@@ -78,8 +78,13 @@
                                     {{ conseil.priorite.value }}
                                 </span>
                             </div>
-                            <p class="mb-1 text-truncate">{{ conseil.descriptionConseil|slice(0, 50) }}...</p>
-                            <small>Analyse #{{ conseil.analyse.id }}</small>
+                            <div class="conseil-card__body">
+                                {{ conseil.descriptionConseil|slice(0, 80) }}{% if conseil.descriptionConseil|length > 80 %}...{% endif %}
+                            </div>
+                            <div class="conseil-card__footer">
+                                <small class="text-muted">Analyse #{{ conseil.analyse.id }}</small>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
                         </a>
                     {% endfor %}
                     </div>
