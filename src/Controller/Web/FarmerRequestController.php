@@ -66,26 +66,24 @@ class FarmerRequestController extends AbstractController
         $stmt = $conn->prepare("SELECT id_plante, nom_espece, cycle_vie, quantite, id_ferme FROM plante WHERE id_ferme = ?");
         $planteResult = $stmt->executeQuery([$farmId])->fetchAllAssociative();
 
-        // Build animal objects manually
-        $animals = [];
-        foreach ($animalResult as $row) {
-            $animal = new \App\Entity\Animal();
-            $animal->setId($row['id_animal']);
-            $animal->setEspece($row['espece']);
-            $animal->setEtatSante($row['etat_sante']);
-            $animals[] = $animal;
-        }
+        // Pass as arrays - simpler than creating entity objects
+        $animals = array_map(function($row) {
+            return [
+                'id' => $row['id_animal'],
+                'espece' => $row['espece'],
+                'etatSante' => $row['etat_sante'],
+                'dateNaissance' => $row['date_naissance']
+            ];
+        }, $animalResult);
 
-        // Build plante objects manually
-        $plantes = [];
-        foreach ($planteResult as $row) {
-            $plante = new \App\Entity\Plante();
-            $plante->setId($row['id_plante']);
-            $plante->setNomEspece($row['nom_espece']);
-            $plante->setCycleVie($row['cycle_vie']);
-            $plante->setQuantite($row['quantite']);
-            $plantes[] = $plante;
-        }
+        $plantes = array_map(function($row) {
+            return [
+                'id' => $row['id_plante'],
+                'nomEspece' => $row['nom_espece'],
+                'cycleVie' => $row['cycle_vie'],
+                'quantite' => $row['quantite']
+            ];
+        }, $planteResult);
 
         if ($request->isMethod('POST')) {
             $description = $request->request->get('description');

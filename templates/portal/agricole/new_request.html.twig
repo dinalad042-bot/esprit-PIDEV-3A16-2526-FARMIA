@@ -53,11 +53,10 @@
             <label style="display:block; color:#333; font-weight:600; margin-bottom:0.5rem;">
                 <i class="fa-solid fa-paw" style="color:#2ecc71;"></i> Sélectionner un animal (optionnel)
             </label>
-            {# DEBUG: {{ dump(animals) }} #}
             <select name="animal" style="width:100%; padding:0.75rem; border:1px solid #ddd; border-radius:8px; font-size:0.95rem;">
                 <option value="">-- Choisir un animal ({{ animals|length }}) --</option>
                 {% for animal in animals %}
-                    <option value="{{ animal.id }}">{{ animal.espece }} - {{ animal.etatSante }} (Né: {{ animal.dateNaissance|date('d/m/Y') }})</option>
+                    <option value="{{ animal.id }}">{{ animal.espece }} - {{ animal.etatSante }}</option>
                 {% endfor %}
             </select>
             {% if animals|length == 0 %}
@@ -78,7 +77,6 @@
             <label style="display:block; color:#333; font-weight:600; margin-bottom:0.5rem;">
                 <i class="fa-solid fa-seedling" style="color:#2ecc71;"></i> Sélectionner une plante (optionnel)
             </label>
-            {# DEBUG: {{ dump(plantes) }} #}
             <select name="plante" style="width:100%; padding:0.75rem; border:1px solid #ddd; border-radius:8px; font-size:0.95rem;">
                 <option value="">-- Choisir une plante ({{ plantes|length }}) --</option>
                 {% for plante in plantes %}
