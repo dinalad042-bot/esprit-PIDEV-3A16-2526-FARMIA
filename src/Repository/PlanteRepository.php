@@ -42,4 +42,13 @@ class PlanteRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findByFerme(int $fermeId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.ferme = :fermeId')
+            ->setParameter('fermeId', $fermeId)
+            ->getQuery()
+            ->getResult();
+    }
 }

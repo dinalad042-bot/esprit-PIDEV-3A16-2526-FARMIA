@@ -15,7 +15,10 @@
       "Bash(./mvnw.cmd compile *)",
       "Bash(./mvnw.cmd test-compile *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'fix: unify password hashing with bcrypt and filter data by user across all modules *)"
+      "Bash(git commit -m 'fix: unify password hashing with bcrypt and filter data by user across all modules *)",
+      "Bash(git push *)",
+      "Bash(./mvnw.cmd clean *)",
+      "Bash(git commit *)"
     ]
   }
 }

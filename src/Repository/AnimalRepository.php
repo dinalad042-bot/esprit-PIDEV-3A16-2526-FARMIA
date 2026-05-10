@@ -82,4 +82,13 @@ class AnimalRepository extends ServiceEntityRepository
     }
     return $data;
 }
+
+    public function findByFerme(int $fermeId): array
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.ferme = :fermeId')
+            ->setParameter('fermeId', $fermeId)
+            ->getQuery()
+            ->getResult();
+    }
 }
