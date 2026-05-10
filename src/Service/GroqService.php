@@ -241,18 +241,20 @@ PROMPT;
                 ],
             ];
 
+            $payload = json_encode([
+                    'model'    => self::VISION_MODEL,
+                    'messages' => $messages,
+                    'temperature' => 0.3,
+                    'max_tokens'  => 1024,
+                ], JSON_UNESCAPED_SLASHES);
+
             $response = $this->httpClient->request('POST', self::API_URL, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type'  => 'application/json',
                 ],
-                'body' => json_encode([
-                    'model'    => self::VISION_MODEL,
-                    'messages' => $messages,
-                    'temperature' => 0.3,
-                    'max_tokens'  => 1024,
-                ]),
-                'timeout' => 30,
+                'body' => $payload,
+                'timeout' => 60,
             ]);
 
             $data    = $response->toArray();
