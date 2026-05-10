@@ -3,9 +3,11 @@
 namespace App\Controller\Web;
 
 use App\Entity\Analyse;
+use App\Entity\Ferme;
 use App\Repository\AnalyseRepository;
 use App\Repository\AnimalRepository;
 use App\Repository\PlanteRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +24,8 @@ class FarmerRequestController extends AbstractController
         private AnalyseRepository $analyseRepo,
         private AnimalRepository $animalRepo,
         private PlanteRepository $planteRepo,
-        private SluggerInterface $slugger
+        private SluggerInterface $slugger,
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('/nouvelle-demande', name: 'farmer_new_request')]
@@ -49,6 +52,25 @@ class FarmerRequestController extends AbstractController
         if (!$ferme) {
             $ferme = $fermes->first();
         }
+
+        // Force load the farm with its collections using DQL
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('f')
+           ->from(Ferme::class, 'f')
+           ->leftJoin('f.animals', 'a')
+           ->leftJoin('f.plantes', 'p')
+           ->addSelect('a', 'p')
+           ->where('f.id_ferme = :id')
+           ->setParameter('id', $ferme->getIdFerme());
+
+        $ferme = $qb->getQuery()->getSingleResult();
+
+        // Debug: Log what we got
+        $logger = new \Psr\Log\NullLogger();
+        if ($this->container->has('logger')) {
+            $logger = $this->container->get('logger');
+        }
+        $logger->info('Farm loaded: ' . $ferme->getNomFerme() . ', Animals: ' . $ferme->getAnimals()->count() . ', Plantes: ' . $ferme->getPlantes()->count());
 
         // Get animals and plants from the selected farm
         $animals = $ferme->getAnimals()->toArray();
