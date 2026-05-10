@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Plante;
+use App\Entity\Ferme;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
