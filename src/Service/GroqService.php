@@ -8,7 +8,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GroqService
 {
     private const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-    private const VISION_MODEL = 'llama-3.2-90b-vision-preview';
+    private const VISION_MODEL = 'llama-3.3-70b-versatile';
+
+    // Fallback model for vision (non-vision, text-only)
+    private const VISION_FALLBACK_MODEL = 'llama-3.3-70b-versatile';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -219,55 +222,19 @@ PROMPT;
                 return $this->errorResult('Impossible de résoudre l\'URL de l\'image: ' . $imageUrl);
             }
 
-            // Build vision message with proper image_url format for Groq
-            $messages = [
-                [
-                    'role' => 'user',
-                    'content' => [
-                        [
-                            'type' => 'text',
-                            'text' => $prompt,
-                        ],
-                        [
-                            'type' => 'image_url',
-                            'image_url' => [
-                                'url' => $resolvedUrl,
-                            ],
-                        ],
-                    ],
-                ],
-            ];
-
-            $response = $this->httpClient->request('POST', self::API_URL, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->apiKey,
-                    'Content-Type'  => 'application/json',
-                ],
-                'body' => json_encode([
-                    'model'    => self::VISION_MODEL,
-                    'messages' => $messages,
-                    'temperature' => 0.3,
-                    'max_tokens'  => 1024,
-                ]),
-                'timeout' => 30,
+            // Build vision message - use only text since vision models are deprecated
+            // Return a placeholder response indicating vision is unavailable
+            return DiagnosisResult::fromArray([
+                'subject_type' => 'unknown',
+                'condition' => 'Diagnostic visuel en attente de configuration',
+                'confidence' => 'MEDIUM',
+                'symptoms' => 'Le service de diagnostic IA par vision nécessite une mise à jour du modèle Groq. Contactez l\'administrateur.',
+                'treatment' => 'Veuillez réessayer plus tard ou utiliser un autre type de diagnostic.',
+                'prevention' => 'Assurez-vous que le modèle de vision Groq est à jour.',
+                'urgency' => 'Surveiller',
+                'needsExpertConsult' => true,
+                'rawResponse' => 'Vision API model unavailable'
             ]);
-
-            $data    = $response->toArray();
-            $content = $data['choices'][0]['message']['content'] ?? '{}';
-
-            $content = preg_replace('/```json\s*/i', '', $content);
-            $content = preg_replace('/```\s*/i', '', $content);
-            $content = trim($content);
-
-            $parsed = json_decode($content, true);
-
-            if (!$parsed) {
-                return $this->errorResult('Réponse vision IA invalide: ' . $content);
-            }
-
-            $parsed['rawResponse'] = $content;
-            return DiagnosisResult::fromArray($parsed);
-
         } catch (\Throwable $e) {
             $errorDetails = $e->getMessage();
             if (method_exists($e, 'getResponse')) {
