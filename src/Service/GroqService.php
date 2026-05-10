@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GroqService
 {
     private const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-    private const VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
+    private const VISION_MODEL = 'llava-1.5-7b-4096-preview';
 
     public function __construct(
         private HttpClientInterface $httpClient,
