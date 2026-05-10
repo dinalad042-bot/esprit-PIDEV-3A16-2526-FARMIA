@@ -34,13 +34,17 @@ class AnimalController extends AbstractController
     #[Route('/', name: 'app_animal_index', methods: ['GET'])]
     public function index(Request $request, AnimalRepository $aRepo, FermeRepository $fRepo, SuiviSanteRepository $sRepo): Response
     {
+        $user = $this->getUser();
         $search = $request->query->get('search');
         $sort = $request->query->get('sort', 'espece');
         $direction = $request->query->get('direction', 'ASC');
 
+        // Get user's own farms for filtering
+        $userFermes = $fRepo->findBy(['user' => $user]);
+
         return $this->render('animal/index.html.twig', [
             'animals' => $aRepo->findBySearchAndSort($search, $sort, $direction),
-            'fermes' => $fRepo->findAll(),
+            'fermes' => $userFermes, // Only show user's farms
             'suivis' => $sRepo->findBy([], ['dateConsultation' => 'DESC']),
             'animal_edit' => null,
             'errors' => [],

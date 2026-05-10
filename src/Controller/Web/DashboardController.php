@@ -67,20 +67,27 @@ class DashboardController extends AbstractController
     #[Route('/agricole/dashboard', name: 'dashboard_agricole')]
     #[IsGranted('ROLE_AGRICOLE')]
     public function agricole(
-        FermeRepository $fermeRepo, 
-        PlanteRepository $planteRepo, // Changé ici (Plante au lieu de Culture)
+        FermeRepository $fermeRepo,
+        PlanteRepository $planteRepo,
         AnimalRepository $animalRepo
     ): Response {
-        // Comptage dynamique depuis la base de données
-        $nbFermes = $fermeRepo->count([]);
-        $nbPlantes = $planteRepo->count([]); // Changé ici
-        $nbAnimaux = $animalRepo->count([]);
+        $user = $this->getUser();
+
+        // Get user's own farms only
+        $userFermes = $fermeRepo->findBy(['user' => $user]);
+
+        // Get ferme IDs for filtering related entities
+        $fermeIds = array_map(fn($f) => $f->getIdFerme(), $userFermes);
+
+        // Comptage dynamique UNIQUEMENT pour les entités de l'utilisateur
+        $nbFermes = count($userFermes);
+        $nbPlantes = $planteRepo->count(['ferme' => $userFermes]);
+        $nbAnimaux = $animalRepo->count(['ferme' => $userFermes]);
 
         return $this->render('portal/agricole/index.html.twig', [
-            'user' => $this->getUser(),
-            // Transmission des variables à la vue Twig
+            'user' => $user,
             'nb_fermes' => $nbFermes,
-            'nb_plantes' => $nbPlantes, // Changé ici
+            'nb_plantes' => $nbPlantes,
             'nb_animaux' => $nbAnimaux,
         ]);
     }

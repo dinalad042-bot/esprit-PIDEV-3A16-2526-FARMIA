@@ -1,7 +1,8 @@
 security:
     password_hashers:
         App\Entity\User:
-            id: App\Security\LegacyPasswordHasher
+            algorithm: bcrypt
+            cost: 10
 
     providers:
         app_user_provider:

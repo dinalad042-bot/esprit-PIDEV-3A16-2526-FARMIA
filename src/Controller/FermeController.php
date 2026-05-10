@@ -22,6 +22,7 @@ class FermeController extends AbstractController
     #[Route('/', name: 'app_ferme_index', methods: ['GET', 'POST'])]
     public function index(FermeRepository $fermeRepository, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): Response
     {
+        $user = $this->getUser();
         $search = $request->query->get('search', '');
         $sort = $request->query->get('sort', 'id_ferme');
         $direction = $request->query->get('direction', 'ASC');
@@ -35,10 +36,15 @@ class FermeController extends AbstractController
         if ($request->isMethod('POST')) {
             $ferme = new Ferme();
             $this->mapData($ferme, $request);
-            
+
             $violations = $validator->validate($ferme);
             if (count($violations) > 0) {
                 return $this->renderWithErrors($violations, $fermeRepository, null, $request);
+            }
+
+            // Set user if not already set
+            if (!$ferme->getUser() && $user) {
+                $ferme->setUser($user);
             }
 
             $em->persist($ferme);
@@ -50,10 +56,14 @@ class FermeController extends AbstractController
 
         // PERFORMANCE : Application systématique d'une limite
         $limit = 20;
-        if (!empty($search) && method_exists($fermeRepository, 'findBySearchAndSort')) {
+
+        // Filter by current user - only show their own farms
+        if (!empty($search)) {
             $fermes = $fermeRepository->findBySearchAndSort($search, $sort, $direction);
+            // Also filter by user
+            $fermes = array_filter($fermes, fn($f) => $f->getUser()?->getId() === $user?->getId());
         } else {
-            $fermes = $fermeRepository->findBy([], [$sort => $direction], $limit);
+            $fermes = $fermeRepository->findBy(['user' => $user], [$sort => $direction], $limit);
         }
 
         return $this->render('ferme/index.html.twig', [
@@ -77,7 +87,7 @@ class FermeController extends AbstractController
 
         // PERFORMANCE : Limite de sécurité pour la génération PDF
         $html = $this->renderView('ferme/pdf.html.twig', [
-            'fermes' => $repo->findBy([], ['nom_ferme' => 'ASC'], 50)
+            'fermes' => $repo->findBy(['user' => $this->getUser()], ['nom_ferme' => 'ASC'], 50)
         ]);
 
         $dompdf->loadHtml($html);
@@ -93,11 +103,19 @@ class FermeController extends AbstractController
     #[Route('/{id_ferme}/edit', name: 'app_ferme_edit', methods: ['GET'])]
     public function edit(Ferme $ferme, Request $request, FermeRepository $repo): Response
     {
+        $user = $this->getUser();
+
+        // Security: Only allow editing own farms
+        if ($ferme->getUser()?->getId() !== $user?->getId()) {
+            $this->addFlash('error', 'Vous ne pouvez pas modifier cette ferme.');
+            return $this->redirectToRoute('app_ferme_index');
+        }
+
         $sort = $request->query->get('sort', 'id_ferme');
         $direction = $request->query->get('direction', 'ASC');
 
         return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findBy([], [$sort => $direction], 20), // LIMITE PERFORMANCE
+            'fermes' => $repo->findBy(['user' => $user], [$sort => $direction], 20),
             'ferme_edit' => $ferme,
             'errors' => [],
             'searchTerm' => $request->query->get('search', ''),
@@ -109,8 +127,16 @@ class FermeController extends AbstractController
     #[Route('/{id_ferme}/update', name: 'app_ferme_update', methods: ['POST'])]
     public function update(Request $request, Ferme $ferme, EntityManagerInterface $em, ValidatorInterface $validator, FermeRepository $repo): Response
     {
+        $user = $this->getUser();
+
+        // Security: Only allow updating own farms
+        if ($ferme->getUser()?->getId() !== $user?->getId()) {
+            $this->addFlash('error', 'Vous ne pouvez pas modifier cette ferme.');
+            return $this->redirectToRoute('app_ferme_index');
+        }
+
         $this->mapData($ferme, $request);
-        
+
         $violations = $validator->validate($ferme);
         if (count($violations) > 0) {
             return $this->renderWithErrors($violations, $repo, $ferme, $request);
@@ -118,19 +144,27 @@ class FermeController extends AbstractController
 
         $em->flush();
         $this->addFlash('success', 'La ferme a été mise à jour.');
-        
+
         return $this->redirectToRoute('app_ferme_index');
     }
 
     #[Route('/delete/{id_ferme}', name: 'app_ferme_delete', methods: ['POST'])]
     public function delete(Request $request, Ferme $ferme, EntityManagerInterface $em): Response
     {
+        $user = $this->getUser();
+
+        // Security: Only allow deleting own farms
+        if ($ferme->getUser()?->getId() !== $user?->getId()) {
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer cette ferme.');
+            return $this->redirectToRoute('app_ferme_index');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$ferme->getIdFerme(), $request->request->get('_token'))) {
             $em->remove($ferme);
             $em->flush();
             $this->addFlash('success', 'Ferme supprimée.');
         }
-        
+
         return $this->redirectToRoute('app_ferme_index');
     }
 
@@ -156,12 +190,13 @@ class FermeController extends AbstractController
     private function renderWithErrors($violations, FermeRepository $repo, ?Ferme $ferme_edit, Request $request): Response
     {
         $errors = [];
-        foreach ($violations as $v) { 
-            $errors[$v->getPropertyPath()] = $v->getMessage(); 
+        foreach ($violations as $v) {
+            $errors[$v->getPropertyPath()] = $v->getMessage();
         }
 
+        $user = $this->getUser();
         return $this->render('ferme/index.html.twig', [
-            'fermes' => $repo->findBy([], ['id_ferme' => 'DESC'], 20), // LIMITE PERFORMANCE
+            'fermes' => $repo->findBy(['user' => $user], ['id_ferme' => 'DESC'], 20),
             'ferme_edit' => $ferme_edit,
             'errors' => $errors,
             'searchTerm' => $request->query->get('search'),

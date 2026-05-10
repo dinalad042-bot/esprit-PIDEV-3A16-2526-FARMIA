@@ -22,13 +22,17 @@ class PlanteController extends AbstractController
     #[Route('/', name: 'app_plante_index', methods: ['GET'])]
     public function index(Request $request, PlanteRepository $pRepo, FermeRepository $fRepo): Response
     {
+        $user = $this->getUser();
         $search = $request->query->get('search');
         $sort = $request->query->get('sort', 'nom_espece');
         $direction = $request->query->get('direction', 'ASC');
 
+        // Get user's own farms for filtering
+        $userFermes = $fRepo->findBy(['user' => $user]);
+
         return $this->render('plante/index.html.twig', [
             'plantes' => $pRepo->findBySearchAndSort($search, $sort, $direction),
-            'fermes' => $fRepo->findAll(),
+            'fermes' => $userFermes, // Only show user's farms
             'plante_edit' => null,
             'errors' => [],
             'searchTerm' => $search,

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone *)",
+      "Bash(Get-ChildItem C:\\\\Users\\\\sliti\\\\Videos\\\\INTEG\\\\sprint_java_farmai\\\\database\\\\ *)",
+      "Bash(php *)",
+      "Bash(mysql *)",
+      "Bash(\"C:\\\\Program Files\\\\MySQL\\\\MySQL Server 8.0\\\\bin\\\\mysql.exe\" -u root -e \"SHOW DATABASES;\")",
+      "Bash(\"C:\\\\Program Files\\\\MariaDB*\\\\bin\\\\mysql.exe\" -u root -e \"SHOW DATABASES;\")",
+      "Bash(where mysql *)",
+      "Bash(where.exe mysql *)",
+      "Bash(tasklist)",
+      "Bash(.\\\\mvnw.cmd compile *)",
+      "Bash(Select-Object -First 30)",
+      "Bash(./mvnw.cmd compile *)",
+      "Bash(./mvnw.cmd test-compile *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: unify password hashing with bcrypt and filter data by user across all modules *)"
+    ]
+  }
+}
