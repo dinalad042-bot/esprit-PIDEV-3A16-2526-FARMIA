@@ -86,9 +86,14 @@ class AnimalRepository extends ServiceEntityRepository
     public function findByFerme(int $fermeId): array
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.ferme = :fermeId')
-            ->setParameter('fermeId', $fermeId)
+            ->andWhere('a.ferme = :ferme')
+            ->setParameter('ferme', $fermeId)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByFermeEntity(Ferme $ferme): array
+    {
+        return $this->findBy(['ferme' => $ferme]);
     }
 }

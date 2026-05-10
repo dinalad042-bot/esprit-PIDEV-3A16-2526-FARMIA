@@ -46,9 +46,14 @@ class PlanteRepository extends ServiceEntityRepository
     public function findByFerme(int $fermeId): array
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.ferme = :fermeId')
-            ->setParameter('fermeId', $fermeId)
+            ->andWhere('p.ferme = :ferme')
+            ->setParameter('ferme', $fermeId)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByFermeEntity(Ferme $ferme): array
+    {
+        return $this->findBy(['ferme' => $ferme]);
     }
 }
