@@ -51,8 +51,8 @@ class FarmerRequestController extends AbstractController
         }
 
         // Get animals and plants from the selected farm
-        $animals = $this->animalRepo->findByFermeEntity($ferme);
-        $plantes = $this->planteRepo->findByFermeEntity($ferme);
+        $animals = $ferme->getAnimals()->toArray();
+        $plantes = $ferme->getPlantes()->toArray();
 
         if ($request->isMethod('POST')) {
             $description = $request->request->get('description');
