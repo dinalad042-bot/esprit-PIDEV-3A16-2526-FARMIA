@@ -3,7 +3,9 @@
 namespace App\Controller\Web;
 
 use App\Entity\Analyse;
+use App\Entity\Animal;
 use App\Entity\Ferme;
+use App\Entity\Plante;
 use App\Repository\AnalyseRepository;
 use App\Repository\AnimalRepository;
 use App\Repository\PlanteRepository;
@@ -54,27 +56,36 @@ class FarmerRequestController extends AbstractController
         }
 
         // Force load the farm with its collections using DQL
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->select('f')
-           ->from(Ferme::class, 'f')
-           ->leftJoin('f.animals', 'a')
-           ->leftJoin('f.plantes', 'p')
-           ->addSelect('a', 'p')
-           ->where('f.id_ferme = :id')
-           ->setParameter('id', $ferme->getIdFerme());
+        $farmId = $ferme->getIdFerme();
 
-        $ferme = $qb->getQuery()->getSingleResult();
+        // Direct query using repository to get animals and plants
+        $conn = $this->entityManager->getConnection();
+        $stmt = $conn->prepare("SELECT id_animal, espece, etat_sante, date_naissance, id_ferme FROM animal WHERE id_ferme = ?");
+        $animalResult = $stmt->executeQuery([$farmId])->fetchAllAssociative();
 
-        // Debug: Log what we got
-        $logger = new \Psr\Log\NullLogger();
-        if ($this->container->has('logger')) {
-            $logger = $this->container->get('logger');
+        $stmt = $conn->prepare("SELECT id_plante, nom_espece, cycle_vie, quantite, id_ferme FROM plante WHERE id_ferme = ?");
+        $planteResult = $stmt->executeQuery([$farmId])->fetchAllAssociative();
+
+        // Build animal objects manually
+        $animals = [];
+        foreach ($animalResult as $row) {
+            $animal = new \App\Entity\Animal();
+            $animal->setId($row['id_animal']);
+            $animal->setEspece($row['espece']);
+            $animal->setEtatSante($row['etat_sante']);
+            $animals[] = $animal;
         }
-        $logger->info('Farm loaded: ' . $ferme->getNomFerme() . ', Animals: ' . $ferme->getAnimals()->count() . ', Plantes: ' . $ferme->getPlantes()->count());
 
-        // Get animals and plants from the selected farm
-        $animals = $ferme->getAnimals()->toArray();
-        $plantes = $ferme->getPlantes()->toArray();
+        // Build plante objects manually
+        $plantes = [];
+        foreach ($planteResult as $row) {
+            $plante = new \App\Entity\Plante();
+            $plante->setId($row['id_plante']);
+            $plante->setNomEspece($row['nom_espece']);
+            $plante->setCycleVie($row['cycle_vie']);
+            $plante->setQuantite($row['quantite']);
+            $plantes[] = $plante;
+        }
 
         if ($request->isMethod('POST')) {
             $description = $request->request->get('description');
