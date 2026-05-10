@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GroqService
 {
     private const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-    private const VISION_MODEL = 'llama-3.3-70b-versatile';
+    private const VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 
     // Fallback model for vision (non-vision, text-only)
     private const VISION_FALLBACK_MODEL = 'llama-3.3-70b-versatile';
@@ -241,19 +241,16 @@ PROMPT;
                 ],
             ];
 
-            $payload = json_encode([
+            $response = $this->httpClient->request('POST', self::API_URL, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                ],
+                'json' => [
                     'model'    => self::VISION_MODEL,
                     'messages' => $messages,
                     'temperature' => 0.3,
                     'max_tokens'  => 1024,
-                ], JSON_UNESCAPED_SLASHES);
-
-            $response = $this->httpClient->request('POST', self::API_URL, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->apiKey,
-                    'Content-Type'  => 'application/json',
                 ],
-                'body' => $payload,
                 'timeout' => 60,
             ]);
 
