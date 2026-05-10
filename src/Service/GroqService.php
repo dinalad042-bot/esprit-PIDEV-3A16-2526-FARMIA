@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GroqService
 {
     private const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-    private const VISION_MODEL = 'llava-1.5-7b-4096-preview';
+    private const VISION_MODEL = 'llama-3.2-11b-vision-preview';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -212,7 +212,12 @@ PROMPT;
 
         try {
             // Resolve image URL to a format suitable for Groq vision API
-            $imageUrl = $this->resolveImageUrl($imageUrl);
+            $resolvedUrl = $this->resolveImageUrl($imageUrl);
+
+            // Validate that we have a valid image URL
+            if (empty($resolvedUrl) || $resolvedUrl === $imageUrl) {
+                return $this->errorResult('Impossible de résoudre l\'URL de l\'image: ' . $imageUrl);
+            }
 
             // Build vision message with proper image_url format for Groq
             $messages = [
@@ -226,7 +231,7 @@ PROMPT;
                         [
                             'type' => 'image_url',
                             'image_url' => [
-                                'url' => $imageUrl,
+                                'url' => $resolvedUrl,
                             ],
                         ],
                     ],
@@ -238,12 +243,12 @@ PROMPT;
                     'Authorization' => 'Bearer ' . $this->apiKey,
                     'Content-Type'  => 'application/json',
                 ],
-                'json' => [
+                'body' => json_encode([
                     'model'    => self::VISION_MODEL,
                     'messages' => $messages,
                     'temperature' => 0.3,
                     'max_tokens'  => 1024,
-                ],
+                ]),
                 'timeout' => 30,
             ]);
 
