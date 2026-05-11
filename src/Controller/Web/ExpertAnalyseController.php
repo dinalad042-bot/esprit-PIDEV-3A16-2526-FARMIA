@@ -105,7 +105,49 @@ class ExpertAnalyseController extends AbstractController
 
         return $this->render('portal/expert/analyse_show.html.twig', [
             'analyse' => $analyse,
+            'imageDataUri' => $this->convertImageUrlToDataUri($analyse->getImageUrl()),
         ]);
+    }
+
+    /**
+     * Convert local image URL to base64 data URI for display.
+     */
+    private function convertImageUrlToDataUri(?string $imageUrl): ?string
+    {
+        if (empty($imageUrl)) {
+            return null;
+        }
+
+        // Already a data URI or HTTP URL
+        if (str_starts_with($imageUrl, 'data:') || str_starts_with($imageUrl, 'http')) {
+            return $imageUrl;
+        }
+
+        // Windows path
+        if (strlen($imageUrl) >= 3 && ctype_alpha($imageUrl[0]) && $imageUrl[1] === ':' && ($imageUrl[2] === '\\' || $imageUrl[2] === '/')) {
+            $normalizedPath = str_replace('/', '\\', $imageUrl);
+            if (file_exists($normalizedPath) && is_file($normalizedPath)) {
+                $mimeType = mime_content_type($normalizedPath) ?: 'image/jpeg';
+                $content = file_get_contents($normalizedPath);
+                if ($content !== false) {
+                    return 'data:' . $mimeType . ';base64,' . base64_encode($content);
+                }
+            }
+        }
+
+        // Relative path - try uploads
+        if (str_starts_with($imageUrl, '/')) {
+            $fullPath = dirname(__DIR__, 2) . '/public' . $imageUrl;
+            if (file_exists($fullPath) && is_file($fullPath)) {
+                $mimeType = mime_content_type($fullPath) ?: 'image/jpeg';
+                $content = file_get_contents($fullPath);
+                if ($content !== false) {
+                    return 'data:' . $mimeType . ';base64,' . base64_encode($content);
+                }
+            }
+        }
+
+        return null;
     }
 
     #[Route('/demandes-en-attente', name: 'expert_pending_requests')]

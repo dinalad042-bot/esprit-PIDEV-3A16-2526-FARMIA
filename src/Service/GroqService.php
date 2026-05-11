@@ -363,7 +363,7 @@ PROMPT;
     /**
      * Resolve image URL to a format suitable for Groq vision API.
      * - Returns as-is if already a full URL (http/https) or base64 data URI
-     * - Converts local file paths to base64 data URIs
+     * - Converts local file paths to base64 data URIs (Windows or Unix)
      */
     private function resolveImageUrl(string $imageUrl): string
     {
@@ -377,24 +377,96 @@ PROMPT;
             return $imageUrl;
         }
 
-        // Local file path - convert to base64
+        // Check if it's a Windows absolute path (e.g., C:\Users\... or C:/Users/...)
+        // Use string detection instead of regex to avoid regex issues
+        if (strlen($imageUrl) >= 3 && ctype_alpha($imageUrl[0]) && $imageUrl[1] === ':' && ($imageUrl[2] === '\\' || $imageUrl[2] === '/')) {
+            // Normalize path separators
+            $normalizedPath = str_replace('/', '\\', $imageUrl);
+
+            error_log('[GroqService] Windows path detected: ' . $normalizedPath);
+            error_log('[GroqService] File exists: ' . (file_exists($normalizedPath) ? 'YES' : 'NO'));
+            error_log('[GroqService] Is file: ' . (is_file($normalizedPath) ? 'YES' : 'NO'));
+            error_log('[GroqService] Is readable: ' . (is_readable($normalizedPath) ? 'YES' : 'NO'));
+
+            // Try to find the file - check various path variations
+            $pathsToTry = [
+                $normalizedPath,
+                str_replace('\\\\', '\\', $normalizedPath),
+                str_replace('\\', '/', $normalizedPath),
+                $imageUrl,
+            ];
+
+            foreach ($pathsToTry as $path) {
+                $path = trim($path);
+                if (!empty($path) && file_exists($path) && is_file($path)) {
+                    error_log('[GroqService] Found file at: ' . $path);
+                    return $this->convertFileToBase64($path);
+                }
+            }
+
+            // Try to find file in common locations (Downloads, Pictures, etc.)
+            $filename = basename($normalizedPath);
+            $homeDir = getenv('USERPROFILE') ?: (getenv('HOME') ?: '/tmp');
+            $username = getenv('USERNAME') ?: 'sliti';
+
+            $commonPaths = [
+                $homeDir . '\\Downloads\\' . $filename,
+                $homeDir . '\\Pictures\\' . $filename,
+                $homeDir . '\\Desktop\\' . $filename,
+                'C:\\Users\\' . $username . '\\Downloads\\' . $filename,
+            ];
+
+            foreach ($commonPaths as $path) {
+                if (file_exists($path) && is_file($path)) {
+                    error_log('[GroqService] Found file in common path: ' . $path);
+                    return $this->convertFileToBase64($path);
+                }
+            }
+
+            error_log('[GroqService] Could not find file, returning original path');
+            return $imageUrl;
+        } else {
+            error_log('[GroqService] Not a Windows path, checking if relative path: ' . $imageUrl);
+        }
+
+        // Unix-style path (relative or absolute)
         // Remove leading slash and prepend to project root
         $localPath = __DIR__ . '/../../public' . $imageUrl;
-        
+
         if (!file_exists($localPath)) {
             // Try alternative path resolution
-            $projectRoot = __DIR__ . '/..';
+            $projectRoot = __DIR__ . '/../..';
             $localPath = $projectRoot . '/public' . $imageUrl;
         }
 
         if (file_exists($localPath) && is_file($localPath)) {
-            $mimeType = mime_content_type($localPath) ?: 'image/jpeg';
-            $imageContent = file_get_contents($localPath);
-            $base64Image = base64_encode($imageContent);
-            return 'data:' . $mimeType . ';base64,' . $base64Image;
+            return $this->convertFileToBase64($localPath);
         }
 
         // Return original if we can't resolve it
         return $imageUrl;
+    }
+
+    /**
+     * Convert a local file to base64 data URI
+     */
+    private function convertFileToBase64(string $filePath): string
+    {
+        if (!file_exists($filePath) || !is_file($filePath)) {
+            return '';
+        }
+
+        $mimeType = mime_content_type($filePath);
+        if (!$mimeType) {
+            $mimeType = 'image/jpeg';
+        }
+
+        $imageContent = file_get_contents($filePath);
+        if ($imageContent === false) {
+            return '';
+        }
+
+        $base64Image = base64_encode($imageContent);
+        return 'data:' . $mimeType . ';base64,' . $base64Image;
     }
 }

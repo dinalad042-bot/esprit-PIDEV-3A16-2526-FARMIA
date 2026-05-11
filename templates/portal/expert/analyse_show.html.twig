@@ -145,12 +145,13 @@
                 <i class="fa-solid fa-image" style="color:#2ecc71;"></i> Image d'analyse
             </h3>
 
-            {% if analyse.imageUrl %}
-                <img src="{{ analyse.imageUrl }}" alt="Analyse"
-                     style="width:100%; max-height:300px; object-fit:cover; border-radius:8px;"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div style="display:none; height:200px; background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:8px; align-items:center; justify-content:center;">
-                    <i class="fa-solid fa-flask" style="color:rgba(255,255,255,0.6); font-size:3rem;"></i>
+            {% if imageDataUri %}
+                <img src="{{ imageDataUri }}" alt="Analyse"
+                     style="width:100%; max-height:300px; object-fit:cover; border-radius:8px;">
+            {% elseif analyse.imageUrl %}
+                <div style="height:200px; background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                    <i class="fa-solid fa-folder-open" style="color:rgba(255,255,255,0.6); font-size:3rem;"></i>
+                    <p style="color:rgba(255,255,255,0.8); margin-top:0.5rem; font-size:0.9rem;">Image locale non accessible</p>
                 </div>
             {% else %}
                 <div style="height:200px; background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:8px; display:flex; align-items:center; justify-content:center;">
@@ -257,7 +258,7 @@
 
     {# AI Diagnosis Section #}
     {% if analyse.hasAiDiagnosis %}
-    {% set aiResult = analyse.aiDiagnosisResult is not null ? analyse.aiDiagnosisResult|raw|json_decode : {} %}
+    {% set aiResult = (analyse.aiDiagnosisResult is not null and analyse.aiDiagnosisResult starts with '{') ? analyse.aiDiagnosisResult|raw|json_decode : null %}
     <div style="margin-top:1.5rem; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border-radius:12px; padding:1.5rem; color:#fff;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
             <h3 style="margin:0; font-size:1.1rem;">
@@ -268,16 +269,17 @@
                     Confiance: {{ analyse.aiConfidenceScore }}
                 </span>
                 <span style="background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:12px; font-size:0.85rem;">
-                    {{ analyse.aiDiagnosisDate|date('d/m/Y H:i') }}
+                    {{ analyse.aiDiagnosisDate ? analyse.aiDiagnosisDate|date('d/m/Y H:i') : '' }}
                 </span>
             </div>
         </div>
-        
+
+        {% if aiResult is not null %}
         <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem; margin-bottom:1rem;">
             <div style="font-size:0.85rem; opacity:0.8; margin-bottom:0.25rem;">Condition détectée</div>
             <div style="font-size:1.1rem; font-weight:600;">{{ aiResult.condition|default('Non déterminé') }}</div>
         </div>
-        
+
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
             <div style="background:rgba(255,255,255,0.1); border-radius:8px; padding:1rem;">
                 <div style="font-size:0.8rem; opacity:0.8; margin-bottom:0.25rem;"><i class="fa-solid fa-heart-pulse"></i> Symptômes</div>
@@ -300,7 +302,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div style="margin-top:1rem; display:flex; gap:0.5rem;">
             <a href="{{ path('expert_analyse_ai_result', {id: analyse.id}) }}" style="background:#fff; color:#764ba2; text-decoration:none; padding:8px 16px; border-radius:8px; font-weight:500;">
                 Voir détails complet <i class="fa-solid fa-arrow-right"></i>
@@ -311,6 +313,11 @@
                 </button>
             </form>
         </div>
+        {% else %}
+        <div style="margin-top:1rem; padding:1rem; background:rgba(255,255,255,0.1); border-radius:8px;">
+            <p style="margin:0;">{{ analyse.aiDiagnosisResult|default('Diagnostic disponible')|slice(0, 200) }}</p>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 
