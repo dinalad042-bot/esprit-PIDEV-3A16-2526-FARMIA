@@ -41,9 +41,10 @@ class AnimalController extends AbstractController
 
         // Get user's own farms for filtering
         $userFermes = $fRepo->findBy(['user' => $user]);
+        $userFermeIds = array_map(fn($f) => $f->getIdFerme(), $userFermes);
 
         return $this->render('animal/index.html.twig', [
-            'animals' => $aRepo->findBySearchAndSort($search, $sort, $direction),
+            'animals' => $aRepo->findBySearchAndSort($search, $sort, $direction, $userFermeIds),
             'fermes' => $userFermes, // Only show user's farms
             'suivis' => $sRepo->findBy([], ['dateConsultation' => 'DESC']),
             'animal_edit' => null,

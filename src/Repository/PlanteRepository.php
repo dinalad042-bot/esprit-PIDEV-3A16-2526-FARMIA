@@ -19,10 +19,21 @@ class PlanteRepository extends ServiceEntityRepository
 
     /**
      * Recherche et tri des plantes avec les noms de champs exacts
+     * Filtré par les fermes de l'utilisateur connecté
+     * @param string|null $search Le terme de recherche
+     * @param string $sort La colonne de tri
+     * @param string $direction La direction (ASC/DESC)
+     * @param int[] $userFermeIds IDs des fermes de l'utilisateur
      */
-    public function findBySearchAndSort(?string $search, string $sort, string $direction): array
+    public function findBySearchAndSort(?string $search, string $sort, string $direction, array $userFermeIds = []): array
     {
         $qb = $this->createQueryBuilder('p');
+
+        // Filter by user's farms only
+        if (!empty($userFermeIds)) {
+            $qb->andWhere('p.ferme IN (:fermeIds)')
+               ->setParameter('fermeIds', $userFermeIds);
+        }
 
         // 1. Filtrage
         if ($search) {
@@ -33,7 +44,7 @@ class PlanteRepository extends ServiceEntityRepository
         // 2. Whitelist de tri (noms des propriétés dans l'entité)
         $allowedSorts = ['nom_espece', 'cycle_vie', 'quantite'];
         if (!in_array($sort, $allowedSorts)) {
-            $sort = 'nom_espece'; 
+            $sort = 'nom_espece';
         }
 
         // 3. Direction

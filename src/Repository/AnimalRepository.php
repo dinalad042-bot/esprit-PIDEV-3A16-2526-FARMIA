@@ -24,14 +24,22 @@ class AnimalRepository extends ServiceEntityRepository
 
     /**
      * Récupère les animaux filtrés par recherche (espèce ou état de santé) et triés.
-     * * @param string|null $search    Le terme de recherche
+     * Filtré par les fermes de l'utilisateur connecté.
+     * @param string|null $search    Le terme de recherche
      * @param string      $sort      La colonne de tri
      * @param string      $direction La direction (ASC/DESC)
+     * @param int[]      $userFermeIds IDs des fermes de l'utilisateur
      * @return Animal[]
      */
-    public function findBySearchAndSort(?string $search, string $sort, string $direction): array
+    public function findBySearchAndSort(?string $search, string $sort, string $direction, array $userFermeIds = []): array
     {
         $qb = $this->createQueryBuilder('a');
+
+        // Filter by user's farms only
+        if (!empty($userFermeIds)) {
+            $qb->andWhere('a.ferme IN (:fermeIds)')
+               ->setParameter('fermeIds', $userFermeIds);
+        }
 
         // 1. Filtrage par recherche (sur espèce ou état de santé)
         if ($search) {
@@ -40,11 +48,10 @@ class AnimalRepository extends ServiceEntityRepository
         }
 
         // 2. Sécurisation des colonnes de tri (Whitelist)
-        // On utilise 'espece' car 'type' n'existe pas dans votre entité
         $allowedSorts = ['espece', 'etat_sante', 'dateNaissance'];
-        
+
         if (!in_array($sort, $allowedSorts)) {
-            $sort = 'espece'; 
+            $sort = 'espece';
         }
 
         // 3. Sécurisation de la direction

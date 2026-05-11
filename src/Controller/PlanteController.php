@@ -29,9 +29,10 @@ class PlanteController extends AbstractController
 
         // Get user's own farms for filtering
         $userFermes = $fRepo->findBy(['user' => $user]);
+        $userFermeIds = array_map(fn($f) => $f->getIdFerme(), $userFermes);
 
         return $this->render('plante/index.html.twig', [
-            'plantes' => $pRepo->findBySearchAndSort($search, $sort, $direction),
+            'plantes' => $pRepo->findBySearchAndSort($search, $sort, $direction, $userFermeIds),
             'fermes' => $userFermes, // Only show user's farms
             'plante_edit' => null,
             'errors' => [],

@@ -6,6 +6,8 @@ doctrine:
         # IMPORTANT: Configuration de la timezone pour synchroniser MySQL avec PHP
         options:
             1002: "SET time_zone = '+00:00'" # UTC timezone for MySQL
+            # SSL options for TiDB Cloud (1009 = PDO::MYSQL_ATTR_SSL_CA)
+            1009: '%kernel.project_dir%/cacert.pem'
         profiling_collect_backtrace: '%kernel.debug%'
     orm:
         auto_generate_proxy_classes: true
@@ -25,7 +27,6 @@ doctrine:
 when@test:
     doctrine:
         dbal:
-            # "TEST_TOKEN" is typically set by ParaTest
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 
 when@prod:
