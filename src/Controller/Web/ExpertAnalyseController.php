@@ -153,10 +153,26 @@ class ExpertAnalyseController extends AbstractController
     #[Route('/demandes-en-attente', name: 'expert_pending_requests')]
     public function pendingRequests(): Response
     {
+        $user = $this->getUser();
+
+        // Get pending requests (en_attente)
         $pendingRequests = $this->analyseRepo->findPendingRequests();
 
+        // Get in-progress requests for current expert (en_cours)
+        $inProgressRequests = $this->analyseRepo->createQueryBuilder('a')
+            ->andWhere('a.technicien = :technicien')
+            ->andWhere('a.statut = :status')
+            ->setParameter('technicien', $user)
+            ->setParameter('status', 'en_cours')
+            ->orderBy('a.dateAnalyse', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        // Merge both for the template
+        $allRequests = array_merge($pendingRequests, $inProgressRequests);
+
         return $this->render('portal/expert/pending_requests.html.twig', [
-            'requests' => $pendingRequests,
+            'requests' => $allRequests,
         ]);
     }
 
@@ -266,6 +282,57 @@ class ExpertAnalyseController extends AbstractController
 
         $this->addFlash('success', 'Statut mis à jour : ' . $status);
         return $this->redirectToRoute('expert_analyse_show', ['id' => $analyse->getId()]);
+    }
+
+    #[Route('/demandes/en-cours', name: 'expert_my_requests')]
+    public function myRequests(): Response
+    {
+        $user = $this->getUser();
+
+        // Get in-progress analyses assigned to this expert
+        $myRequests = $this->analyseRepo->createQueryBuilder('a')
+            ->andWhere('a.technicien = :technicien')
+            ->andWhere('a.statut = :status')
+            ->setParameter('technicien', $user)
+            ->setParameter('status', 'en_cours')
+            ->orderBy('a.dateAnalyse', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('portal/expert/my_requests.html.twig', [
+            'myRequests' => $myRequests,
+        ]);
+    }
+
+    #[Route('/demande/{id}/terminer', name: 'expert_complete_request', methods: ['POST'])]
+    public function completeRequest(Request $request, Analyse $analyse): Response
+    {
+        // Security check: ensure the expert is the technicien for this analysis
+        if ($analyse->getTechnicien() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier cette analyse.');
+        }
+
+        // Check if analysis is in progress
+        if ($analyse->getStatut() !== 'en_cours') {
+            $this->addFlash('error', 'Cette demande n\'est pas en cours.');
+            return $this->redirectToRoute('expert_pending_requests');
+        }
+
+        $resultatTechnique = $request->request->get('resultat_technique');
+
+        if (empty($resultatTechnique)) {
+            $this->addFlash('error', 'Le résultat technique est requis.');
+            return $this->redirectToRoute('expert_pending_requests');
+        }
+
+        // Save the technical result and update status to terminee
+        $analyse->setResultatTechnique($resultatTechnique);
+        $analyse->setStatut('terminee');
+
+        $this->em->flush();
+
+        $this->addFlash('success', 'Analyse #' . $analyse->getId() . ' terminée avec succès.');
+        return $this->redirectToRoute('expert_pending_requests');
     }
 
     #[Route('/analyse/{id}/conseil/new', name: 'expert_analyse_conseil_new', methods: ['GET', 'POST'])]

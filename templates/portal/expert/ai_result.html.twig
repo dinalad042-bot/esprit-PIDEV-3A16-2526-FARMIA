@@ -61,6 +61,9 @@
             <a href="{{ path('expert_analyse_conseil_new', {id: analyse.id}) }}" style="background:#fff; color:#764ba2; text-decoration:none; padding:10px 20px; border-radius:8px; font-weight:500;">
                 <i class="fa-solid fa-plus"></i> Créer un conseil basé sur l'IA
             </a>
+            <button onclick="showTerminerModal()" style="background:#27ae60; color:#fff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:500;">
+                <i class="fa-solid fa-check"></i> Terminer et sauvegarder résultat
+            </button>
         </div>
     </div>
 
@@ -73,13 +76,19 @@
                 <i class="fa-solid fa-heart-pulse" style="color:#e74c3c; margin-right:8px;"></i> Symptômes observés
             </h4>
             <div style="color:#444; line-height:1.7;">
-                    {% if aiResult.symptoms is defined and aiResult.symptoms is iterable %}
-                        {{ aiResult.symptoms|join('\n')|nl2br }}
-                    {% elseif aiResult.symptoms is defined %}
-                        {{ aiResult.symptoms|nl2br }}
+                {% set symptoms_text = '' %}
+                {% if aiResult.symptoms is defined %}
+                    {% if aiResult.symptoms is iterable %}
+                        {% set symptoms_text = aiResult.symptoms|join(' ') %}
                     {% else %}
-                        Aucun symptôme spécifique mentionné.
+                        {% set symptoms_text = aiResult.symptoms %}
                     {% endif %}
+                {% endif %}
+                {% if symptoms_text %}
+                    {{ symptoms_text|nl2br }}
+                {% else %}
+                    Aucun symptôme spécifique mentionné.
+                {% endif %}
             </div>
         </div>
 
@@ -144,11 +153,74 @@
             <div>
                 <div style="font-weight:600; color:#1a1a2e; margin-bottom:0.25rem;">Avertissement</div>
                 <div style="color:#666; font-size:0.9rem; line-height:1.5;">
-                    Ce diagnostic est généré par une intelligence artificielle et ne remplace pas l'expertise d'un professionnel agricole. 
+                    Ce diagnostic est généré par une intelligence artificielle et ne remplace pas l'expertise d'un professionnel agricole.
                     Veuillez toujours valider les recommandations avec un expert qualifié avant de prendre des décisions importantes.
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{# Terminer Modal - Pre-filled with AI result #}
+<div id="terminerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; padding:2rem; border-radius:12px; width:600px; max-width:90%;">
+        <h3 style="margin-top:0; color:#1e2a38; font-size:1.3rem;">
+            <i class="fa-solid fa-check-circle"></i> Terminer l'analyse #{{ analyse.id }}
+        </h3>
+        <p style="color:#666; margin-bottom:1rem;">Sauvegardez le résultat technique basé sur le diagnostic IA:</p>
+
+        <form id="terminerForm" method="POST" action="{{ path('expert_complete_request', {id: analyse.id}) }}">
+            <label class="fw-bold" style="display:block; margin-bottom:0.5rem;">Résultat technique:</label>
+            {% set symptoms_val = '' %}
+            {% if aiResult.symptoms is defined %}
+                {% if aiResult.symptoms is iterable %}
+                    {% set symptoms_val = aiResult.symptoms|join(' ') %}
+                {% else %}
+                    {% set symptoms_val = aiResult.symptoms %}
+                {% endif %}
+            {% endif %}
+            <textarea name="resultat_technique" class="form-control" rows="8" required
+                style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:0.95rem; resize:vertical; margin-bottom:1rem;">=== DIAGNOSTIC IA ===
+Condition: {{ aiResult.condition|default('Non déterminé') }}
+Confiance: {{ aiResult.confidence|default(analyse.aiConfidenceScore) }}
+Urgence: {{ aiResult.urgency|default('Surveiller') }}
+
+SYMPTÔMES:
+{{ symptoms_val|default('Non spécifiés') }}
+
+TRAITEMENT:
+{{ aiResult.treatment|default('Non spécifié') }}
+
+PRÉVENTION:
+{{ aiResult.prevention|default('Non spécifiée') }}</textarea>
+
+            <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                <button type="button" onclick="closeTerminerModal()"
+                        style="padding:12px 20px; background:#e0e0e0; color:#333; border:none; border-radius:8px; cursor:pointer; font-size:0.95rem;">
+                    Annuler
+                </button>
+                <button type="submit"
+                        style="padding:12px 20px; background:#27ae60; color:#fff; border:none; border-radius:8px; cursor:pointer; font-size:0.95rem; font-weight:600;">
+                    <i class="fa-solid fa-check"></i> Confirmer et Terminer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showTerminerModal() {
+    document.getElementById('terminerModal').style.display = 'block';
+}
+
+function closeTerminerModal() {
+    document.getElementById('terminerModal').style.display = 'none';
+}
+
+document.getElementById('terminerModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeTerminerModal();
+    }
+});
+</script>
 {% endblock %}
