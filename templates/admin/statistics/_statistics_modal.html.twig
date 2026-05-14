@@ -1,0 +1,90 @@
+﻿<!-- Statistics Modal Component -->
+<div class="profile-modal-overlay" id="statsModal" style="display: none; z-index: 10000; align-items: center; justify-content: center;">
+    <div class="profile-modal" style="width: 700px; padding: 40px; text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 style="margin: 0; color: #1e293b; font-weight: 800; text-align: center; width: 100%;">Distribution des Utilisateurs par R├┤le</h2>
+            <button type="button" onclick="closeStatsModal()" style="background: none; border: none; font-size: 28px; color: #94a3b8; cursor: pointer; position: absolute; right: 25px; top: 25px;">&times;</button>
+        </div>
+        
+        <div style="height: 400px; width: 100%; display: flex; justify-content: center; align-items: center; position: relative;">
+            <canvas id="userRolesChart"></canvas>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <button onclick="loadStatsData()" class="btn" style="background-color: #4ade80; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 6px rgba(74, 222, 128, 0.2);">
+                <i class="fa-solid fa-arrows-rotate"></i> Actualiser les donn├⌐es
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let rolesChart = null;
+
+    function openStatsModal() {
+        document.getElementById('statsModal').style.display = 'flex';
+        // Auto-load if not already loaded
+        if (!rolesChart) {
+            loadStatsData();
+        }
+    }
+
+    function closeStatsModal() {
+        document.getElementById('statsModal').style.display = 'none';
+    }
+
+    function loadStatsData() {
+        fetch('{{ path("admin_statistics_data") }}')
+            .then(response => response.json())
+            .then(data => {
+                renderChart(data);
+            })
+            .catch(error => console.error("Erreur de chargement des stats:", error));
+    }
+
+    function renderChart(chartData) {
+        const ctx = document.getElementById('userRolesChart').getContext('2d');
+        
+        if (rolesChart) {
+            rolesChart.destroy();
+        }
+        
+        rolesChart = new Chart(ctx, {
+            type: 'pie', // Or 'doughnut' depending on preference
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14,
+                                family: "'Segoe UI', system-ui, sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 15,
+                        titleFont: { size: 14 },
+                        bodyFont: { size: 14 },
+                        displayColors: true,
+                        cornerRadius: 8
+                    }
+                }
+            }
+        });
+    }
+
+    // Fermeture en cliquant ├á l'ext├⌐rieur
+    window.addEventListener('click', function(event) {
+        let modal = document.getElementById('statsModal');
+        if (event.target === modal) {
+            closeStatsModal();
+        }
+    });
+</script>

@@ -1,0 +1,40 @@
+{% extends 'layouts/auth.html.twig' %}
+
+{% block title %}Vérification de l'email - FarmIA{% endblock %}
+
+{% block left_subtitle %}Vérification d'identité{% endblock %}
+
+{% block left_features %}
+    <li>Sécurité anti-spam</li>
+    <li>Comptes vérifiés</li>
+    <li>Protection des données</li>
+{% endblock %}
+
+{% block auth_content %}
+    <div style="text-align: center; margin-bottom: 30px;">
+        <i class="fa-regular fa-envelope-open" style="font-size: 3rem; color: var(--accent-green); margin-bottom: 15px;"></i>
+        <h3 style="color: white; font-weight: 600; margin-bottom: 10px;">Vérifiez votre email</h3>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.5;">
+            Un code à 6 chiffres a été envoyé à <strong>{{ email }}</strong>. Saisissez-le ci-dessous pour valider la création de votre compte.
+        </p>
+    </div>
+
+    <!-- Si on gère l'erreur propre au render en bas du form, on l'affiche avec la classe .alert-error -->
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    <!-- Les autres flashes d'erreur et succès (depuis session) sont gérés par le layout parent -->
+
+    <form method="post" action="{{ path('app_signup_verify') }}">
+        <div class="form-group">
+            <label for="code">Code de vérification (6 chiffres)</label>
+            <input type="text" name="code" id="code" class="form-control" placeholder="123456" maxlength="6" pattern="\d{6}" required autofocus style="letter-spacing: 5px; text-align: center; font-weight: bold; font-size: 1.2rem;">
+        </div>
+
+        <button class="btn btn-login" type="submit" style="margin-top: 10px;">Confirmer mon inscription</button>
+    </form>
+
+    <div class="auth-links" style="margin-top: 25px;">
+        <a href="{{ path('app_signup') }}"><i class="fa-solid fa-arrow-left me-1"></i> Recommencer l'inscription</a>
+    </div>
+{% endblock %}

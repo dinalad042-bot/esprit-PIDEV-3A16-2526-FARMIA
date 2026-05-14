@@ -1,0 +1,12 @@
+parameters:
+    level: 5
+    paths:
+        - src/Controller/Web/ExpertAnalyseController.php
+        - src/Controller/Web/ExpertAIController.php
+        - src/Controller/Web/ExpertConseilController.php
+        - src/Entity/Analyse.php
+        - src/Entity/Conseil.php
+        - src/Service/GroqService.php
+        - src/Service/WeatherService.php
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml

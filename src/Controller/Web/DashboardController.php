@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Controller\Web;
+
+// Ajout des Repositories avec les bons noms : Plante et Animal
+use App\Repository\FermeRepository;
+use App\Repository\PlanteRepository; 
+use App\Repository\AnimalRepository;
+use App\Repository\AnalyseRepository;
+use App\Repository\ConseilRepository;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+class DashboardController extends AbstractController
+{
+    #[Route('/dashboard', name: 'dashboard_default')]
+    public function index(): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $roles = $user->getRoles();
+
+        if (in_array('ROLE_ADMIN', $roles, true)) return $this->redirectToRoute('admin_dashboard');
+        if (in_array('ROLE_EXPERT', $roles, true)) return $this->redirectToRoute('dashboard_expert');
+        if (in_array('ROLE_AGRICOLE', $roles, true)) return $this->redirectToRoute('dashboard_agricole');
+        if (in_array('ROLE_FOURNISSEUR', $roles, true)) return $this->redirectToRoute('dashboard_fournisseur');
+
+        // Fallback générique
+        return $this->render('dashboard/default.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/expert/dashboard', name: 'dashboard_expert')]
+    #[IsGranted('ROLE_EXPERT')]
+    public function expert(
+        AnalyseRepository $analyseRepo,
+        ConseilRepository $conseilRepo
+    ): Response
+    {
+        $user = $this->getUser();
+        
+        // Calculate stats for current expert
+        $stats = [
+            'analysesThisMonth' => $analyseRepo->countByTechnicienThisMonth($user->getId()),
+            'analysesTotal' => $analyseRepo->countByTechnicien($user->getId()),
+            'conseilsTotal' => $conseilRepo->countByTechnicien($user->getId()),
+            'pendingRequests' => $analyseRepo->countPendingRequests(),
+        ];
+        
+        return $this->render('portal/expert/index.html.twig', [
+            'user' => $user,
+            'stats' => $stats,
+        ]);
+    }
+
+    // -----------------------------------------------------------
+    // --- ESPACE AGRICOLE ---
+    // -----------------------------------------------------------
+
+    #[Route('/agricole/dashboard', name: 'dashboard_agricole')]
+    #[IsGranted('ROLE_AGRICOLE')]
+    public function agricole(
+        FermeRepository $fermeRepo,
+        PlanteRepository $planteRepo,
+        AnimalRepository $animalRepo
+    ): Response {
+        $user = $this->getUser();
+
+        // Get user's own farms only
+        $userFermes = $fermeRepo->findBy(['user' => $user]);
+
+        // Get ferme IDs for filtering related entities
+        $fermeIds = array_map(fn($f) => $f->getIdFerme(), $userFermes);
+
+        // Comptage dynamique UNIQUEMENT pour les entités de l'utilisateur
+        $nbFermes = count($userFermes);
+        $nbPlantes = $planteRepo->count(['ferme' => $userFermes]);
+        $nbAnimaux = $animalRepo->count(['ferme' => $userFermes]);
+
+        return $this->render('portal/agricole/index.html.twig', [
+            'user' => $user,
+            'nb_fermes' => $nbFermes,
+            'nb_plantes' => $nbPlantes,
+            'nb_animaux' => $nbAnimaux,
+        ]);
+    }
+
+    // Ajout de la route pour le sous-menu "Gestion de l'Exploitation"
+    #[Route('/agricole/exploitation', name: 'app_exploitation')]
+    #[IsGranted('ROLE_AGRICOLE')]
+    public function exploitation(): Response
+    {
+        // Assure-toi de placer ton fichier twig d'exploitation dans ce dossier
+        return $this->render('portal/agricole/exploitation.html.twig', [
+            'user' => $this->getUser()
+        ]);
+    }
+
+    // -----------------------------------------------------------
+    // --- ESPACE FOURNISSEUR ---
+    // -----------------------------------------------------------
+
+    #[Route('/fournisseur/dashboard', name: 'dashboard_fournisseur')]
+    #[IsGranted('ROLE_FOURNISSEUR')]
+    public function fournisseur(): Response
+    {
+        return $this->render('portal/fournisseur/index.html.twig', [
+            'user' => $this->getUser()
+        ]);
+    }
+}

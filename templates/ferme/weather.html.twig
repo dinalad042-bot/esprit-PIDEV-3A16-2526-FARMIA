@@ -1,0 +1,142 @@
+{% extends 'layouts/agricole.html.twig' %}
+
+{% block title %}Météo - {{ ferme.nomFerme }}{% endblock %}
+
+{% block body %}
+<div style="background-color: #f8fafc; min-height: 100vh; padding: 30px; font-family: 'Plus Jakarta Sans', sans-serif;">
+    
+    {# --- BARRE DE NAVIGATION --- #}
+    <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{{ path('app_ferme_index') }}" style="text-decoration: none; color: #2d7a36; font-weight: 700; display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: #f0fdf4; border-radius: 12px; border: 1.5px solid #bbf7d0; font-size: 0.9rem; transition: all 0.3s ease;">
+            <i class="fa-solid fa-arrow-left"></i> Retour aux fermes
+        </a>
+        <div style="text-align: right;">
+            <h1 style="color: #1e293b; font-size: 1.8rem; font-weight: 800; margin: 0;">{{ ferme.nomFerme }}</h1>
+            <p style="color: #64748b; margin: 5px 0 0 0;"><i class="fa-solid fa-location-dot"></i> {{ ferme.lieu }} ({{ ferme.latitude }}, {{ ferme.longitude }})</p>
+        </div>
+    </div>
+
+    {# --- GRILLE SUPÉRIEURE : MÉTÉO ET IA --- #}
+    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 30px; margin-bottom: 20px;">
+        
+        {# BLOC GAUCHE : MÉTÉO PRINCIPALE #}
+        <div style="background: white; border-radius: 25px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: #eff6ff; border-radius: 50%; z-index: 0;"></div>
+
+            <div style="position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 5rem; font-weight: 800; color: #1e293b; line-height: 1;">{{ weather.main.temp|round }}°C</div>
+                    <div style="font-size: 1.5rem; color: #64748b; font-weight: 600; text-transform: capitalize; margin-top: 10px;">
+                        {{ weather.weather[0].description }}
+                    </div>
+                    <p style="color: #94a3b8; font-weight: 500;">Ressenti : {{ weather.main.feels_like|round }}°C</p>
+                </div>
+                <div style="text-align: center;">
+                    <img src="https://openweathermap.org/img/wn/{{ weather.weather[0].icon }}@4x.png" style="width: 150px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));" alt="icon">
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                <div style="background: #f8fafc; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #f1f5f9;">
+                    <i class="fa-solid fa-droplet" style="color: #3b82f6; font-size: 1.5rem; margin-bottom: 10px;"></i>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: #1e293b;">{{ weather.main.humidity }}%</div>
+                    <div style="color: #94a3b8; font-size: 0.8rem; font-weight: 600;">Humidité</div>
+                </div>
+                <div style="background: #f8fafc; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #f1f5f9;">
+                    <i class="fa-solid fa-wind" style="color: #64748b; font-size: 1.5rem; margin-bottom: 10px;"></i>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: #1e293b;">{{ weather.wind.speed }} <small>km/h</small></div>
+                    <div style="color: #94a3b8; font-size: 0.8rem; font-weight: 600;">Vent</div>
+                </div>
+                <div style="background: #f8fafc; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #f1f5f9;">
+                    <i class="fa-solid fa-temperature-arrow-down" style="color: #10b981; font-size: 1.5rem; margin-bottom: 10px;"></i>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: #1e293b;">{{ (weather.main.temp - ((100 - weather.main.humidity) / 5))|round(1) }}°C</div>
+                    <div style="color: #94a3b8; font-size: 0.8rem; font-weight: 600;">Pt de Rosée</div>
+                </div>
+            </div>
+        </div>
+
+        {# BLOC DROIT : RECOMMANDATIONS & SURFACE #}
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: white; border-radius: 25px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; flex: 1;">
+                <h3 style="margin: 0 0 20px 0; color: #1e293b; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-robot" style="color: #10b981;"></i> IA Conseils
+                </h3>
+                <div style="padding: 15px; border-radius: 15px; background: #f0fdf4; border: 1px solid #dcfce7; font-size: 0.85rem; color: #166534;">
+                    {% if weather.main.temp > 30 %}
+                        Forte chaleur : augmentez l'irrigation.
+                    {% else %}
+                        Conditions optimales.
+                    {% endif %}
+                </div>
+            </div>
+            <div style="background: #1e293b; border-radius: 25px; padding: 25px; color: white;">
+                <h3 style="margin: 0 0 10px 0; font-size: 0.9rem; opacity: 0.8;">Surface Totale</h3>
+                <div style="font-size: 2rem; font-weight: 800;">{{ ferme.surface }} m²</div>
+                <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 15px;">
+                    <div style="width: 70%; height: 100%; background: #2d7a36; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# --- SECTION INFOS AVANCÉES --- #}
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;">
+        <div style="background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px;">
+            <div style="background: #f0f9ff; padding: 12px; border-radius: 12px;"><i class="fa-solid fa-gauge-high" style="color: #0284c7;"></i></div>
+            <div>
+                <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Pression</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #1e293b;">{{ weather.main.pressure }} hPa</div>
+            </div>
+        </div>
+        <div style="background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px;">
+            <div style="background: #fffbeb; padding: 12px; border-radius: 12px;"><i class="fa-solid fa-sun" style="color: #f59e0b;"></i></div>
+            <div>
+                <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Lever</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #1e293b;">{{ weather.sys.sunrise|date('H:i') }}</div>
+            </div>
+        </div>
+        <div style="background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px;">
+            <div style="background: #f8fafc; padding: 12px; border-radius: 12px;"><i class="fa-solid fa-moon" style="color: #475569;"></i></div>
+            <div>
+                <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Coucher</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #1e293b;">{{ weather.sys.sunset|date('H:i') }}</div>
+            </div>
+        </div>
+    </div>
+
+    {# --- SECTION MAP : PLEINE LARGEUR ET AGRANDIE --- #}
+    <div style="background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+        <h3 style="color: #1e293b; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-map-location-dot" style="color: #2d7a36;"></i> Localisation Satellite de la Ferme
+        </h3>
+        <div id="map" style="height: 500px; border-radius: 15px; border: 1px solid #eee; z-index: 1;"></div>
+    </div>
+
+</div>
+
+{# SCRIPTS LEAFLET #}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // Initialisation sur les coordonnées de la ferme avec un zoom plus précis (15)
+    var map = L.map('map').setView([{{ ferme.latitude }}, {{ ferme.longitude }}], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Marqueur personnalisé "Agricole"
+    var farmIcon = L.divIcon({
+        html: '<div style="background: #2d7a36; width: 40px; height: 40px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"><i class="fa-solid fa-tractor" style="color: white; font-size: 18px;"></i></div>',
+        className: 'custom-div-icon',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40]
+    });
+
+    L.marker([{{ ferme.latitude }}, {{ ferme.longitude }}], {icon: farmIcon})
+        .addTo(map)
+        .bindPopup('<b style="color: #2d7a36;">{{ ferme.nomFerme }}</b><br>Zone de production active.')
+        .openPopup();
+</script>
+{% endblock %}

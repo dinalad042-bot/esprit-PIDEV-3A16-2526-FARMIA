@@ -1,0 +1,220 @@
+{% extends 'layouts/agricole.html.twig' %}
+
+{% block body %}
+<style>
+    /* --- Styles pour le calendrier et l'animation --- */
+    #section-suivi-detail {
+        display: none;
+        margin-top: 40px;
+        animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .calendar-grid {
+        display: grid; 
+        grid-template-columns: repeat(7, 1fr); 
+        gap: 10px;
+        background: #f8fafc; 
+        padding: 20px; 
+        border-radius: 20px; 
+        border: 1px solid #e2e8f0;
+    }
+
+    .calendar-day {
+        aspect-ratio: 1; 
+        background: white; 
+        border-radius: 12px;
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        font-weight: 700; 
+        border: 1px solid #f1f5f9; 
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 0.9rem;
+        color: #475569;
+    }
+
+    .calendar-day:hover { border-color: #0ea5e9; transform: scale(1.05); z-index: 10; }
+
+    .day-watered { background: #e0f2fe !important; border-color: #0ea5e9 !important; color: #0369a1 !important; position: relative; }
+    .day-watered::after {
+        content: '\f043'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+        font-size: 0.65rem; position: absolute; top: 5px; right: 5px; color: #0ea5e9;
+    }
+
+    .today { border: 2px solid #059669 !important; color: #059669; }
+
+    .tech-card {
+        background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #f1f5f9; 
+        display: flex; flex-direction: column; align-items: center; text-align: center;
+        transition: 0.3s;
+    }
+    .tech-card:hover { background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.03); }
+
+    @media print {
+        .no-print { display: none !important; }
+        #section-suivi-detail { display: block !important; }
+    }
+</style>
+
+<div style="background-color: #f8fafc; min-height: 100vh; padding: 40px; font-family: 'Plus Jakarta Sans', sans-serif;">
+    <div style="max-width: 1000px; margin: 0 auto;">
+        
+        {# Lien Retour #}
+        <a href="{{ path('app_plante_index') }}" class="no-print" style="text-decoration: none; color: #64748b; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+            <i class="fa-solid fa-arrow-left"></i> Retour à la gestion
+        </a>
+
+        <div style="background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+            <div style="display: grid; grid-template-columns: 400px 1fr;">
+                
+                {# Image dynamique #}
+                <div style="background: url('{{ details.image_url|default(maint.default_image.regular_url|default('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2')) }}') center/cover; min-height: 500px;"></div>
+
+                {# Contenu Technique #}
+                <div style="padding: 40px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="background: #f0fdf4; color: #166534; padding: 6px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 700;">STATION DE PILOTAGE</span>
+                        <span style="font-size: 0.75rem; color: #94a3b8;">ID: #{{ plante.idPlante }}</span>
+                    </div>
+                    
+                    <h1 style="font-size: 2.5rem; color: #1e293b; margin: 15px 0;">{{ nom|capitalize }}</h1>
+                    
+                    {# --- SECTION 1 : DASHBOARD --- #}
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+                        <div onclick="ouvrirSuivi()" style="background: #eff6ff; border: 1.5px solid #dbeafe; padding: 15px; border-radius: 20px; cursor: pointer;" class="no-print">
+                            <div style="color: #1e40af; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">
+                                <i class="fa-solid fa-droplet"></i> Prochain Arrosage
+                            </div>
+                            <div style="font-size: 1.1rem; font-weight: 800; color: #1e3a8a;">{{ nextWatering|date('d M Y') }}</div>
+                            <div style="font-size: 0.7rem; color: #60a5fa;">Cliquer pour l'historique</div>
+                        </div>
+
+                        <div style="background: #fffbeb; border: 1.5px solid #fef3c7; padding: 15px; border-radius: 20px;">
+                            <div style="color: #92400e; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">
+                                <i class="fa-solid fa-wheat-awn"></i> Récolte Prévue
+                            </div>
+                            <div style="font-size: 1.1rem; font-weight: 800; color: #78350f;">{{ harvestDate|date('d M Y') }}</div>
+                            <div style="font-size: 0.7rem; color: #fbbf24;">Cycle: {{ maint.cycle|default('Annuel') }}</div>
+                        </div>
+                    </div>
+
+                    {# --- SECTION 2 : GRILLE TECHNIQUE ENRICHIE --- #}
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px;">
+                        <div class="tech-card">
+                            <i class="fa-solid fa-vial-circle-check" style="color: #8b5cf6; margin-bottom: 8px;"></i>
+                            <div style="color: #94a3b8; font-size: 0.6rem; font-weight: 700;">PH SOL</div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 0.9rem;">{{ details.main_species.growth.ph_maximum|default('6.5') }}</div>
+                        </div>
+                        <div class="tech-card">
+                            <i class="fa-solid fa-gauge-high" style="color: #10b981; margin-bottom: 8px;"></i>
+                            <div style="color: #94a3b8; font-size: 0.6rem; font-weight: 700;">VITESSE</div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 0.9rem;">{{ details.main_species.growth.growth_rate|default('Moyenne') }}</div>
+                        </div>
+                        <div class="tech-card">
+                            <i class="fa-solid fa-sun" style="color: #f59e0b; margin-bottom: 8px;"></i>
+                            <div style="color: #94a3b8; font-size: 0.6rem; font-weight: 700;">LUMIÈRE</div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 0.9rem;">{{ details.main_species.growth.light|default('7') }}/10</div>
+                        </div>
+                        <div class="tech-card">
+                            <i class="fa-solid fa-temperature-low" style="color: #3b82f6; margin-bottom: 8px;"></i>
+                            <div style="color: #94a3b8; font-size: 0.6rem; font-weight: 700;">TEMP. MIN</div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 0.9rem;">{{ details.main_species.growth.minimum_temperature.deg_c|default('5') }}°C</div>
+                        </div>
+                        <div class="tech-card">
+                            <i class="fa-solid fa-cloud-showers-water" style="color: #06b6d4; margin-bottom: 8px;"></i>
+                            <div style="color: #94a3b8; font-size: 0.6rem; font-weight: 700;">EAU MIN.</div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 0.9rem;">{{ details.main_species.growth.minimum_precipitation.mm|default('400') }}mm</div>
+                        </div>
+                        <div class="tech-card">
+                            <i class="fa-solid fa-hand-holding-heart" style="color: #ec4899; margin-bottom: 8px;"></i>
+                            <div style="color: #94a3b8; font-size: 0.6rem; font-weight: 700;">SOIN</div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 0.9rem;">{{ maint.care_level|default('Standard') }}</div>
+                        </div>
+                    </div>
+
+                    {# --- SECTION 3 : ANALYSE FarmAI DYNAMIQUE --- #}
+                    <div style="padding: 20px; background: #1e293b; color: white; border-radius: 20px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 0.85rem; color: #10b981; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-robot"></i> Analyse FarmAI
+                        </h4>
+                        <p style="font-size: 0.75rem; opacity: 0.9; line-height: 1.5; margin: 0;">
+                            {% if details.main_species.growth.ph_maximum|default(7) < 6 %}
+                                <i class="fa-solid fa-circle-info" style="color: #3b82f6;"></i> Sol acide requis. Le pH de {{ details.main_species.growth.ph_maximum }} est idéal pour optimiser l'absorption des nutriments.
+                            {% else %}
+                                <i class="fa-solid fa-check-circle" style="color: #10b981;"></i> Les paramètres de croissance sont stables. {{ maint.description|default('Surveillez l\'arrosage prévu pour maintenir la vigueur.')|slice(0, 120) }}...
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {# --- SECTION SUIVI CACHÉE --- #}
+            <div id="section-suivi-detail" style="padding: 40px; border-top: 1px solid #f1f5f9;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="margin: 0; color: #1e293b; font-size: 1.2rem;">
+                        <i class="fa-solid fa-calendar-day" style="color: #0ea5e9; margin-right: 10px;"></i>
+                        Historique d'arrosage : {{ "now"|date("F Y") }}
+                    </h3>
+                    <button onclick="document.getElementById('section-suivi-detail').style.display='none'" style="background: #f1f5f9; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; color: #64748b; font-weight: 700; transition: 0.2s;">Fermer</button>
+                </div>
+
+                {% set datesArrosage = [] %}
+                {% if plante.arrosages is defined %}
+                    {% for a in plante.arrosages %}
+                        {% set datesArrosage = datesArrosage|merge([a.dateArrosage|date('Y-m-d')]) %}
+                    {% endfor %}
+                {% endif %}
+
+                <div class="calendar-grid">
+                    {% set yearMonth = "now"|date("Y-m-") %}
+                    {% for day in 1..31 %}
+                        {% set currentIterDate = yearMonth ~ (day < 10 ? '0' ~ day : day) %}
+                        {% set isWatered = currentIterDate in datesArrosage %}
+                        
+                        <div class="calendar-day {{ isWatered ? 'day-watered' : '' }} {{ day == "now"|date("d") ? 'today' : '' }}" 
+                             onclick="toggleWatering({{ plante.idPlante }}, '{{ currentIterDate }}', this)">
+                            {{ day }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ouvrirSuivi() {
+        const section = document.getElementById('section-suivi-detail');
+        section.style.display = 'block';
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function toggleWatering(planteId, date, element) {
+        element.style.pointerEvents = 'none';
+        element.style.opacity = '0.6';
+        
+        try {
+            const response = await fetch(`/api/plante/${planteId}/arrosage/${date}`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            if (response.ok) {
+                element.classList.toggle('day-watered');
+            } else {
+                alert("Erreur lors de l'enregistrement de l'arrosage.");
+            }
+        } catch (error) {
+            console.error("Erreur réseau :", error);
+        } finally {
+            element.style.pointerEvents = 'auto';
+            element.style.opacity = '1';
+        }
+    }
+</script>
+{% endblock %}

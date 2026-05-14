@@ -1,0 +1,36 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Nouveau Conseil - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Ajouter un Conseil</h1>
+    <p class="welcome-subtitle">Créez un nouveau conseil pour l'analyse #{{ analyse.id }}</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fa-solid fa-plus-circle"></i> Formulaire de création</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info mb-4">
+            <strong>Analyse associée:</strong> #{{ analyse.id }} - 
+            {% if analyse.ferme %}{{ analyse.ferme.nomFerme }}{% else %}Ferme non définie{% endif %}
+        </div>
+        
+        {{ form_start(form) }}
+            {{ form_row(form.descriptionConseil) }}
+            {{ form_row(form.prioriteRaw) }}
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('admin_analyses_show', {'id': analyse.id}) }}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à l'analyse
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> Créer le conseil
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

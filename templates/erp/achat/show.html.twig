@@ -1,0 +1,71 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Achat #{{ achat.idAchat }} — FarmIA Desk{% endblock %}
+
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-cart-plus" style="color:#22c55e;"></i> Achat #{{ achat.idAchat }}</h1>
+    <a href="{{ path('erp_achat_index') }}" class="btn-erp btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Retour
+    </a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
+
+    <div class="erp-form-card" style="max-width:100%;">
+        <p style="margin:0 0 .5rem;color:#64748b;font-size:.85rem;">Date</p>
+        <p style="margin:0 0 1rem;font-weight:600;">{{ achat.dateAchat|date('d/m/Y') }}</p>
+
+        <table class="erp-table" style="margin-bottom:1rem;">
+            <thead>
+                <tr><th>Service</th><th>Qté</th><th>Prix unit.</th><th>Sous-total</th></tr>
+            </thead>
+            <tbody>
+                {% for l in achat.lignes %}
+                <tr>
+                    <td>{{ l.service.nom }}</td>
+                    <td>{{ l.quantite }}</td>
+                    <td>{{ l.prixUnitaire|number_format(2,',',' ') }} €</td>
+                    <td><strong>{{ l.sousTotal|number_format(2,',',' ') }} €</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-display">Total : {{ achat.total|number_format(2,',',' ') }} €</div>
+
+        {% if not qrPath %}
+            {% if achat.paid %}
+                <div class="badge-ok" style="margin-top:1.5rem;padding:.6rem 1rem;display:inline-flex;align-items:center;gap:.4rem;border-radius:8px;font-size:.9rem;">
+                    <i class="fa-solid fa-circle-check"></i> Paiement initié — QR code généré
+                </div>
+            {% else %}
+                <form method="post" action="{{ path('erp_achat_pay', {id: achat.idAchat}) }}" style="margin-top:1.5rem;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('pay_achat_' ~ achat.idAchat) }}">
+                    <button type="submit" class="btn-erp btn-primary">
+                        <i class="fa-brands fa-stripe"></i> Payer avec Stripe
+                    </button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    {% if qrPath %}
+    <div class="erp-form-card" style="max-width:100%;text-align:center;">
+        <h3 style="margin:0 0 1rem;font-size:1rem;color:#475569;">
+            <i class="fa-solid fa-qrcode"></i> QR Code de paiement Stripe
+        </h3>
+        <img src="{{ asset(qrPath) }}" alt="QR Code Stripe"
+             style="width:260px;height:260px;border:1px solid #e2e8f0;border-radius:8px;padding:.5rem;background:#fff;">
+        <p style="margin:.75rem 0 0;font-size:.85rem;color:#64748b;">
+            Scannez ce QR code pour ouvrir la page de paiement Stripe.
+        </p>
+        {% if stripeUrl is defined %}
+        <a href="{{ stripeUrl }}" target="_blank" class="btn-erp btn-primary" style="margin-top:.75rem;display:inline-flex;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Ouvrir Stripe
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

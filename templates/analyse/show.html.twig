@@ -1,0 +1,140 @@
+{% extends 'layouts/admin.html.twig' %}
+{% block title %}Analyse #{{ analyse.id }} — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:1000px;">
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+        <a href="{{ path('app_analyse_index') }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Retour
+        </a>
+        <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
+            Analyse <span style="color:#2ecc71;">#{{ analyse.id }}</span>
+        </h2>
+        <div style="margin-left:auto; display:flex; gap:0.5rem;">
+            <a href="{{ path('app_analyse_edit', {id: analyse.id}) }}" class="btn btn-dark">
+                <i class="fa-solid fa-pen"></i> Modifier
+            </a>
+            <a href="{{ path('app_conseil_new') }}" class="btn btn-success">
+                <i class="fa-solid fa-plus"></i> Ajouter Conseil
+            </a>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:1.5rem;">
+
+        {# Main Card #}
+        <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:2rem;">
+
+            {% if analyse.imageUrl %}
+            <img src="{{ analyse.imageUrl }}" alt="Image"
+                 style="width:100%; max-height:250px; object-fit:cover; border-radius:8px; margin-bottom:1.5rem;"
+                 onerror="this.style.display='none'">
+            {% endif %}
+
+            <table style="width:100%; border-collapse:collapse;">
+                <tr style="border-bottom:1px solid #f5f5f5;">
+                    <td style="padding:0.8rem 0; color:#888; width:35%; font-size:0.9rem;">
+                        <i class="fa-solid fa-calendar" style="margin-right:6px;"></i>Date
+                    </td>
+                    <td style="padding:0.8rem 0; font-weight:500;">
+                        {{ analyse.dateAnalyse ? analyse.dateAnalyse|date('d/m/Y à H:i') : 'N/A' }}
+                    </td>
+                </tr>
+                <tr style="border-bottom:1px solid #f5f5f5;">
+                    <td style="padding:0.8rem 0; color:#888; font-size:0.9rem;">
+                        <i class="fa-solid fa-tractor" style="margin-right:6px;"></i>Ferme
+                    </td>
+                    <td style="padding:0.8rem 0; font-weight:500;">
+                        {% if analyse.ferme %}
+                            {{ analyse.ferme.nomFerme }}
+                            <span style="color:#888; font-size:0.85rem;"> — {{ analyse.ferme.lieu }}</span>
+                        {% else %}N/A{% endif %}
+                    </td>
+                </tr>
+                <tr style="border-bottom:1px solid #f5f5f5;">
+                    <td style="padding:0.8rem 0; color:#888; font-size:0.9rem;">
+                        <i class="fa-solid fa-user-tie" style="margin-right:6px;"></i>Expert
+                    </td>
+                    <td style="padding:0.8rem 0; font-weight:500;">
+                        {% if analyse.technicien %}
+                            {{ analyse.technicien.prenom }} {{ analyse.technicien.nom }}
+                            <br><small style="color:#888;">{{ analyse.technicien.email }}</small>
+                        {% else %}N/A{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:0.8rem 0; color:#888; font-size:0.9rem; vertical-align:top;">
+                        <i class="fa-solid fa-microscope" style="margin-right:6px;"></i>Résultat
+                    </td>
+                    <td style="padding:0.8rem 0;">
+                        <div style="background:#f8fffe; border-left:3px solid #2ecc71; padding:1rem; border-radius:0 8px 8px 0; font-size:0.9rem; line-height:1.7; white-space:pre-wrap;">
+                            {{ analyse.resultatTechnique ?? 'Aucun résultat enregistré.' }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        {# Side Stats #}
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+            <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:1.5rem; text-align:center;">
+                <div style="font-size:3rem; font-weight:700; color:#2ecc71;">{{ analyse.nbConseils }}</div>
+                <div style="color:#888; font-size:0.9rem;">Conseil(s) associé(s)</div>
+                <a href="{{ path('app_conseil_new') }}"
+                   style="display:block; margin-top:1rem; background:#2ecc71; color:#fff; padding:8px; border-radius:8px; text-decoration:none; font-size:0.85rem;">
+                    <i class="fa-solid fa-plus"></i> Ajouter un conseil
+                </a>
+            </div>
+
+            <div style="background:linear-gradient(135deg,#2ecc71,#27ae60); border-radius:12px; padding:1.5rem; color:#fff;">
+                <div style="font-size:0.85rem; opacity:0.8; margin-bottom:0.5rem;">Actions rapides</div>
+                <a href="{{ path('app_analyse_edit', {id: analyse.id}) }}"
+                   style="display:block; background:rgba(255,255,255,0.2); color:#fff; padding:8px 12px; border-radius:8px; text-decoration:none; font-size:0.85rem; margin-bottom:0.5rem;">
+                    <i class="fa-solid fa-pen"></i> Modifier cette analyse
+                </a>
+                <a href="{{ path('admin_analyse_index') }}"
+                   style="display:block; background:rgba(255,255,255,0.2); color:#fff; padding:8px 12px; border-radius:8px; text-decoration:none; font-size:0.85rem;">
+                    <i class="fa-solid fa-shield"></i> Vue Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Conseils Section #}
+    {% if analyse.conseils|length > 0 %}
+    <div style="margin-top:1.5rem; background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:2rem;">
+        <h3 style="font-size:1rem; font-weight:700; color:#1a1a2e; margin:0 0 1.5rem; text-transform:uppercase; letter-spacing:1px;">
+            <i class="fa-solid fa-lightbulb" style="color:#2ecc71;"></i>
+            Conseils associés ({{ analyse.conseils|length }})
+        </h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:1rem;">
+            {% for conseil in analyse.conseils %}
+            <div style="border:1px solid #f0f0f0; border-radius:10px; padding:1.25rem; border-left:4px solid
+                {% if conseil.prioriteRaw == 'HAUTE' %}#e74c3c
+                {% elseif conseil.prioriteRaw == 'MOYENNE' %}#f39c12
+                {% else %}#2ecc71{% endif %};">
+                <div style="margin-bottom:0.75rem;">
+                    {% if conseil.priorite %}
+                        <span style="{{ conseil.priorite.badgeStyle() }}">
+                            {{ conseil.priorite.icon() }} {{ conseil.priorite.label() }}
+                        </span>
+                    {% endif %}
+                </div>
+                <p style="color:#555; font-size:0.88rem; line-height:1.6; margin:0;">
+                    {{ conseil.descriptionConseil }}
+                </p>
+                <div style="margin-top:0.75rem; display:flex; gap:0.5rem;">
+                    <a href="{{ path('app_conseil_edit', {id: conseil.id}) }}"
+                       style="font-size:0.8rem; color:#2ecc71; text-decoration:none;">
+                        <i class="fa-solid fa-pen"></i> Modifier
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

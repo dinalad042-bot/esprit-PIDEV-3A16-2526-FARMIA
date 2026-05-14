@@ -1,0 +1,257 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Nouvel Achat — FarmIA Desk{% endblock %}
+
+{% block stylesheets %}
+<style>
+.page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; }
+.page-header h1 { font-size:1.5rem; font-weight:700; color:#0f172a; margin:0; }
+
+.form-card {
+    background:#fff; border-radius:20px; padding:2rem;
+    box-shadow:0 4px 20px rgba(0,0,0,.07); max-width:860px;
+}
+
+.section-title {
+    font-size:.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase;
+    letter-spacing:.08em; margin:1.75rem 0 .75rem; display:flex; align-items:center; gap:.4rem;
+}
+
+.field-group { margin-bottom:1.25rem; }
+.field-group label { display:block; font-size:.82rem; font-weight:600; color:#475569; margin-bottom:.35rem; }
+.field-group input, .field-group select {
+    width:100%; padding:.6rem .85rem; border:1.5px solid #e2e8f0; border-radius:10px;
+    font-size:.875rem; color:#0f172a; background:#f8fafc; transition:border .15s;
+    box-sizing:border-box;
+}
+.field-group input:focus, .field-group select:focus {
+    outline:none; border-color:#635bff; background:#fff;
+}
+
+.ligne-row {
+    display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:.75rem;
+    align-items:end; background:#f8fafc; border-radius:12px;
+    padding:.9rem 1rem; margin-bottom:.6rem; border:1px solid #f1f5f9;
+    transition:border .15s;
+}
+.ligne-row:hover { border-color:#e2e8f0; }
+.sous-total-badge {
+    background:#dcfce7; color:#16a34a; font-size:.8rem; font-weight:700;
+    padding:.35rem .65rem; border-radius:8px; text-align:center; white-space:nowrap;
+}
+
+.btn-add-ligne {
+    display:inline-flex; align-items:center; gap:.4rem;
+    background:#f0fdf4; color:#16a34a; border:1.5px dashed #86efac;
+    border-radius:10px; padding:.55rem 1rem; font-size:.85rem; font-weight:600;
+    cursor:pointer; transition:all .15s; margin-top:.25rem;
+}
+.btn-add-ligne:hover { background:#dcfce7; border-color:#4ade80; }
+
+.btn-remove {
+    background:#fee2e2; color:#dc2626; border:none; border-radius:8px;
+    width:34px; height:34px; cursor:pointer; display:flex; align-items:center;
+    justify-content:center; font-size:.85rem; transition:background .15s; flex-shrink:0;
+}
+.btn-remove:hover { background:#fecaca; }
+
+.total-bar {
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff;
+    border-radius:12px; padding:1rem 1.5rem; margin:1.25rem 0;
+}
+.total-bar-label { font-size:.85rem; color:#94a3b8; }
+.total-bar-value { font-size:1.5rem; font-weight:800; color:#22c55e; }
+
+.convert-box {
+    background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px;
+    padding:1.25rem; margin-bottom:1.5rem;
+}
+.convert-row { display:flex; gap:.75rem; align-items:center; margin-top:.75rem; }
+.convert-row select {
+    padding:.5rem .75rem; border:1.5px solid #e2e8f0; border-radius:8px;
+    font-size:.85rem; background:#fff; color:#0f172a;
+}
+.convert-result {
+    margin-top:.75rem; font-size:.85rem; color:#475569; font-weight:500;
+    min-height:1.2rem;
+}
+
+.btn-submit {
+    background:#635bff; color:#fff; border:none; border-radius:12px;
+    padding:.75rem 2rem; font-size:.95rem; font-weight:700; cursor:pointer;
+    display:inline-flex; align-items:center; gap:.5rem; transition:all .15s;
+}
+.btn-submit:hover { background:#4f46e5; transform:translateY(-1px); }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1><i class="fa-solid fa-cart-plus" style="color:#22c55e;"></i> Nouvel achat de matières</h1>
+    <a href="{{ path('erp_achat_index') }}" class="btn-erp btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Retour
+    </a>
+</div>
+
+<div class="form-card">
+    {{ form_start(form) }}
+
+    <div class="section-title"><i class="fa-regular fa-calendar"></i> Date de l'achat</div>
+    <div class="field-group" style="max-width:220px;">
+        {{ form_widget(form.dateAchat) }}
+        {{ form_errors(form.dateAchat) }}
+    </div>
+
+    <div class="section-title"><i class="fa-solid fa-boxes-stacked"></i> Matières achetées</div>
+    {{ form_errors(form.lignes) }}
+
+    <div id="lignes-container"
+         data-prototype="{{ form_widget(form.lignes.vars.prototype)|e('html_attr') }}"
+         data-index="{{ form.lignes|length }}">
+        {% for ligne in form.lignes %}
+        <div class="ligne-row">
+            <div class="field-group" style="margin:0;">
+                {{ form_label(ligne.matiere) }}
+                {{ form_widget(ligne.matiere, {attr: {class: 'matiere-select'}}) }}
+            </div>
+            <div class="field-group" style="margin:0;">
+                {{ form_label(ligne.quantite) }}
+                {{ form_widget(ligne.quantite, {attr: {class: 'quantite-input'}}) }}
+            </div>
+            <div class="field-group" style="margin:0;">
+                {{ form_label(ligne.prixUnitaire) }}
+                {{ form_widget(ligne.prixUnitaire, {attr: {class: 'prix-input'}}) }}
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.4rem;align-items:center;">
+                <span class="sous-total-badge">—</span>
+                <button type="button" class="btn-remove remove-ligne" title="Supprimer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="add-ligne" class="btn-add-ligne">
+        <i class="fa-solid fa-plus"></i> Ajouter une matière
+    </button>
+
+    <div class="total-bar">
+        <div>
+            <div class="total-bar-label">Montant total</div>
+            <div class="total-bar-value" id="total-display">0,00 €</div>
+        </div>
+        <i class="fa-solid fa-coins" style="font-size:2rem;color:#22c55e;opacity:.4;"></i>
+    </div>
+
+    <div class="convert-box">
+        <div class="section-title" style="margin:0 0 .25rem;"><i class="fa-solid fa-arrow-right-arrow-left"></i> Conversion de devise</div>
+        <div style="font-size:.8rem;color:#94a3b8;">Convertissez le total dans une autre devise</div>
+        <div class="convert-row">
+            <select id="currency-select">
+                <option value="TND" selected>TND</option>
+                {% for code in currencies %}{% if code != 'EUR' %}<option value="{{ code }}">{{ code }}</option>{% endif %}{% endfor %}
+            </select>
+            <button type="button" id="convert-btn" class="btn-erp btn-warning">
+                <i class="fa-solid fa-calculator"></i> Convertir
+            </button>
+        </div>
+        <div class="convert-result" id="convert-result"></div>
+    </div>
+
+    <button type="submit" class="btn-submit">
+        <i class="fa-solid fa-floppy-disk"></i> Enregistrer l'achat
+    </button>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+(function() {
+    const container = document.getElementById('lignes-container');
+    const totalDisplay = document.getElementById('total-display');
+    const convertResult = document.getElementById('convert-result');
+
+    function getTotal() {
+        let t = 0;
+        container.querySelectorAll('.ligne-row').forEach(row => {
+            const q = parseFloat(row.querySelector('.quantite-input')?.value) || 0;
+            const p = parseFloat(row.querySelector('.prix-input')?.value) || 0;
+            const st = q * p;
+            const el = row.querySelector('.sous-total-badge');
+            if (el) el.textContent = st > 0 ? st.toFixed(2) + ' €' : '—';
+            t += st;
+        });
+        return t;
+    }
+
+    function updateTotal() {
+        const t = getTotal();
+        totalDisplay.textContent = t.toFixed(2).replace('.', ',') + ' €';
+        convertResult.textContent = '';
+    }
+
+    function bindRow(row) {
+        row.querySelectorAll('.quantite-input,.prix-input').forEach(el => el.addEventListener('input', updateTotal));
+        const sel = row.querySelector('.matiere-select');
+        if (sel) sel.addEventListener('change', function() {
+            const prix = this.options[this.selectedIndex]?.getAttribute('data-prix');
+            if (prix) { const pi = row.querySelector('.prix-input'); if (pi) { pi.value = parseFloat(prix).toFixed(2); } }
+            updateTotal();
+        });
+        const rm = row.querySelector('.remove-ligne');
+        if (rm) rm.addEventListener('click', () => { row.remove(); updateTotal(); });
+    }
+
+    container.querySelectorAll('.ligne-row').forEach(bindRow);
+
+    document.getElementById('add-ligne').addEventListener('click', function() {
+        const proto = container.dataset.prototype;
+        const idx = parseInt(container.dataset.index);
+        const html = proto.replace(/__name__/g, idx);
+        container.dataset.index = idx + 1;
+        const tmp = document.createElement('div'); tmp.innerHTML = html;
+        const row = document.createElement('div'); row.className = 'ligne-row';
+        const fields = Array.from(tmp.children);
+        const cols = [
+            { label: 'Matière', cls: 'matiere-select' },
+            { label: 'Quantité', cls: 'quantite-input' },
+            { label: 'Prix unit.', cls: 'prix-input' }
+        ];
+        fields.forEach((f, i) => {
+            const col = document.createElement('div');
+            col.style.margin = '0';
+            col.className = 'field-group';
+            col.appendChild(f);
+            row.appendChild(col);
+        });
+        const actions = document.createElement('div');
+        actions.style.cssText = 'display:flex;flex-direction:column;gap:.4rem;align-items:center;';
+        actions.innerHTML = '<span class="sous-total-badge">—</span><button type="button" class="btn-remove remove-ligne" title="Supprimer"><i class="fa-solid fa-xmark"></i></button>';
+        row.appendChild(actions);
+        container.appendChild(row);
+        bindRow(row);
+        updateTotal();
+    });
+
+    document.getElementById('convert-btn').addEventListener('click', function() {
+        const total = getTotal();
+        const currency = document.getElementById('currency-select').value;
+        convertResult.textContent = '⏳ Conversion en cours…';
+        fetch('{{ path('erp_achat_convert') }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'total=' + total + '&currency=' + currency
+        }).then(r => r.json()).then(d => {
+            convertResult.textContent = d.error
+                ? '⚠ ' + d.error
+                : '💱 ' + total.toFixed(2) + ' EUR = ' + d.converted + ' ' + d.currency + '  (taux : ' + d.rate + ')';
+        }).catch(() => { convertResult.textContent = '⚠ Erreur réseau.'; });
+    });
+
+    updateTotal();
+})();
+</script>
+{% endblock %}

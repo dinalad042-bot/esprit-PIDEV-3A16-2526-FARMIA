@@ -1,0 +1,56 @@
+parameters:
+    app.weather_api_key: '%env(OPENWEATHER_API_KEY)%'
+    app.groq_api_key: '%env(GROQ_API_KEY)%'
+    timezone: 'UTC'
+
+services:
+    _defaults:
+        autowire: true      
+        autoconfigure: true 
+        bind:
+            $weatherApiKey: '%app.weather_api_key%'
+            $perenualApiKey: '%env(PERENUAL_API_KEY)%'
+            $groqApiKey: '%app.groq_api_key%'
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Service\FaceEnrollmentService:
+        arguments:
+            $pythonApiUrl: '%env(string:PYTHON_API_URL)%'
+            $datasetBasePath: '%kernel.project_dir%/python_api/dataset'
+
+    App\Service\PythonFaceRecognitionService:
+        arguments:
+            $pythonApiUrl: '%env(string:PYTHON_API_URL)%'
+
+    App\Service\GroqService:
+        arguments:
+            $apiKey: '%env(string:GROQ_API_KEY)%'
+            $model: '%env(string:GROQ_MODEL)%'
+
+    App\Service\WeatherService:
+        arguments:
+            $weatherApiKey: '%app.weather_api_key%'
+
+    App\Service\PlantService:
+        arguments:
+            $trefleApiToken: '%env(TREFLE_API_TOKEN)%'
+
+    App\Controller\AnimalController:
+        arguments:
+            $groqApiKey: '%app.groq_api_key%'
+        tags: ['controller.service_arguments']
+
+    App\Service\ERP\PaymentService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $qrOutputDir: '%kernel.project_dir%/public/uploads/erp_qr'
+
+    App\Service\ERP\ERPEmailService:
+        arguments:
+            $fromAddress: '%env(MAILER_FROM)%'

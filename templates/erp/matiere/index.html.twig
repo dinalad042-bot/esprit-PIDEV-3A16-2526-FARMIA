@@ -1,0 +1,174 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Matières premières — FarmIA Desk{% endblock %}
+
+{% block stylesheets %}
+<style>
+.mat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; }
+.mat-header h1 { font-size:1.5rem; font-weight:700; color:#0f172a; margin:0; }
+
+.mat-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem; }
+.mat-stat { background:#fff; border-radius:14px; padding:1.2rem 1.5rem; box-shadow:0 1px 6px rgba(0,0,0,.07); display:flex; align-items:center; gap:1rem; }
+.mat-stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+.mat-stat-icon.green { background:#dcfce7; color:#16a34a; }
+.mat-stat-icon.orange { background:#fef3c7; color:#d97706; }
+.mat-stat-icon.blue { background:#dbeafe; color:#2563eb; }
+.mat-stat-label { font-size:.75rem; color:#94a3b8; font-weight:500; }
+.mat-stat-value { font-size:1.3rem; font-weight:700; color:#0f172a; }
+
+.mat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.25rem; }
+
+.mat-card {
+    background:#fff; border-radius:18px; overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.07); border:1px solid #f1f5f9;
+    display:flex; flex-direction:column; transition:transform .15s, box-shadow .15s;
+}
+.mat-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.12); }
+
+.mat-card-banner { height:6px; background:linear-gradient(90deg,#22c55e,#16a34a); }
+.mat-card-banner.critical { background:linear-gradient(90deg,#f59e0b,#d97706); }
+.mat-card-banner.out { background:linear-gradient(90deg,#ef4444,#dc2626); }
+
+.mat-card-body { padding:1.25rem; flex:1; display:flex; flex-direction:column; gap:.6rem; }
+.mat-card-name { font-size:1rem; font-weight:700; color:#0f172a; }
+.mat-card-desc { font-size:.8rem; color:#64748b; }
+
+.mat-badges { display:flex; gap:.4rem; flex-wrap:wrap; }
+.mat-badge { font-size:.72rem; font-weight:600; padding:.25rem .6rem; border-radius:20px; display:inline-flex; align-items:center; gap:.3rem; }
+.badge-unit { background:#f1f5f9; color:#475569; }
+.badge-ok { background:#dcfce7; color:#16a34a; }
+.badge-low { background:#fef9c3; color:#a16207; }
+.badge-out { background:#fee2e2; color:#dc2626; }
+
+.mat-price { display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border-radius:10px; padding:.6rem .9rem; }
+.mat-price-label { font-size:.75rem; color:#94a3b8; }
+.mat-price-value { font-size:1.2rem; font-weight:800; color:#22c55e; }
+
+.mat-card-footer { padding:.9rem 1.25rem; border-top:1px solid #f1f5f9; display:flex; gap:.5rem; }
+.btn-edit { flex:1; background:#f1f5f9; color:#475569; border:none; border-radius:10px; padding:.55rem; font-weight:600; font-size:.85rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.4rem; text-decoration:none; transition:background .15s; }
+.btn-edit:hover { background:#e2e8f0; }
+.btn-del { background:#fee2e2; color:#dc2626; border:none; border-radius:10px; padding:.55rem .75rem; cursor:pointer; font-size:.85rem; transition:background .15s; }
+.btn-del:hover { background:#fecaca; }
+
+.empty-state { text-align:center; padding:5rem 2rem; background:#fff; border-radius:16px; border:2px dashed #e2e8f0; color:#94a3b8; }
+.empty-state i { font-size:3.5rem; margin-bottom:1rem; display:block; color:#cbd5e1; }
+
+.alert-critical { background:#fffbeb; border:1px solid #fcd34d; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; }
+.alert-critical strong { color:#92400e; display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+.crit-list { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
+.crit-item { background:#fef3c7; color:#92400e; font-size:.8rem; font-weight:600; padding:.3rem .75rem; border-radius:20px; display:flex; align-items:center; gap:.4rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="mat-header">
+    <h1><i class="fa-solid fa-cubes" style="color:#22c55e;"></i> Matières premières</h1>
+    {% if is_granted('ROLE_FOURNISSEUR') %}
+    <a href="{{ path('erp_matiere_new') }}" class="btn-erp btn-primary">
+        <i class="fa-solid fa-plus"></i> Nouvelle matière
+    </a>
+    {% endif %}
+</div>
+
+{# Stats bar #}
+<div class="mat-stats">
+    <div class="mat-stat">
+        <div class="mat-stat-icon green"><i class="fa-solid fa-cubes"></i></div>
+        <div>
+            <div class="mat-stat-label">Total matières</div>
+            <div class="mat-stat-value">{{ matieres|length }}</div>
+        </div>
+    </div>
+    <div class="mat-stat">
+        <div class="mat-stat-icon orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div>
+            <div class="mat-stat-label">Stock critique</div>
+            <div class="mat-stat-value">{{ critiques|length }}</div>
+        </div>
+    </div>
+    <div class="mat-stat">
+        <div class="mat-stat-icon blue"><i class="fa-solid fa-coins"></i></div>
+        <div>
+            <div class="mat-stat-label">Valeur totale stock</div>
+            <div class="mat-stat-value">
+                {% set total = 0 %}
+                {% for m in matieres %}{% set total = total + (m.stock * m.prixUnitaire) %}{% endfor %}
+                {{ total|number_format(0,',',' ') }} €
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Critical alert #}
+{% if critiques|length > 0 %}
+<div class="alert-critical">
+    <strong><i class="fa-solid fa-triangle-exclamation"></i> {{ critiques|length }} matière(s) en stock critique</strong>
+    <div class="crit-list">
+        {% for m in critiques %}
+        <span class="crit-item">
+            <i class="fa-solid fa-circle-dot"></i>
+            {{ m.nom }} — {{ m.stock }} {{ m.unite }} (seuil: {{ m.seuilCritique }})
+        </span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{# Cards grid #}
+{% if matieres|length == 0 %}
+<div class="empty-state">
+    <i class="fa-solid fa-cubes"></i>
+    <h3 style="color:#475569;">Aucune matière enregistrée</h3>
+    {% if is_granted('ROLE_FOURNISSEUR') %}
+    <p>Commencez par ajouter vos premières matières au catalogue.</p>
+    <a href="{{ path('erp_matiere_new') }}" class="btn-erp btn-primary" style="margin-top:1rem;">
+        <i class="fa-solid fa-plus"></i> Ajouter une matière
+    </a>
+    {% endif %}
+</div>
+{% else %}
+<div class="mat-grid">
+    {% for m in matieres %}
+    {% set bannerClass = m.stock <= 0 ? 'out' : (m.isStockCritique ? 'critical' : '') %}
+    <div class="mat-card">
+        <div class="mat-card-banner {{ bannerClass }}"></div>
+        <div class="mat-card-body">
+            <div class="mat-card-name">{{ m.nom }}</div>
+            {% if m.description %}
+            <div class="mat-card-desc">{{ m.description }}</div>
+            {% endif %}
+            <div class="mat-badges">
+                <span class="mat-badge badge-unit"><i class="fa-solid fa-ruler"></i> {{ m.unite }}</span>
+                {% if m.stock <= 0 %}
+                    <span class="mat-badge badge-out"><i class="fa-solid fa-ban"></i> Rupture</span>
+                {% elseif m.isStockCritique %}
+                    <span class="mat-badge badge-low"><i class="fa-solid fa-triangle-exclamation"></i> Stock faible: {{ m.stock }}</span>
+                {% else %}
+                    <span class="mat-badge badge-ok"><i class="fa-solid fa-circle-check"></i> En stock: {{ m.stock }}</span>
+                {% endif %}
+                {% if m.seuilCritique > 0 %}
+                <span class="mat-badge badge-unit"><i class="fa-solid fa-gauge"></i> Seuil: {{ m.seuilCritique }}</span>
+                {% endif %}
+            </div>
+            <div class="mat-price">
+                <span class="mat-price-label">Prix unitaire</span>
+                <span class="mat-price-value">{{ m.prixUnitaire|number_format(2,',',' ') }} €</span>
+            </div>
+        </div>
+        {% if is_granted('ROLE_FOURNISSEUR') %}
+        <div class="mat-card-footer">
+            <a href="{{ path('erp_matiere_edit', {id: m.idMatiere}) }}" class="btn-edit">
+                <i class="fa-solid fa-pen"></i> Modifier
+            </a>
+            <form method="post" action="{{ path('erp_matiere_delete', {id: m.idMatiere}) }}" onsubmit="return confirm('Supprimer cette matière ?')">
+                <input type="hidden" name="_token" value="{{ csrf_token('del_matiere_' ~ m.idMatiere) }}">
+                <button type="submit" class="btn-del" title="Supprimer">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

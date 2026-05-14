@@ -1,0 +1,201 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Produits finis — FarmIA Desk{% endblock %}
+
+{% block stylesheets %}
+<style>
+.prod-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; }
+.prod-header h1 { font-size:1.5rem; font-weight:700; color:#0f172a; margin:0; }
+
+.prod-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem; }
+.prod-stat { background:#fff; border-radius:14px; padding:1.2rem 1.5rem; box-shadow:0 1px 6px rgba(0,0,0,.07); display:flex; align-items:center; gap:1rem; }
+.prod-stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+.prod-stat-icon.purple { background:#ede9fe; color:#7c3aed; }
+.prod-stat-icon.green { background:#dcfce7; color:#16a34a; }
+.prod-stat-icon.blue { background:#dbeafe; color:#2563eb; }
+.prod-stat-label { font-size:.75rem; color:#94a3b8; font-weight:500; }
+.prod-stat-value { font-size:1.3rem; font-weight:700; color:#0f172a; }
+
+.prod-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; }
+
+.prod-card {
+    background:#fff; border-radius:18px; overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.07); border:1px solid #f1f5f9;
+    display:flex; flex-direction:column; transition:transform .15s, box-shadow .15s;
+}
+.prod-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.12); }
+
+.prod-card-banner { height:6px; }
+.banner-simple { background:linear-gradient(90deg,#22c55e,#16a34a); }
+.banner-fabrique { background:linear-gradient(90deg,#7c3aed,#6d28d9); }
+.banner-empty { background:linear-gradient(90deg,#ef4444,#dc2626); }
+
+.prod-card-body { padding:1.25rem; flex:1; display:flex; flex-direction:column; gap:.75rem; }
+.prod-card-top { display:flex; align-items:flex-start; justify-content:space-between; }
+.prod-card-name { font-size:1rem; font-weight:700; color:#0f172a; }
+.prod-card-desc { font-size:.8rem; color:#64748b; }
+
+.type-badge { font-size:.72rem; font-weight:700; padding:.3rem .7rem; border-radius:20px; white-space:nowrap; }
+.type-simple { background:#dcfce7; color:#16a34a; }
+.type-fabrique { background:#ede9fe; color:#7c3aed; }
+
+.prod-row { display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border-radius:10px; padding:.6rem .9rem; }
+.prod-row-label { font-size:.75rem; color:#94a3b8; }
+.prod-row-value { font-size:1rem; font-weight:700; color:#0f172a; }
+.prod-row-value.green { color:#22c55e; }
+.prod-row-value.red { color:#ef4444; }
+.prod-row-value.purple { color:#7c3aed; }
+
+.recette-box { background:#f5f3ff; border-radius:10px; padding:.75rem; }
+.recette-title { font-size:.75rem; font-weight:700; color:#6d28d9; margin-bottom:.5rem; display:flex; align-items:center; gap:.3rem; }
+.recette-item { font-size:.78rem; color:#475569; padding:.2rem 0; display:flex; align-items:center; gap:.4rem; }
+.recette-item i { color:#7c3aed; font-size:.65rem; }
+.stock-pill { font-size:.7rem; color:#94a3b8; background:#e2e8f0; padding:.1rem .4rem; border-radius:10px; margin-left:auto; }
+
+.prod-card-footer { padding:.9rem 1.25rem; border-top:1px solid #f1f5f9; display:flex; gap:.5rem; flex-wrap:wrap; }
+.btn-produce { flex:1; background:#7c3aed; color:#fff; border:none; border-radius:10px; padding:.55rem; font-weight:600; font-size:.82rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.4rem; transition:background .15s; }
+.btn-produce:hover { background:#6d28d9; }
+.btn-edit-p { background:#f1f5f9; color:#475569; border:none; border-radius:10px; padding:.55rem .75rem; cursor:pointer; font-size:.85rem; text-decoration:none; display:flex; align-items:center; gap:.3rem; transition:background .15s; }
+.btn-edit-p:hover { background:#e2e8f0; }
+.btn-del-p { background:#fee2e2; color:#dc2626; border:none; border-radius:10px; padding:.55rem .75rem; cursor:pointer; font-size:.85rem; transition:background .15s; }
+.btn-del-p:hover { background:#fecaca; }
+.batches-input { width:48px; padding:.4rem; border:1.5px solid #e2e8f0; border-radius:8px; font-size:.82rem; text-align:center; }
+
+.empty-state { text-align:center; padding:5rem 2rem; background:#fff; border-radius:16px; border:2px dashed #e2e8f0; color:#94a3b8; }
+.empty-state i { font-size:3.5rem; margin-bottom:1rem; display:block; color:#cbd5e1; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="prod-header">
+    <h1><i class="fa-solid fa-box-open" style="color:#7c3aed;"></i> Produits finis</h1>
+    {% if is_granted('ROLE_AGRICOLE') %}
+    <a href="{{ path('erp_produit_new') }}" class="btn-erp btn-primary">
+        <i class="fa-solid fa-plus"></i> Nouveau produit
+    </a>
+    {% endif %}
+</div>
+
+<div class="prod-stats">
+    <div class="prod-stat">
+        <div class="prod-stat-icon purple"><i class="fa-solid fa-box-open"></i></div>
+        <div>
+            <div class="prod-stat-label">Total produits</div>
+            <div class="prod-stat-value">{{ produits|length }}</div>
+        </div>
+    </div>
+    <div class="prod-stat">
+        <div class="prod-stat-icon green"><i class="fa-solid fa-industry"></i></div>
+        <div>
+            <div class="prod-stat-label">En stock</div>
+            <div class="prod-stat-value">{{ produits|filter(p => p.stock > 0)|length }}</div>
+        </div>
+    </div>
+    <div class="prod-stat">
+        <div class="prod-stat-icon blue"><i class="fa-solid fa-coins"></i></div>
+        <div>
+            <div class="prod-stat-label">Valeur catalogue</div>
+            <div class="prod-stat-value">
+                {% set total = 0 %}
+                {% for p in produits %}{% set total = total + (p.stock * p.prixVente) %}{% endfor %}
+                {{ total|number_format(0,',',' ') }} €
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if produits|length == 0 %}
+<div class="empty-state">
+    <i class="fa-solid fa-box-open"></i>
+    <h3 style="color:#475569;">Aucun produit enregistré</h3>
+    {% if is_granted('ROLE_AGRICOLE') %}
+    <p>Créez vos premiers produits finis à partir de vos matières premières.</p>
+    <a href="{{ path('erp_produit_new') }}" class="btn-erp btn-primary" style="margin-top:1rem;">
+        <i class="fa-solid fa-plus"></i> Créer un produit
+    </a>
+    {% endif %}
+</div>
+{% else %}
+<div class="prod-grid">
+    {% for p in produits %}
+    {% set bannerClass = p.stock <= 0 ? 'banner-empty' : (p.isSimple ? 'banner-simple' : 'banner-fabrique') %}
+    <div class="prod-card">
+        <div class="prod-card-banner {{ bannerClass }}"></div>
+        <div class="prod-card-body">
+            <div class="prod-card-top">
+                <div>
+                    <div class="prod-card-name">{{ p.nom }}</div>
+                    {% if p.description %}
+                    <div class="prod-card-desc">{{ p.description|slice(0,80) }}</div>
+                    {% endif %}
+                </div>
+                {% if p.isSimple %}
+                    <span class="type-badge type-simple"><i class="fa-solid fa-tag"></i> Simple</span>
+                {% else %}
+                    <span class="type-badge type-fabrique"><i class="fa-solid fa-flask"></i> Fabriqué</span>
+                {% endif %}
+            </div>
+
+            <div class="prod-row">
+                <span class="prod-row-label">Prix de vente</span>
+                <span class="prod-row-value green">{{ p.prixVente|number_format(2,',',' ') }} €</span>
+            </div>
+
+            <div class="prod-row">
+                <span class="prod-row-label">Stock disponible</span>
+                <span class="prod-row-value {{ p.stock > 0 ? 'purple' : 'red' }}">
+                    {{ p.stock|number_format(0) }} unité(s)
+                </span>
+            </div>
+
+            {% if not p.isSimple %}
+            <div class="prod-row">
+                <span class="prod-row-label">Produit par lot</span>
+                <span class="prod-row-value">{{ p.quantiteProduite|number_format(0) }} unité(s)</span>
+            </div>
+
+            {% if p.recette|length > 0 %}
+            <div class="recette-box">
+                <div class="recette-title">
+                    <i class="fa-solid fa-flask"></i> Recette de fabrication
+                </div>
+                {% for ing in p.recette %}
+                <div class="recette-item">
+                    <i class="fa-solid fa-circle-dot"></i>
+                    {{ ing.quantite }} {{ ing.matiere.unite }} de <strong>{{ ing.matiere.nom }}</strong>
+                    <span class="stock-pill">stock: {{ ing.matiere.stock }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="font-size:.78rem;color:#f59e0b;background:#fffbeb;padding:.5rem .75rem;border-radius:8px;">
+                <i class="fa-solid fa-triangle-exclamation"></i> Aucun ingrédient défini
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        {% if is_granted('ROLE_AGRICOLE') %}
+        <div class="prod-card-footer">
+            {% if not p.isSimple %}
+            <form method="post" action="{{ path('erp_produit_produire', {id: p.idProduit}) }}" style="display:flex;gap:.4rem;align-items:center;flex:1;">
+                <input type="hidden" name="_token" value="{{ csrf_token('produire_' ~ p.idProduit) }}">
+                <input type="number" name="batches" value="1" min="1" class="batches-input" title="Lots à produire">
+                <button type="submit" class="btn-produce">
+                    <i class="fa-solid fa-industry"></i> Produire
+                </button>
+            </form>
+            {% endif %}
+            <a href="{{ path('erp_produit_edit', {id: p.idProduit}) }}" class="btn-edit-p">
+                <i class="fa-solid fa-pen"></i>
+            </a>
+            <form method="post" action="{{ path('erp_produit_delete', {id: p.idProduit}) }}" onsubmit="return confirm('Supprimer ce produit ?')">
+                <input type="hidden" name="_token" value="{{ csrf_token('del_produit_' ~ p.idProduit) }}">
+                <button type="submit" class="btn-del-p"><i class="fa-solid fa-trash"></i></button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

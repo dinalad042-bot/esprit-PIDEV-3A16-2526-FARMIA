@@ -1,0 +1,63 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Nouvelle Analyse - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Créer une Nouvelle Analyse</h1>
+    <p class="welcome-subtitle">Ajoutez une nouvelle demande d'analyse agricole</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fa-solid fa-plus-circle"></i> Formulaire de création</h5>
+    </div>
+    <div class="card-body">
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.dateAnalyse) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.statut) }}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.demandeur) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.technicien) }}
+                </div>
+            </div>
+            
+            {{ form_row(form.ferme) }}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.animalCible) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.planteCible) }}
+                </div>
+            </div>
+            
+            {{ form_row(form.imageUrl) }}
+            
+            {{ form_row(form.descriptionDemande) }}
+            
+            {{ form_row(form.resultatTechnique) }}
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('admin_analyses_index') }}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Retour
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> Créer l'analyse
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

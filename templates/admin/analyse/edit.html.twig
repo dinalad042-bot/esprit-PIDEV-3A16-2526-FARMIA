@@ -1,0 +1,63 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Modifier Analyse #{{ analyse.id }} - FarmAI Admin{% endblock %}
+
+{% block body %}
+<div class="welcome-section">
+    <h1 class="welcome-title">Modifier l'Analyse #{{ analyse.id }}</h1>
+    <p class="welcome-subtitle">Mettez à jour les informations de la demande d'analyse</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fa-solid fa-pen-to-square"></i> Formulaire d'édition</h5>
+    </div>
+    <div class="card-body">
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.dateAnalyse) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.statut) }}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.demandeur) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.technicien) }}
+                </div>
+            </div>
+            
+            {{ form_row(form.ferme) }}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.animalCible) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.planteCible) }}
+                </div>
+            </div>
+            
+            {{ form_row(form.imageUrl) }}
+            
+            {{ form_row(form.descriptionDemande) }}
+            
+            {{ form_row(form.resultatTechnique) }}
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('admin_analyses_index') }}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Retour
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i> Enregistrer les modifications
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

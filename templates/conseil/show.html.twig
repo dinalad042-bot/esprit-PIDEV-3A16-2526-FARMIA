@@ -1,0 +1,49 @@
+{% extends 'layouts/admin.html.twig' %}
+{% block title %}Conseil #{{ conseil.id }} — FarmAI{% endblock %}
+
+{% block body %}
+<div style="padding:2rem; max-width:800px;">
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+        <a href="{{ path('app_conseil_index') }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Retour
+        </a>
+        <h2 style="font-size:1.4rem; font-weight:700; color:#1a1a2e; margin:0;">
+            Conseil <span style="color:#2ecc71;">#{{ conseil.id }}</span>
+        </h2>
+        <a href="{{ path('app_conseil_edit', {id: conseil.id}) }}" class="btn btn-dark" style="margin-left:auto;">
+            <i class="fa-solid fa-pen"></i> Modifier
+        </a>
+    </div>
+
+    <div style="background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); padding:2rem; border-left:6px solid
+        {% if conseil.prioriteRaw == 'HAUTE' %}#e74c3c
+        {% elseif conseil.prioriteRaw == 'MOYENNE' %}#f39c12
+        {% else %}#2ecc71{% endif %};">
+
+        <div style="margin-bottom:1.5rem;">
+            {% if conseil.priorite %}
+                <span style="{{ conseil.priorite.badgeStyle() }}; font-size:0.9rem;">
+                    {{ conseil.priorite.icon() }} {{ conseil.priorite.label() }} Priorité
+                </span>
+            {% endif %}
+        </div>
+
+        <div style="font-size:1rem; line-height:1.8; color:#333; background:#f9f9f9; padding:1.5rem; border-radius:8px; margin-bottom:1.5rem;">
+            {{ conseil.descriptionConseil }}
+        </div>
+
+        {% if conseil.analyse %}
+        <div style="padding-top:1rem; border-top:1px solid #f0f0f0;">
+            <p style="color:#888; font-size:0.85rem; margin:0 0 0.5rem;">Analyse associée:</p>
+            <a href="{{ path('app_analyse_show', {id: conseil.analyse.id}) }}"
+               style="display:inline-flex; align-items:center; gap:0.5rem; background:#f0fdf4; color:#27ae60; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:0.9rem;">
+                <i class="fa-solid fa-flask"></i>
+                Analyse #{{ conseil.analyse.id }}
+                {% if conseil.analyse.ferme %} — {{ conseil.analyse.ferme.nomFerme }}{% endif %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

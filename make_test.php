@@ -1,0 +1,3 @@
+<?php  
+$c = "<?php" . PHP_EOL . PHP_EOL . "namespace App\\Tests\\Functional;" . PHP_EOL . PHP_EOL . "use App\\Tests\\BaseWebTestCase;" . PHP_EOL . PHP_EOL . "class TemplateRenderingTest extends BaseWebTestCase" . PHP_EOL . "{" . PHP_EOL . "    public function testHomepageLoads(): void" . PHP_EOL . "    {" . PHP_EOL . "        self::ensureKernelShutdown();" . PHP_EOL . "        self::$client = static::createClient();" . PHP_EOL . "        self::$client->request('GET', '/');" . PHP_EOL . "        $this->assertResponseIsSuccessful();" . PHP_EOL . "        $this->assertResponseStatusCodeSame(200);" . PHP_EOL . "    }" . PHP_EOL . "}";  
+file_put_contents("tests/Functional/TemplateRenderingTest.php", $c); 

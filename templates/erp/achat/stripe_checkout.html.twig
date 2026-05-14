@@ -1,0 +1,134 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}Paiement — Achat #{{ achat.idAchat }}{% endblock %}
+
+{% block stylesheets %}
+<style>
+.checkout-wrapper {
+    display: flex; gap: 1.5rem; align-items: flex-start; max-width: 1100px; margin: 0 auto;
+}
+.checkout-summary {
+    width: 300px; flex-shrink: 0; background: #fff; border-radius: 20px;
+    padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,.07); position: sticky; top: 1rem;
+}
+.checkout-summary h3 {
+    font-size: .78rem; font-weight: 700; color: #94a3b8;
+    text-transform: uppercase; letter-spacing: .06em; margin: 0 0 1rem;
+    display: flex; align-items: center; gap: .4rem;
+}
+.summary-row {
+    display: flex; justify-content: space-between; font-size: .85rem;
+    color: #475569; padding: .4rem 0; border-bottom: 1px dashed #f1f5f9;
+}
+.summary-total {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: .75rem; padding-top: .75rem; border-top: 2px solid #e2e8f0;
+    font-weight: 800; font-size: 1.1rem; color: #0f172a;
+}
+.summary-total span:last-child { color: #22c55e; }
+.secure-note {
+    margin-top: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0;
+    border-radius: 10px; padding: .75rem; font-size: .78rem; color: #166534;
+    display: flex; align-items: flex-start; gap: .5rem;
+}
+.back-link {
+    display: inline-flex; align-items: center; gap: .4rem; color: #64748b;
+    font-size: .82rem; text-decoration: none; margin-top: 1rem;
+    padding: .5rem .75rem; background: #f1f5f9; border-radius: 8px; transition: background .15s;
+}
+.back-link:hover { background: #e2e8f0; color: #0f172a; }
+
+.stripe-form-wrapper {
+    flex: 1; background: #fff; border-radius: 20px; padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+}
+.stripe-form-header {
+    display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;
+}
+.stripe-form-header i { color: #635bff; font-size: 1.3rem; }
+.stripe-form-header span { font-weight: 700; color: #0f172a; font-size: 1rem; }
+.stripe-form-header .ssl {
+    margin-left: auto; font-size: .75rem; color: #16a34a; font-weight: 600;
+    display: flex; align-items: center; gap: .3rem;
+}
+
+#checkout { min-height: 300px; }
+
+.loading-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 1rem; padding: 3rem; color: #94a3b8;
+}
+.spinner {
+    width: 36px; height: 36px; border: 3px solid #e2e8f0;
+    border-top-color: #635bff; border-radius: 50%;
+    animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="erp-page-header" style="margin-bottom:1.5rem;">
+    <h1><i class="fa-brands fa-stripe" style="color:#635bff;"></i> Paiement sécurisé</h1>
+    <a href="{{ path('erp_achat_index') }}" class="btn-erp btn-secondary">
+        <i class="fa-solid fa-xmark"></i> Annuler
+    </a>
+</div>
+
+<div class="checkout-wrapper">
+    <div class="checkout-summary">
+        <h3><i class="fa-solid fa-receipt"></i> Récapitulatif</h3>
+        <div style="font-size:.75rem;color:#94a3b8;margin-bottom:.75rem;">
+            Achat #{{ achat.idAchat }} · {{ achat.dateAchat|date('d/m/Y') }}
+        </div>
+        {% for l in achat.lignes %}
+        <div class="summary-row">
+            <span>{{ l.matiere.nom }}<br>
+                <small style="color:#94a3b8;">{{ l.quantite }} {{ l.matiere.unite }}</small>
+            </span>
+            <strong>{{ l.sousTotal|number_format(2,',',' ') }} €</strong>
+        </div>
+        {% endfor %}
+        <div class="summary-total">
+            <span>Total</span>
+            <span>{{ achat.total|number_format(2,',',' ') }} €</span>
+        </div>
+        <div class="secure-note">
+            <i class="fa-solid fa-shield-halved" style="margin-top:.1rem;flex-shrink:0;"></i>
+            <span>Paiement sécurisé par Stripe. Vos données ne sont jamais stockées.</span>
+        </div>
+        <a href="{{ path('erp_achat_index') }}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Annuler le paiement
+        </a>
+    </div>
+
+    <div class="stripe-form-wrapper">
+        <div class="stripe-form-header">
+            <i class="fa-brands fa-stripe"></i>
+            <span>Entrez vos informations de paiement</span>
+            <span class="ssl"><i class="fa-solid fa-lock"></i> SSL sécurisé</span>
+        </div>
+        <div class="loading-state" id="loading">
+            <div class="spinner"></div>
+            <span>Chargement du formulaire…</span>
+        </div>
+        <div id="checkout"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+(async function() {
+    const stripe = Stripe('{{ constant('App\\Service\\ERP\\PaymentService::PUBLISHABLE_KEY') }}');
+
+    const checkout = await stripe.initEmbeddedCheckout({
+        clientSecret: '{{ clientSecret }}'
+    });
+
+    document.getElementById('loading').style.display = 'none';
+    checkout.mount('#checkout');
+})();
+</script>
+{% endblock %}

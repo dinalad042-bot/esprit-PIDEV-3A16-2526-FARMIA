@@ -1,0 +1,46 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}FarmIA Desk — Espace Fournisseur{% endblock %}
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-store" style="color:#22c55e;"></i> FarmIA Desk — Mon Catalogue</h1>
+</div>
+
+<div class="stats-grid" style="margin-bottom:2rem;">
+    <div class="stat-card green">
+        <div class="stat-value"><i class="fa-solid fa-cubes"></i></div>
+        <div class="stat-label">Matières</div>
+        <div class="stat-sublabel">Mon catalogue</div>
+        <div class="stat-footer stat-footer-line"><a href="{{ path('erp_matiere_index') }}" style="color:#fff;">Gérer →</a></div>
+    </div>
+    <div class="stat-card dark">
+        <div class="stat-value"><i class="fa-solid fa-receipt"></i></div>
+        <div class="stat-label">Ventes</div>
+        <div class="stat-sublabel">Enregistrées</div>
+        <div class="stat-footer stat-footer-line"><a href="{{ path('erp_vente_index') }}" style="color:#f59e0b;">Voir →</a></div>
+    </div>
+    <div class="stat-card light-gray">
+        <div class="stat-value" style="color:var(--dark-bg);">{{ critiques|length }}</div>
+        <div class="stat-label" style="color:var(--dark-bg);">Alertes</div>
+        <div class="stat-sublabel">Stock critique</div>
+        <div class="stat-footer stat-footer-line" style="color:#cbd5e1;">
+            {% if critiques|length > 0 %}<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i> Réapprovisionner{% else %}Tout est OK{% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="bottom-grid">
+    <div class="action-card">
+        <div class="action-header"><h3 class="action-title"><i class="fa-solid fa-bolt"></i> Actions Rapides</h3></div>
+        <div class="btn-group">
+            <a href="{{ path('erp_matiere_new') }}" class="btn btn-dark"><i class="fa-solid fa-plus"></i> Nouvelle matière</a>
+            <a href="{{ path('erp_matiere_index') }}" class="btn btn-outline-green"><i class="fa-solid fa-cubes"></i> Mon catalogue</a>
+            <a href="{{ path('erp_vente_new') }}" class="btn btn-outline-green"><i class="fa-solid fa-receipt"></i> Nouvelle vente</a>
+        </div>
+    </div>
+    <div class="enterprise-card">
+        <h3 class="enterprise-title"><i class="fa-solid fa-store"></i> Espace Fournisseur</h3>
+        <p class="enterprise-text">Gérez vos matières premières, définissez vos prix et stocks, et enregistrez vos ventes aux agriculteurs.</p>
+        <i class="fa-solid fa-truck-field enterprise-icon"></i>
+    </div>
+</div>
+{% endblock %}

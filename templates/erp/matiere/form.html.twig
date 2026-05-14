@@ -1,0 +1,20 @@
+{% extends 'erp/layout.html.twig' %}
+{% block title %}{{ title }} — FarmIA Desk{% endblock %}
+{% block body %}
+<div class="erp-page-header">
+    <h1><i class="fa-solid fa-cubes" style="color:#22c55e;"></i> {{ title }}</h1>
+    <a href="{{ path('erp_matiere_index') }}" class="btn-erp btn-secondary"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+</div>
+<div class="erp-form-card">
+    {{ form_start(form) }}
+    {% for field in form %}
+    <div class="form-group">
+        {{ form_label(field) }}
+        {{ form_widget(field) }}
+        {{ form_errors(field) }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn-erp btn-primary"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

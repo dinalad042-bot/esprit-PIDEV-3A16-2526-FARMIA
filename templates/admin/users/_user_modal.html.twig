@@ -1,0 +1,185 @@
+<!-- User Add/Edit Dialog -->
+<div class="profile-modal-overlay" id="adminUserModal">
+    <div class="profile-modal">
+        <div class="profile-modal-header">
+            <h3 id="adminUserModalTitle" style="margin: 0; color: white;">Ajouter Utilisateur</h3>
+            <button type="button" class="close-modal-btn" onclick="closeAdminUserModal()">&times;</button>
+        </div>
+        
+        {{ form_start(form, {'action': path('admin_users_save'), 'attr': {'id': 'adminUserForm', 'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+            <input type="hidden" name="id" id="modalUserId" value="{{ user_id|default('') }}">
+            <div class="profile-modal-body">
+                <!-- Avatar Column -->
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar-preview" style="width: 110px; height: 110px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; background: #f1f5f9; flex-shrink: 0;">
+                        <!-- JS Fallback for Initials -->
+                        <div id="adminAvatarInitials" style="display: none; width: 100%; height: 100%; color: white; align-items: center; justify-content: center; font-weight: 700; font-size: 2rem; text-transform: uppercase;"></div>
+                        <!-- Photo Preview -->
+                        <img src="#" id="adminAvatarPreview" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        <!-- Generic Icon (Creation only) -->
+                        <i class="fa-solid fa-user-tie" id="adminAvatarFallback" style="font-size: 50px; color: #94a3b8;"></i>
+                    </div>
+                    <label class="btn-outline-green btn-file-upload" style="cursor: pointer; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--primary-green); color: var(--primary-green); white-space: nowrap; font-size: 0.85rem; margin-top: 8px;">
+                        Choisir Photo <input type="file" name="photo" accept="image/*" style="display: none;" onchange="previewAdminImage(event)">
+                    </label>
+                </div>
+                
+                <!-- Form Column -->
+                <div class="profile-form-section" style="flex: 1; min-width: 0; overflow: hidden;">
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>Nom:</label>
+                        {{ form_widget(form.nom, {'id': 'modalUserNom'}) }}
+                        <div class="modal-form-error">{{ form_errors(form.nom) }}</div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>Prénom:</label>
+                        {{ form_widget(form.prenom, {'id': 'modalUserPrenom'}) }}
+                        <div class="modal-form-error">{{ form_errors(form.prenom) }}</div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>Email:</label>
+                        {{ form_widget(form.email, {'id': 'modalUserEmail'}) }}
+                        <div class="modal-form-error">{{ form_errors(form.email) }}</div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>CIN:</label>
+                        {{ form_widget(form.cin, {'id': 'modalUserCin'}) }}
+                        <div class="modal-form-error">{{ form_errors(form.cin) }}</div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>Téléphone:</label>
+                        {{ form_widget(form.telephone, {'id': 'modalUserTelephone'}) }}
+                        <div class="modal-form-error">{{ form_errors(form.telephone) }}</div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>Adresse:</label>
+                        {{ form_widget(form.adresse, {'id': 'modalUserAdresse'}) }}
+                        <div class="modal-form-error">{{ form_errors(form.adresse) }}</div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>Mot de passe:</label>
+                        {{ form_widget(form.password, {'id': 'modalUserPassword'}) }}
+                        <div class="modal-form-error">{{ form_errors(form.password) }}</div>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 4px;">
+                        <label>Rôle:</label>
+                        {{ form_widget(form.role, {'id': 'modalUserRole'}) }}
+                    </div>
+                    
+                    {# Render any other fields (like CSRF token) #}
+                    {{ form_rest(form) }}
+                </div>
+            </div>
+            
+            <div class="profile-modal-footer">
+                <button type="submit" class="btn btn-solid-blue" style="background: var(--dark-bg);">Enregistrer</button>
+                <button type="button" class="btn btn-outline-gray" onclick="closeAdminUserModal()">Annuler</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+    // ── Avatar helpers ────────────────────────────────────────────────────────
+    function _hideAllAvatarElements() {
+        var preview  = document.getElementById('adminAvatarPreview');
+        var fallback = document.getElementById('adminAvatarFallback');
+        var initials = document.getElementById('adminAvatarInitials');
+        preview.style.display  = 'none';
+        preview.src            = '#';
+        fallback.style.display = 'none';
+        initials.style.display = 'none';
+        initials.style.backgroundColor = '';
+        initials.innerText = '';
+    }
+
+    function _showAvatarInitials(prenom, nom) {
+        var initials = document.getElementById('adminAvatarInitials');
+        var ini = ((prenom || ' ').charAt(0) + (nom || ' ').charAt(0)).toUpperCase();
+        var colors = ['#8b5cf6', '#4ade80', '#3b82f6', '#f59e0b', '#ec4899'];
+        var cIdx = ((prenom || '').length + (nom || '').length) % 5;
+        initials.innerText = ini;
+        initials.style.backgroundColor = colors[cIdx];
+        initials.style.display = 'flex';
+    }
+
+    function openAdminUserModal(id = null, nom = '', prenom = '', email = '', cin = '', telephone = '', adresse = '', role = '', imageUrl = '') {
+        document.getElementById('adminUserModalTitle').innerText = id ? "Modifier Utilisateur" : "Ajouter Utilisateur";
+        document.getElementById('modalUserId').value = id || '';
+        document.getElementById('modalUserNom').value = nom;
+        document.getElementById('modalUserPrenom').value = prenom;
+        document.getElementById('modalUserEmail').value = email;
+        document.getElementById('modalUserCin').value = cin;
+        document.getElementById('modalUserTelephone').value = telephone;
+        document.getElementById('modalUserAdresse').value = adresse;
+        document.getElementById('modalUserPassword').value = '';
+
+        // Clear Twig injected errors to prevent bleeding into other rows
+        document.querySelectorAll('.modal-form-error').forEach(function(el) { el.innerHTML = ''; });
+
+        // Role select
+        var roleSelect = document.getElementById('modalUserRole');
+        for (var i = 0; i < roleSelect.options.length; i++) {
+            if (roleSelect.options[i].value === role) {
+                roleSelect.selectedIndex = i;
+                break;
+            }
+        }
+
+        {% if not open_modal|default(false) %}
+        // Fresh open — reset avatar display
+        _hideAllAvatarElements();
+        if (imageUrl) {
+            var preview = document.getElementById('adminAvatarPreview');
+            preview.src = '/' + imageUrl;
+            preview.style.display = 'block';
+        } else if (id && (nom || prenom)) {
+            _showAvatarInitials(prenom, nom);
+        } else {
+            document.getElementById('adminAvatarFallback').style.display = 'block';
+        }
+        {% endif %}
+
+        document.getElementById('adminUserModal').style.display = 'flex';
+    }
+
+    function closeAdminUserModal() {
+        document.getElementById('adminUserModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById('adminUserModal');
+        if (event.target === modal) { closeAdminUserModal(); }
+    };
+
+    function previewAdminImage(event) {
+        var file = event.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            _hideAllAvatarElements();
+            var preview = document.getElementById('adminAvatarPreview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Auto-open logic for Dashboard redirection or Form Errors
+    document.addEventListener('DOMContentLoaded', function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('open') === 'create') {
+            openAdminUserModal();
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        {% if open_modal|default(false) %}
+        // Form has errors — re-open modal but keep Twig-rendered field values intact
+        document.getElementById('adminUserModalTitle').innerText = {{ is_edit|default(false) ? '"Modifier Utilisateur"' : '"Ajouter Utilisateur"' }};
+        document.getElementById('modalUserId').value = '{{ user_id|default('')|escape('js') }}';
+        document.getElementById('adminUserModal').style.display = 'flex';
+        // Show fallback icon since we don't have avatar data in error state
+        document.getElementById('adminAvatarFallback').style.display = 'block';
+        {% endif %}
+    });
+</script>

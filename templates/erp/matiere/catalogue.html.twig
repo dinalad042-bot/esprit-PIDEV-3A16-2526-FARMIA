@@ -1,0 +1,330 @@
+{% extends 'layouts/agricole.html.twig' %}
+{% block title %}Catalogue Fournisseurs — FarmIA{% endblock %}
+
+{% block stylesheets %}
+<style>
+.page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; }
+.page-header h1 { font-size:1.5rem; font-weight:700; color:#0f172a; margin:0; }
+
+.catalogue-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:1.25rem;
+}
+.product-card {
+    background:#fff; border-radius:18px; overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.07); border:1px solid #f1f5f9;
+    display:flex; flex-direction:column; transition:transform .15s, box-shadow .15s;
+}
+.product-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.12); }
+
+.product-banner {
+    height:6px;
+    background:linear-gradient(90deg,#22c55e,#16a34a);
+}
+.product-banner.critical { background:linear-gradient(90deg,#f59e0b,#d97706); }
+.product-banner.out { background:linear-gradient(90deg,#ef4444,#dc2626); }
+
+.product-body { padding:1.25rem; flex:1; display:flex; flex-direction:column; gap:.6rem; }
+.product-name { font-size:1rem; font-weight:700; color:#0f172a; }
+.product-desc { font-size:.8rem; color:#64748b; flex:1; }
+.product-meta { display:flex; gap:.5rem; flex-wrap:wrap; }
+.meta-badge {
+    font-size:.72rem; font-weight:600; padding:.25rem .6rem; border-radius:20px;
+    display:inline-flex; align-items:center; gap:.3rem;
+}
+.badge-unit { background:#f1f5f9; color:#475569; }
+.badge-stock-ok { background:#dcfce7; color:#16a34a; }
+.badge-stock-low { background:#fef9c3; color:#a16207; }
+.badge-stock-out { background:#fee2e2; color:#dc2626; }
+
+.product-price {
+    display:flex; align-items:center; justify-content:space-between;
+    background:#f8fafc; border-radius:10px; padding:.6rem .9rem;
+}
+.price-label { font-size:.75rem; color:#94a3b8; }
+.price-value { font-size:1.2rem; font-weight:800; color:#22c55e; }
+
+.product-footer {
+    padding:.9rem 1.25rem; border-top:1px solid #f1f5f9;
+}
+.btn-order {
+    width:100%; background:#22c55e; color:#fff; border:none; border-radius:10px;
+    padding:.6rem; font-weight:700; font-size:.875rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:.4rem;
+    transition:background .15s, transform .1s;
+}
+.btn-order:hover { background:#16a34a; transform:translateY(-1px); }
+.btn-order:disabled { background:#e2e8f0; color:#94a3b8; cursor:not-allowed; transform:none; }
+
+.empty-state {
+    text-align:center; padding:5rem 2rem; background:#fff;
+    border-radius:16px; border:2px dashed #e2e8f0; color:#94a3b8;
+}
+
+/* Cart sidebar */
+.cart-sidebar {
+    position:fixed; right:0; top:0; height:100vh; width:360px;
+    background:#fff; box-shadow:-4px 0 30px rgba(0,0,0,.12);
+    z-index:1000; transform:translateX(100%); transition:transform .3s ease;
+    display:flex; flex-direction:column;
+}
+.cart-sidebar.open { transform:translateX(0); }
+.cart-header {
+    padding:1.25rem 1.5rem; border-bottom:1px solid #f1f5f9;
+    display:flex; align-items:center; justify-content:space-between;
+}
+.cart-header h3 { font-size:1rem; font-weight:700; color:#0f172a; margin:0; }
+.cart-close { background:#f1f5f9; border:none; border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:1rem; color:#64748b; display:flex; align-items:center; justify-content:center; }
+.cart-close:hover { background:#e2e8f0; }
+.cart-items { flex:1; overflow-y:auto; padding:1rem 1.5rem; }
+.cart-item {
+    display:flex; align-items:center; gap:.75rem;
+    padding:.75rem 0; border-bottom:1px dashed #f1f5f9;
+}
+.cart-item-name { flex:1; font-size:.85rem; font-weight:600; color:#0f172a; }
+.cart-item-sub { font-size:.75rem; color:#94a3b8; }
+.cart-qty { display:flex; align-items:center; gap:.4rem; }
+.qty-btn { background:#f1f5f9; border:none; border-radius:6px; width:26px; height:26px; cursor:pointer; font-size:.9rem; display:flex; align-items:center; justify-content:center; color:#475569; }
+.qty-btn:hover { background:#e2e8f0; }
+.qty-val { font-size:.85rem; font-weight:700; min-width:24px; text-align:center; }
+.cart-item-price { font-size:.85rem; font-weight:700; color:#22c55e; white-space:nowrap; }
+.cart-footer { padding:1.25rem 1.5rem; border-top:1px solid #f1f5f9; }
+.cart-total { display:flex; justify-content:space-between; font-weight:800; font-size:1.1rem; margin-bottom:1rem; }
+.cart-total span:last-child { color:#22c55e; }
+.btn-checkout {
+    width:100%; background:#635bff; color:#fff; border:none; border-radius:12px;
+    padding:.75rem; font-weight:700; font-size:.9rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:.5rem;
+    transition:background .15s;
+}
+.btn-checkout:hover { background:#4f46e5; }
+.btn-checkout:disabled { background:#e2e8f0; color:#94a3b8; cursor:not-allowed; }
+
+.cart-fab {
+    position:fixed; bottom:2rem; right:2rem; background:#635bff; color:#fff;
+    border:none; border-radius:50%; width:56px; height:56px; font-size:1.3rem;
+    cursor:pointer; box-shadow:0 4px 20px rgba(99,91,255,.4);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s; z-index:999;
+}
+.cart-fab:hover { transform:scale(1.1); }
+.cart-badge {
+    position:absolute; top:-4px; right:-4px; background:#ef4444; color:#fff;
+    font-size:.65rem; font-weight:700; width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1><i class="fa-solid fa-store" style="color:#22c55e;"></i> Catalogue Fournisseurs</h1>
+        <p style="color:#64748b;font-size:.85rem;margin:.25rem 0 0;">Parcourez les matières disponibles et ajoutez-les à votre panier</p>
+    </div>
+</div>
+
+{% if matieres|length == 0 %}
+<div class="empty-state">
+    <i class="fa-solid fa-box-open" style="font-size:3rem;margin-bottom:1rem;display:block;"></i>
+    <h3 style="color:#475569;">Aucune matière disponible</h3>
+    <p>Les fournisseurs n'ont pas encore publié de produits.</p>
+</div>
+{% else %}
+<div class="catalogue-grid">
+    {% for m in matieres %}
+    {% set stockClass = m.stock <= 0 ? 'out' : (m.stockCritique ? 'critical' : '') %}
+    <div class="product-card">
+        <div class="product-banner {{ stockClass }}"></div>
+        <div class="product-body">
+            <div class="product-name">{{ m.nom }}</div>
+            {% if m.description %}
+            <div class="product-desc">{{ m.description }}</div>
+            {% endif %}
+            <div class="product-meta">
+                <span class="meta-badge badge-unit"><i class="fa-solid fa-ruler"></i> {{ m.unite }}</span>
+                {% if m.stock <= 0 %}
+                    <span class="meta-badge badge-stock-out"><i class="fa-solid fa-ban"></i> Rupture</span>
+                {% elseif m.stockCritique %}
+                    <span class="meta-badge badge-stock-low"><i class="fa-solid fa-triangle-exclamation"></i> Stock faible ({{ m.stock }})</span>
+                {% else %}
+                    <span class="meta-badge badge-stock-ok"><i class="fa-solid fa-circle-check"></i> En stock ({{ m.stock }})</span>
+                {% endif %}
+            </div>
+            <div class="product-price">
+                <span class="price-label">Prix unitaire</span>
+                <span class="price-value">{{ m.prixUnitaire }} €</span>
+            </div>
+        </div>
+        <div class="product-footer">
+            <button type="button" class="btn-order add-to-cart"
+                    data-id="{{ m.idMatiere }}"
+                    data-nom="{{ m.nom }}"
+                    data-prix="{{ m.prixUnitaire }}"
+                    data-unite="{{ m.unite }}"
+                    data-stock="{{ m.stock }}"
+                    {% if m.stock <= 0 %}disabled{% endif %}>
+                {% if m.stock <= 0 %}
+                    <i class="fa-solid fa-ban"></i> Indisponible
+                {% else %}
+                    <i class="fa-solid fa-cart-plus"></i> Ajouter au panier
+                {% endif %}
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# Cart sidebar #}
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3><i class="fa-solid fa-cart-shopping" style="color:#635bff;"></i> Mon panier</h3>
+        <button class="cart-close" id="closeCart"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cart-items" id="cartItems">
+        <p style="color:#94a3b8;text-align:center;padding:2rem;font-size:.85rem;">Votre panier est vide</p>
+    </div>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotal">0,00 €</span>
+        </div>
+        <form method="post" action="{{ path('erp_achat_new') }}" id="checkoutForm">
+            <input type="hidden" name="date_achat" id="hiddenDate">
+            <div id="hiddenLignes"></div>
+            <button type="submit" class="btn-checkout" id="checkoutBtn" disabled>
+                <i class="fa-brands fa-stripe"></i> Commander & Payer
+            </button>
+        </form>
+    </div>
+</div>
+
+{# Cart FAB #}
+<button class="cart-fab" id="cartFab">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span class="cart-badge" id="cartCount" style="display:none;">0</span>
+</button>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+(function() {
+    let cart = {}; // { id: { nom, prix, unite, qty } }
+
+    const sidebar  = document.getElementById('cartSidebar');
+    const cartItems = document.getElementById('cartItems');
+    const cartTotal = document.getElementById('cartTotal');
+    const cartCount = document.getElementById('cartCount');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const hiddenLignes = document.getElementById('hiddenLignes');
+    const hiddenDate = document.getElementById('hiddenDate');
+
+    // Set today's date
+    hiddenDate.value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('cartFab').addEventListener('click', () => sidebar.classList.add('open'));
+    document.getElementById('closeCart').addEventListener('click', () => sidebar.classList.remove('open'));
+
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            if (cart[id]) {
+                cart[id].qty++;
+            } else {
+                cart[id] = {
+                    nom: this.dataset.nom,
+                    prix: parseFloat(this.dataset.prix),
+                    unite: this.dataset.unite,
+                    qty: 1
+                };
+            }
+            renderCart();
+            sidebar.classList.add('open');
+        });
+    });
+
+    function renderCart() {
+        const ids = Object.keys(cart);
+        cartCount.textContent = ids.reduce((s, id) => s + cart[id].qty, 0);
+        cartCount.style.display = ids.length ? 'flex' : 'none';
+        checkoutBtn.disabled = ids.length === 0;
+
+        if (ids.length === 0) {
+            cartItems.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:2rem;font-size:.85rem;">Votre panier est vide</p>';
+            cartTotal.textContent = '0,00 €';
+            hiddenLignes.innerHTML = '';
+            return;
+        }
+
+        let total = 0;
+        let html = '';
+        hiddenLignes.innerHTML = '';
+
+        ids.forEach((id, i) => {
+            const item = cart[id];
+            const sub = item.prix * item.qty;
+            total += sub;
+            html += `
+            <div class="cart-item">
+                <div>
+                    <div class="cart-item-name">${item.nom}</div>
+                    <div class="cart-item-sub">${item.prix.toFixed(2)} € / ${item.unite}</div>
+                </div>
+                <div class="cart-qty">
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}',-1)"><i class="fa-solid fa-minus"></i></button>
+                    <span class="qty-val">${item.qty}</span>
+                    <button type="button" class="qty-btn" onclick="changeQty('${id}',1)"><i class="fa-solid fa-plus"></i></button>
+                </div>
+                <div class="cart-item-price">${sub.toFixed(2)} €</div>
+            </div>`;
+
+            // Hidden form fields for checkout
+            hiddenLignes.innerHTML += `
+                <input type="hidden" name="achat[lignes][${i}][matiere]" value="${id}">
+                <input type="hidden" name="achat[lignes][${i}][quantite]" value="${item.qty}">
+                <input type="hidden" name="achat[lignes][${i}][prixUnitaire]" value="${item.prix}">
+            `;
+        });
+
+        cartItems.innerHTML = html;
+        cartTotal.textContent = total.toFixed(2).replace('.', ',') + ' €';
+    }
+
+    window.changeQty = function(id, delta) {
+        cart[id].qty += delta;
+        if (cart[id].qty <= 0) delete cart[id];
+        renderCart();
+    };
+
+    // On checkout, build a proper achat form and submit
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const ids = Object.keys(cart);
+        if (!ids.length) return;
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ path('erp_achat_new') }}';
+
+        const today = new Date().toISOString().split('T')[0];
+        const addField = (name, value) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        };
+
+        addField('achat[dateAchat]', today);
+        ids.forEach((id, i) => {
+            addField(`achat[lignes][${i}][matiere]`, id);
+            addField(`achat[lignes][${i}][quantite]`, cart[id].qty);
+            addField(`achat[lignes][${i}][prixUnitaire]`, cart[id].prix);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+    });
+})();
+</script>
+{% endblock %}

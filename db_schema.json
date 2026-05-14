@@ -1,0 +1,150 @@
+{
+    "user": [
+        {
+            "Field": "id_user",
+            "Type": "int(11)",
+            "Null": "NO",
+            "Key": "PRI",
+            "Default": null,
+            "Extra": "auto_increment"
+        },
+        {
+            "Field": "nom",
+            "Type": "varchar(100)",
+            "Null": "NO",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "prenom",
+            "Type": "varchar(100)",
+            "Null": "NO",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "email",
+            "Type": "varchar(150)",
+            "Null": "NO",
+            "Key": "UNI",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "password",
+            "Type": "varchar(255)",
+            "Null": "NO",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "cin",
+            "Type": "varchar(20)",
+            "Null": "NO",
+            "Key": "UNI",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "adresse",
+            "Type": "text",
+            "Null": "YES",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "telephone",
+            "Type": "varchar(20)",
+            "Null": "YES",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "image_url",
+            "Type": "varchar(255)",
+            "Null": "YES",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "role",
+            "Type": "enum('ADMIN','EXPERT','AGRICOLE','FOURNISSEUR')",
+            "Null": "YES",
+            "Key": "",
+            "Default": "AGRICOLE",
+            "Extra": ""
+        },
+        {
+            "Field": "created_at",
+            "Type": "timestamp",
+            "Null": "NO",
+            "Key": "",
+            "Default": "current_timestamp()",
+            "Extra": ""
+        },
+        {
+            "Field": "updated_at",
+            "Type": "timestamp",
+            "Null": "NO",
+            "Key": "",
+            "Default": "current_timestamp()",
+            "Extra": "on update current_timestamp()"
+        }
+    ],
+    "user_log": [
+        {
+            "Field": "id",
+            "Type": "bigint(20)",
+            "Null": "NO",
+            "Key": "PRI",
+            "Default": null,
+            "Extra": "auto_increment"
+        },
+        {
+            "Field": "user_id",
+            "Type": "int(11)",
+            "Null": "NO",
+            "Key": "MUL",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "action_type",
+            "Type": "varchar(20)",
+            "Null": "NO",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "performed_by",
+            "Type": "varchar(255)",
+            "Null": "NO",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        },
+        {
+            "Field": "timestamp",
+            "Type": "timestamp",
+            "Null": "NO",
+            "Key": "",
+            "Default": "current_timestamp()",
+            "Extra": ""
+        },
+        {
+            "Field": "description",
+            "Type": "text",
+            "Null": "YES",
+            "Key": "",
+            "Default": null,
+            "Extra": ""
+        }
+    ]
+}
